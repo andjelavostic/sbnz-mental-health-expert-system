@@ -1,39 +1,39 @@
 package com.ftn.sbnz.model.features;
 
 public class EmotionalFeatures {
-    private double esi;
-    private double nai;
-    private double evi;
-    private double lci;
-    public EmotionalFeatures(double esi, double nai, double evi, double lci) {
-        this.esi = esi;
-        this.nai = nai;
-        this.evi = evi;
-        this.lci = lci;
+    private double ESI;
+    private double NAI;
+    private double EVI;
+    private double LCI;
+    public EmotionalFeatures(double ESI, double NAI, double EVI, double LCI) {
+        this.ESI = ESI;
+        this.NAI = NAI;
+        this.EVI = EVI;
+        this.LCI = LCI;
     }
-    public double getEsi() {
-        return esi;
+    public double getESI() {
+        return ESI;
     }
-    public void setEsi(double esi) {
-        this.esi = esi;
+    public void setESI(double ESI) {
+        this.ESI = ESI;
     }
-    public double getNai() {
-        return nai;
+    public double getNAI() {
+        return NAI;
     }
-    public void setNai(double nai) {
-        this.nai = nai;
+    public void setNAI(double NAI) {
+        this.NAI = NAI;
     }
-    public double getEvi() {
-        return evi;
+    public double getEVI() {
+        return EVI;
     }
-    public void setEvi(double evi) {
-        this.evi = evi;
+    public void setEVI(double EVI) {
+        this.EVI = EVI;
     }
-    public double getLci() {
-        return lci;
+    public double getLCI() {
+        return LCI;
     }
-    public void setLci(double lci) {
-        this.lci = lci;
+    public void setLCI(double LCI) {
+        this.LCI = LCI;
     }
     
 }

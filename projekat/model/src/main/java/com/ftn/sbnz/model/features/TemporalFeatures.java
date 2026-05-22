@@ -1,39 +1,39 @@
 package com.ftn.sbnz.model.features;
 
 public class TemporalFeatures {
-    private double sps;
-    private double dr;
-    private double evl;
-    private double tii;
-    public TemporalFeatures(double sps, double dr, double evl, double tii) {
-        this.sps = sps;
-        this.dr = dr;
-        this.evl = evl;
-        this.tii = tii;
+    private double SPS;
+    private double DR;
+    private double EVL;
+    private double TII;
+    public TemporalFeatures(double SPS, double DR, double EVL, double TII) {
+        this.SPS = SPS;
+        this.DR = DR;
+        this.EVL = EVL;
+        this.TII = TII;
     }
-    public double getSps() {
-        return sps;
+    public double getSPS() {
+        return SPS;
     }
-    public void setSps(double sps) {
-        this.sps = sps;
+    public void setSPS(double SPS) {
+        this.SPS = SPS;
     }
-    public double getDr() {
-        return dr;
+    public double getDR() {
+        return DR;
     }
-    public void setDr(double dr) {
-        this.dr = dr;
+    public void setDR(double DR) {
+        this.DR = DR;
     }
-    public double getEvl() {
-        return evl;
+    public double getEVL() {
+        return EVL;
     }
-    public void setEvl(double evl) {
-        this.evl = evl;
+    public void setEVL(double EVL) {
+        this.EVL = EVL;
     }
-    public double getTii() {
-        return tii;
+    public double getTII() {
+        return TII;
     }
-    public void setTii(double tii) {
-        this.tii = tii;
+    public void setTII(double TII) {
+        this.TII = TII;
     }
     
 }

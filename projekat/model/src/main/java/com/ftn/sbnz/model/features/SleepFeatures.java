@@ -1,31 +1,31 @@
 package com.ftn.sbnz.model.features;
 
 public class SleepFeatures {
-    private double sqi;
-    private double fi;
-    private double sfi;
-    public SleepFeatures(double sqi, double fi, double sfi) {
-        this.sqi = sqi;
-        this.fi = fi;
-        this.sfi = sfi;
+    private double SQI;
+    private double FI;
+    private double SFI;
+    public SleepFeatures(double SQI, double FI, double SFI) {
+        this.SQI = SQI;
+        this.FI = FI;
+        this.SFI = SFI;
     }
-    public double getSqi() {
-        return sqi;
+    public double getSQI() {
+        return SQI;
     }
-    public void setSqi(double sqi) {
-        this.sqi = sqi;
+    public void setSQI(double SQI) {
+        this.SQI = SQI;
     }
-    public double getFi() {
-        return fi;
+    public double getFI() {
+        return FI;
     }
-    public void setFi(double fi) {
-        this.fi = fi;
+    public void setFI(double FI) {
+        this.FI = FI;
     }
-    public double getSfi() {
-        return sfi;
+    public double getSFI() {
+        return SFI;
     }
-    public void setSfi(double sfi) {
-        this.sfi = sfi;
+    public void setSFI(double SFI) {
+        this.SFI = SFI;
     }
     
 }

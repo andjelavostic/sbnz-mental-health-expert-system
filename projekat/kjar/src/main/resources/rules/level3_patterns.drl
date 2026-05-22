@@ -1,0 +1,33 @@
+//ANXIETY PATTERNS
+rule "Early Burnout Pattern"
+when
+    EmotionalRisks( emotionalStressRisk == true )
+    PhysicalRisks( sleepDisturbanceRisk == true )
+    CognitiveRisks( cognitiveStrainRisk == true )
+then
+    BurnoutPattern bp = new BurnoutPattern();
+    bp.setEarlyBurnout(true);
+    insert(bp);
+end
+rule "Burnout Syndrome Pattern"
+when
+    EmotionalRisks( emotionalOverloadRisk == true )
+    PhysicalRisks( sleepDeprivationRisk == true )
+    CognitiveRisks( cognitiveOverloadRisk == true )
+then
+    BurnoutPattern bp = new BurnoutPattern();
+    bp.setBurnoutSyndrome(true);
+    insert(bp);
+end
+rule "Severe Burnout Pattern"
+when
+    PhysicalRisks( exhaustionSyndromeRisk == true )
+    SocialRisks( socialIsolationRisk == true )
+    TemporalRisks( chronicDeteriorationRisk == true )
+    EmotionalRisks( emotionalInstabilityRisk == true )
+then
+    BurnoutPattern bp = new BurnoutPattern();
+    bp.setSevereBurnoutState(true);
+    insert(bp);
+end
+//DEPRESSIVE PATTERNS

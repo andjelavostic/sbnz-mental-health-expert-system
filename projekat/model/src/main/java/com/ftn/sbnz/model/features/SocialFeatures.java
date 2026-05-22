@@ -1,31 +1,31 @@
 package com.ftn.sbnz.model.features;
 
 public class SocialFeatures {
-    private double swi;
-    private double idi;
-    private double sad;
-    public SocialFeatures(double swi, double idi, double sad) {
-        this.swi = swi;
-        this.idi = idi;
-        this.sad = sad;
+    private double SWI;
+    private double IDI;
+    private double SAD;
+    public SocialFeatures(double SWI, double IDI, double SAD) {
+        this.SWI = SWI;
+        this.IDI = IDI;
+        this.SAD = SAD;
     }
-    public double getSwi() {
-        return swi;
+    public double getSWI() {
+        return SWI;
     }
-    public void setSwi(double swi) {
-        this.swi = swi;
+    public void setSWI(double SWI) {
+        this.SWI = SWI;
     }
-    public double getIdi() {
-        return idi;
+    public double getIDI() {
+        return IDI;
     }
-    public void setIdi(double idi) {
-        this.idi = idi;
+    public void setIDI(double IDI) {
+        this.IDI = IDI;
     }
-    public double getSad() {
-        return sad;
+    public double getSAD() {
+        return SAD;
     }
-    public void setSad(double sad) {
-        this.sad = sad;
+    public void setSAD(double SAD) {
+        this.SAD = SAD;
     }
     
 }

@@ -1,11 +1,4 @@
-package com.ftn.sbnz.service;
-
-import com.ftn.sbnz.model.features.CognitiveFeatures;
-import com.ftn.sbnz.model.features.EmotionalFeatures;
-import com.ftn.sbnz.model.features.EnvironmentalFeatures;
-import com.ftn.sbnz.model.features.SleepFeatures;
-import com.ftn.sbnz.model.features.SocialFeatures;
-import com.ftn.sbnz.model.features.TemporalFeatures;
+package com.ftn.sbnz.model.features;
 
 public class FeatureVector {
     private EmotionalFeatures emotional;

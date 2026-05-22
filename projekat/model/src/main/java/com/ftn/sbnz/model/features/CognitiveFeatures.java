@@ -1,31 +1,31 @@
 package com.ftn.sbnz.model.features;
 
 public class CognitiveFeatures {
-    private double cli;
-    private double mfs;
-    private double dli;
-    public CognitiveFeatures(double cli, double mfs, double dli) {
-        this.cli = cli;
-        this.mfs = mfs;
-        this.dli = dli;
+    private double CLI;
+    private double MFS;
+    private double DLI;
+    public CognitiveFeatures(double CLI, double MFS, double DLI) {
+        this.CLI = CLI;
+        this.MFS = MFS;
+        this.DLI = DLI;
     }
-    public double getCli() {
-        return cli;
+    public double getCLI() {
+        return CLI;
     }
-    public void setCli(double cli) {
-        this.cli = cli;
+    public void setCLI(double CLI) {
+        this.CLI = CLI;
     }
-    public double getMfs() {
-        return mfs;
+    public double getMFS() {
+        return MFS;
     }
-    public void setMfs(double mfs) {
-        this.mfs = mfs;
+    public void setMFS(double MFS) {
+        this.MFS = MFS;
     }
-    public double getDli() {
-        return dli;
+    public double getDLI() {
+        return DLI;
     }
-    public void setDli(double dli) {
-        this.dli = dli;
+    public void setDLI(double DLI) {
+        this.DLI = DLI;
     }
     
     
