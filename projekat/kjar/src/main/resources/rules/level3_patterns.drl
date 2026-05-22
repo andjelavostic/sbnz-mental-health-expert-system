@@ -19,6 +19,7 @@ then
     bp.setBurnoutSyndrome(true);
     insert(bp);
 end
+//CEP??
 rule "Severe Burnout Pattern"
 when
     PhysicalRisks( exhaustionSyndromeRisk == true )
@@ -30,4 +31,201 @@ then
     bp.setSevereBurnoutState(true);
     insert(bp);
 end
+//CEP ZA SEVERE
+rule "Occupational Exhaustion Pattern"
+when
+    EnvironmentalRisks( highExternalStressRisk == true )
+    PhysicalRisks( physicalFatigueRisk == true )
+    BurnoutPattern( burnoutSyndrome == true )
+then
+    BurnoutPattern bp = new BurnoutPattern();
+    bp.setOccupationalExhaustion(true);
+    insert(bp);
+end
 //DEPRESSIVE PATTERNS
+rule "Depressive Pattern"
+when
+    SocialRisks( socialIsolationRisk == true )
+    EmotionalRisks( emotionalStressRisk == true )
+then
+    DepressionPattern dp = new DepressionPattern();
+    dp.setDepressivePattern(true);
+    insert(dp);
+end
+rule "Emotional Numbness State - Cognitive + Emotional"
+when
+    EmotionalRisks( emotionalInstabilityRisk == true )
+    CognitiveRisks( cognitiveOverloadRisk == true )
+then
+    DepressionPattern dp = new DepressionPattern();
+    dp.setEmotionalNumbnessState(true);
+    insert(dp);
+end
+//CEP ZA NUMBNES
+rule "Motivational Collapse"
+when
+    SocialRisks( behavioralWithdrawalRisk == true )
+    CognitiveRisks( mentalFatigueRisk == true )
+    SocialCollapseEvent()
+then
+    DepressionPattern dp = new DepressionPattern();
+    dp.setMotivationalCollapse(true);
+    insert(dp);
+end
+rule "Severe Depressive Risk Pattern"
+when
+    TemporalRisks( chronicDeteriorationRisk == true )
+    SocialRisks( socialIsolationRisk == true )
+    EmotionalRisks( emotionalOverloadRisk == true )
+then
+    DepressionPattern dp = new DepressionPattern();
+    dp.setSevereDepressiveRisk(true);
+    insert(dp);
+end
+//CEP ZA SEVERE
+//ANXIETY PATTERNS
+rule "Anxiety Pattern"
+when
+    EmotionalRisks( emotionalStressRisk == true )
+    CognitiveRisks( cognitiveStrainRisk == true )
+then
+    AnxietyPattern ap = new AnxietyPattern();
+    ap.setAnxietyRisk(true);
+    insert(ap);
+end
+rule "Anxiety Escalation State"
+when
+    TemporalRisks( stressProgressionRisk == true )
+    EmotionalRisks( emotionalInstabilityRisk == true )
+then
+    AnxietyPattern ap = new AnxietyPattern();
+    ap.setAnxietyEscalation(true);
+    insert(ap);
+end
+//CEPP
+rule "Panic Attack Pattern"
+when
+    EmotionalRisks( emotionalOverloadRisk == true )
+    TemporalRisks( rapidEscalationRisk == true )
+    PhysicalRisks( sleepDeprivationRisk == true )
+then
+    AnxietyPattern ap = new AnxietyPattern();
+    ap.setPanicAttack(true);
+    insert(ap);
+end
+//CEP
+rule "Generalized Anxiety Tendency"
+when
+    EmotionalRisks( emotionalStressRisk == true )
+    TemporalRisks( chronicStressExposureRisk == true )
+then
+    AnxietyPattern ap = new AnxietyPattern();
+    ap.setGeneralizedAnxiety(true);
+    insert(ap);
+end
+//COGNITIVE PATTERN
+rule "Mental fatigue syndrome - feature based"
+when
+    CognitiveRisks( cognitiveOverloadRisk == true )
+    PhysicalRisks( sleepDeprivationRisk == true )
+    EmotionalRisks( emotionalStressRisk == true )
+then
+    CognitivePattern p = new CognitivePattern();
+    p.setMentalFatigueSyndrome(true);
+    insert(p);
+end
+//CEP
+rule "Concentration decline pattern"
+when
+    CognitiveEvents( cognitiveDegradationEvent == true )
+    CognitiveRisks( decisionImpairmentRisk == true )
+then
+    CognitivePattern p = new CognitivePattern();
+    p.setConcentrationDecline(true);
+    insert(p);
+end
+rule "Decision collapse state - risk based"
+when
+    CognitiveRisks( decisionImpairmentRisk == true )
+    CognitiveRisks( cognitiveOverloadRisk == true )
+    EmotionalRisks( emotionalInstabilityRisk == true )
+then
+    CognitivePattern p = new CognitivePattern();
+    p.setDecisionFatigue(true);
+    insert(p);
+end
+//cep
+//SOCIAL PATTERN
+rule "Social withdrawal syndrome - risk based"
+when
+    SocialRisks( socialIsolationRisk == true )
+    EmotionalRisks( emotionalStressRisk == true )
+    CognitiveRisks( mentalFatigueRisk == true )
+then
+    SocialPattern p = new SocialPattern();
+    p.setSocialWithdrawal(true);
+    insert(p);
+end
+//CEP
+rule "Interpersonal detachment pattern - risk"
+when
+    SocialRisks( interpersonalDetachmentRisk == true )
+    EmotionalRisks( emotionalInstabilityRisk == true )
+then
+    SocialPattern p = new SocialPattern();
+    p.setInterpersonalDetachment(true);
+    insert(p);
+end
+//cep
+rule "Social isolation progression"
+when
+    SocialEvents( socialCollapseEvent == true )
+    TemporalRisks( chronicDeteriorationRisk == true )
+then
+    SocialPattern p = new SocialPattern();
+    p.setSocialIsolationProgression(true);
+    insert(p);
+end
+//CRITICAL PATTERNS
+rule "Severe psychological deterioration - full system"
+when
+    TemporalRisks( chronicDeteriorationRisk == true )
+    EmotionalRisks( emotionalInstabilityRisk == true )
+    CognitiveRisks( cognitiveOverloadRisk == true )
+    SocialRisks( socialIsolationRisk == true )
+then
+    CriticalPattern p = new CriticalPattern();
+    p.setSeverePsychologicalDeterioration(true);
+    insert(p);
+end
+//CEP
+rule "Emotional collapse risk"
+when
+    EmotionalRisks( severeEmotionalCrisisRisk == true )
+    EmotionalEvents( emotionalVolatilityBurst == true )
+    TemporalEvents( crisisBuildUpEvent == true )
+then
+    CriticalPattern p = new CriticalPattern();
+    p.setEmotionalCollapseRisk(true);
+    insert(p);
+end
+rule "Self-harm risk pattern"
+when
+    DepressionPattern( severeDepressiveRiskPattern == true )
+    CriticalPattern( severePsychologicalDeterioration == true )
+    CriticalPattern( emotionalCollapseRisk == true )
+then
+    CriticalPattern p = new CriticalPattern();
+    p.setSelfHarmRisk(true);
+    insert(p);
+end
+rule "Crisis intervention recommended"
+when
+    PhysicalRisks( exhaustionSyndromeRisk == true )
+    EmotionalRisks( severeEmotionalCrisisRisk == true )
+then
+    CriticalPattern p = new CriticalPattern();
+    p.setCrisisInterventionRecommended(true);
+    insert(p);
+end
+//CEP
