@@ -1,4 +1,6 @@
-package com.ftn.sbnz.service;
+package com.ftn.sbnz.service.services;
+
+import org.springframework.stereotype.Service;
 
 import com.ftn.sbnz.model.assessment.UserAssessment;
 import com.ftn.sbnz.model.features.CognitiveFeatures;
@@ -8,6 +10,7 @@ import com.ftn.sbnz.model.features.SleepFeatures;
 import com.ftn.sbnz.model.features.SocialFeatures;
 import com.ftn.sbnz.model.features.TemporalFeatures;
 
+@Service
 public class FeatureCalculatorService {
     private double clamp(double v) {
         return Math.max(0.0, Math.min(1.0, v));
