@@ -5,6 +5,8 @@ public class AnxietyPattern {
     private boolean anxietyEscalation;
     private boolean panicAttack;
     private boolean generalizedAnxiety;
+    public AnxietyPattern() {
+    }
     public AnxietyPattern(boolean anxietyRisk, boolean anxietyEscalation, boolean panicAttack,
             boolean generalizedAnxiety) {
         this.anxietyRisk = anxietyRisk;

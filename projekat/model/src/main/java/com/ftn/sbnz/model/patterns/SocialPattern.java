@@ -4,6 +4,8 @@ public class SocialPattern {
     private boolean socialWithdrawal;
     private boolean interpersonalDetachment;
     private boolean socialIsolationProgression;
+    public SocialPattern() {
+    }
     public SocialPattern(boolean socialWithdrawal, boolean interpersonalDetachment,
             boolean socialIsolationProgression) {
         this.socialWithdrawal = socialWithdrawal;

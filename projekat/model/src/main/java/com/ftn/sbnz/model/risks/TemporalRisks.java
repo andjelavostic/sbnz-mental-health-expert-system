@@ -1,31 +1,41 @@
 package com.ftn.sbnz.model.risks;
 
 public class TemporalRisks {
-    private double stressProgressionRisk;
-    private double deteriorationRisk;
-    private double escalationRisk;
-    public TemporalRisks(double stressProgressionRisk, double deteriorationRisk, double escalationRisk) {
+    private boolean stressProgressionRisk;
+    private boolean deteriorationRisk;
+    private boolean escalationRisk;
+    private boolean emotionalInstabilityTemporalRisk;
+    public TemporalRisks() {
+    }
+    public TemporalRisks(boolean stressProgressionRisk, boolean deteriorationRisk, boolean escalationRisk, boolean emotionalInstabilityTemporalRisk) {
         this.stressProgressionRisk = stressProgressionRisk;
         this.deteriorationRisk = deteriorationRisk;
         this.escalationRisk = escalationRisk;
+        this.emotionalInstabilityTemporalRisk=emotionalInstabilityTemporalRisk;
     }
-    public double getStressProgressionRisk() {
+    public boolean isStressProgressionRisk() {
         return stressProgressionRisk;
     }
-    public void setStressProgressionRisk(double stressProgressionRisk) {
+    public void setStressProgressionRisk(boolean stressProgressionRisk) {
         this.stressProgressionRisk = stressProgressionRisk;
     }
-    public double getDeteriorationRisk() {
+    public boolean isDeteriorationRisk() {
         return deteriorationRisk;
     }
-    public void setDeteriorationRisk(double deteriorationRisk) {
+    public void setDeteriorationRisk(boolean deteriorationRisk) {
         this.deteriorationRisk = deteriorationRisk;
     }
-    public double getEscalationRisk() {
+    public boolean isEscalationRisk() {
         return escalationRisk;
     }
-    public void setEscalationRisk(double escalationRisk) {
+    public void setEscalationRisk(boolean escalationRisk) {
         this.escalationRisk = escalationRisk;
+    }
+    public boolean isEmotionalInstabilityTemporalRisk() {
+        return emotionalInstabilityTemporalRisk;
+    }
+    public void setEmotionalInstabilityTemporalRisk(boolean emotionalInstabilityTemporalRisk) {
+        this.emotionalInstabilityTemporalRisk = emotionalInstabilityTemporalRisk;
     }
     
 }

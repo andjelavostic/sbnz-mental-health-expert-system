@@ -1,3 +1,8 @@
+package rules;
+import com.ftn.sbnz.model.risks.*;
+import com.ftn.sbnz.model.patterns.*;
+import com.ftn.sbnz.model.decision.*;
+import java.util.List;
 //BURNOUT
 rule "Early Burnout Final Decision"
 when
@@ -96,10 +101,10 @@ then
         List.of("GeneralizedAnxiety")
     ));
 end
-//DEPRESSION
+//Depressive
 rule "Depressive Pattern Final Decision"
 when
-    DepressionPattern( depressivePattern == true )
+    DepressivePattern( depressivePattern == true )
 then
     insert(new FinalDecision(
         FinalState.DEPRESSIVE_PATTERN,
@@ -111,7 +116,7 @@ then
 end
 rule "Emotional Numbness Final Decision"
 when
-    DepressionPattern( emotionalNumbnessState == true )
+    DepressivePattern( emotionalNumbnessState == true )
 then
     insert(new FinalDecision(
         FinalState.EMOTIONAL_NUMBNESS_STATE,
@@ -123,7 +128,7 @@ then
 end
 rule "Motivational Collapse Final Decision"
 when
-    DepressionPattern( motivationalCollapse == true )
+    DepressivePattern( motivationalCollapse == true )
 then
     insert(new FinalDecision(
         FinalState.MOTIVATIONAL_COLLAPSE,
@@ -133,9 +138,9 @@ then
         List.of("MotivationalCollapse")
     ));
 end
-rule "Severe Depression Final Decision"
+rule "Severe Depressive Final Decision"
 when
-    DepressionPattern( severeDepressiveRisk == true )
+    DepressivePattern( severeDepressiveRisk == true )
 then
     insert(new FinalDecision(
         FinalState.SEVERE_DEPRESSIVE_RISK_PATTERN,
@@ -247,7 +252,7 @@ end
 rule "Self Harm Final Decision"
 when
     CriticalPattern( selfHarmRisk == true )
-    DepressionPattern( severeDepressiveRisk == true )
+    DepressivePattern( severeDepressiveRisk == true )
 then
     insert(new FinalDecision(
         FinalState.SELF_HARM_RISK_PATTERN,

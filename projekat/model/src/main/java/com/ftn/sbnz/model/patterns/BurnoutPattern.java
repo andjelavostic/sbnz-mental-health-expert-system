@@ -5,6 +5,8 @@ public class BurnoutPattern {
     private boolean burnoutSyndrome;
     private boolean severeBurnoutState;
     private boolean occupationalExhaustion;
+    public BurnoutPattern() {
+    }
     public BurnoutPattern(boolean earlyBurnout, boolean burnoutSyndrome, boolean severeBurnoutState,
             boolean occupationalExhaustion) {
         this.earlyBurnout = earlyBurnout;

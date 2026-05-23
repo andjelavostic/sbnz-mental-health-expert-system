@@ -1,23 +1,32 @@
 package com.ftn.sbnz.model.risks;
 
 public class EnvironmentalRisks {
-    private double externalPressureRisk;
-    private double chronicStressRisk;
-    public EnvironmentalRisks(double externalPressureRisk, double chronicStressRisk) {
+    private boolean externalPressureRisk;
+    private boolean highExternalStressRisk;
+    private boolean chronicStressRisk;
+    public EnvironmentalRisks() {
+    }
+    public EnvironmentalRisks(boolean externalPressureRisk, boolean highExternalStressRisk, boolean chronicStressRisk) {
         this.externalPressureRisk = externalPressureRisk;
+        this.highExternalStressRisk = highExternalStressRisk;
         this.chronicStressRisk = chronicStressRisk;
     }
-    public double getExternalPressureRisk() {
+    public boolean getExternalPressureRisk() {
         return externalPressureRisk;
     }
-    public void setExternalPressureRisk(double externalPressureRisk) {
+    public void setExternalPressureRisk(boolean externalPressureRisk) {
         this.externalPressureRisk = externalPressureRisk;
     }
-    public double getChronicStressRisk() {
+    public boolean getChronicStressRisk() {
         return chronicStressRisk;
     }
-    public void setChronicStressRisk(double chronicStressRisk) {
+    public void setChronicStressRisk(boolean chronicStressRisk) {
         this.chronicStressRisk = chronicStressRisk;
     }
-    
+    public boolean isHighExternalStressRisk() {
+        return highExternalStressRisk;
+    }
+    public void setHighExternalStressRisk(boolean highExternalStressRisk) {
+        this.highExternalStressRisk = highExternalStressRisk;
+    }
 }

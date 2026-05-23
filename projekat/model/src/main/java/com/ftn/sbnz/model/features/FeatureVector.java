@@ -7,6 +7,8 @@ public class FeatureVector {
     private SocialFeatures social;
     private EnvironmentalFeatures environmental;
     private TemporalFeatures temporal;
+    public FeatureVector() {
+    }
     public FeatureVector(EmotionalFeatures emotional, SleepFeatures sleep, CognitiveFeatures cognitive,
             SocialFeatures social, EnvironmentalFeatures environmental, TemporalFeatures temporal) {
         this.emotional = emotional;

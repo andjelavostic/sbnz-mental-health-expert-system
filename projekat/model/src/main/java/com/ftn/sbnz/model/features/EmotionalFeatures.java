@@ -5,6 +5,9 @@ public class EmotionalFeatures {
     private double NAI;
     private double EVI;
     private double LCI;
+    
+    public EmotionalFeatures() {
+    }
     public EmotionalFeatures(double ESI, double NAI, double EVI, double LCI) {
         this.ESI = ESI;
         this.NAI = NAI;

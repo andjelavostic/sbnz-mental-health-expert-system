@@ -5,6 +5,8 @@ public class TemporalFeatures {
     private double DR;
     private double EVL;
     private double TII;
+    public TemporalFeatures() {
+    }
     public TemporalFeatures(double SPS, double DR, double EVL, double TII) {
         this.SPS = SPS;
         this.DR = DR;

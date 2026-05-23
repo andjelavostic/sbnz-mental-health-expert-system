@@ -9,6 +9,8 @@ public class FinalDecision {
     private String recommendation;
 
     private List<String> triggeredPatterns;
+    public FinalDecision() {
+    }
     public FinalDecision(FinalState finalState, Severity severity, String explanation, String recommendation,
             List<String> triggeredPatterns) {
         this.finalState = finalState;

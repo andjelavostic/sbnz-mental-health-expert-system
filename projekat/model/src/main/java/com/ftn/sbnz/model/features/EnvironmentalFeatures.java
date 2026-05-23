@@ -3,6 +3,9 @@ package com.ftn.sbnz.model.features;
 public class EnvironmentalFeatures {
     private double externalStressIndex;
     private double chronicStressExposure;
+    
+    public EnvironmentalFeatures() {
+    }
     public EnvironmentalFeatures(double externalStressIndex, double chronicStressExposure) {
         this.externalStressIndex = externalStressIndex;
         this.chronicStressExposure = chronicStressExposure;

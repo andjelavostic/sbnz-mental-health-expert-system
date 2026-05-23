@@ -4,6 +4,8 @@ public class SleepFeatures {
     private double SQI;
     private double FI;
     private double SFI;
+    public SleepFeatures() {
+    }
     public SleepFeatures(double SQI, double FI, double SFI) {
         this.SQI = SQI;
         this.FI = FI;

@@ -4,6 +4,8 @@ public class SocialFeatures {
     private double SWI;
     private double IDI;
     private double SAD;
+    public SocialFeatures() {
+    }
     public SocialFeatures(double SWI, double IDI, double SAD) {
         this.SWI = SWI;
         this.IDI = IDI;

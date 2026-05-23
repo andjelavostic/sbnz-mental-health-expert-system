@@ -1,40 +1,41 @@
 package com.ftn.sbnz.model.risks;
 
 public class PhysicalRisks {
-    private double sleepDisturbanceRisk;
-    private double sleepDeprivationRisk;
-    private double physicalFatigueRisk;
-    private double exhaustionRisk;
-    public PhysicalRisks(double sleepDisturbanceRisk, double sleepDeprivationRisk, double physicalFatigueRisk,
-            double exhaustionRisk) {
+    private boolean sleepDisturbanceRisk;
+    private boolean sleepDeprivationRisk;
+    private boolean physicalFatigueRisk;
+    private boolean exhaustionRisk;
+    public PhysicalRisks() {
+    }
+    public PhysicalRisks(boolean sleepDisturbanceRisk, boolean sleepDeprivationRisk, boolean physicalFatigueRisk,
+            boolean exhaustionRisk) {
         this.sleepDisturbanceRisk = sleepDisturbanceRisk;
         this.sleepDeprivationRisk = sleepDeprivationRisk;
         this.physicalFatigueRisk = physicalFatigueRisk;
         this.exhaustionRisk = exhaustionRisk;
     }
-    public double getSleepDisturbanceRisk() {
+    public boolean isSleepDisturbanceRisk() {
         return sleepDisturbanceRisk;
     }
-    public void setSleepDisturbanceRisk(double sleepDisturbanceRisk) {
+    public void setSleepDisturbanceRisk(boolean sleepDisturbanceRisk) {
         this.sleepDisturbanceRisk = sleepDisturbanceRisk;
     }
-    public double getSleepDeprivationRisk() {
+    public boolean isSleepDeprivationRisk() {
         return sleepDeprivationRisk;
     }
-    public void setSleepDeprivationRisk(double sleepDeprivationRisk) {
+    public void setSleepDeprivationRisk(boolean sleepDeprivationRisk) {
         this.sleepDeprivationRisk = sleepDeprivationRisk;
     }
-    public double getPhysicalFatigueRisk() {
+    public boolean isPhysicalFatigueRisk() {
         return physicalFatigueRisk;
     }
-    public void setPhysicalFatigueRisk(double physicalFatigueRisk) {
+    public void setPhysicalFatigueRisk(boolean physicalFatigueRisk) {
         this.physicalFatigueRisk = physicalFatigueRisk;
     }
-    public double getExhaustionRisk() {
+    public boolean isExhaustionRisk() {
         return exhaustionRisk;
     }
-    public void setExhaustionRisk(double exhaustionRisk) {
+    public void setExhaustionRisk(boolean exhaustionRisk) {
         this.exhaustionRisk = exhaustionRisk;
     }
-    
 }

@@ -1,3 +1,6 @@
+package rules;
+import com.ftn.sbnz.model.features.*;
+import com.ftn.sbnz.model.risks.*;
 //EMOTIONAL RISKS
 rule "Emotional Stress Risk"
 when
@@ -67,7 +70,7 @@ when
                       SQI < 0.3 )
 then
     PhysicalRisks risk = new PhysicalRisks();
-    risk.setExhaustionSyndromeRisk(true);
+    risk.setExhaustionRisk(true);
     insert(risk);
 end
 //COGNITIVE RISKS
@@ -169,7 +172,7 @@ end
 rule "External Pressure Risk"
 when
     EnvironmentalFeatures(
-        ESL >= 0.3 && ESL < 0.6
+        externalStressIndex >= 0.3 && externalStressIndex < 0.6
     )
 
     EmotionalFeatures(
@@ -184,7 +187,7 @@ end
 rule "High External Stress Risk"
 when
     EnvironmentalFeatures(
-        ESL >= 0.6
+        externalStressIndex >= 0.6
     )
 
     EmotionalFeatures(
@@ -199,7 +202,7 @@ end
 rule "Chronic Stress Exposure Risk"
 when
     EnvironmentalFeatures(
-        CSE >= 0.6
+        chronicStressExposure >= 0.6
     )
 
     TemporalFeatures(
@@ -207,7 +210,7 @@ when
     )
 then
     EnvironmentalRisks risk = new EnvironmentalRisks();
-    risk.setChronicStressExposureRisk(true);
+    risk.setChronicStressRisk(true);
     insert(risk);
 end
 //TEMPORAL RISKS
@@ -246,7 +249,7 @@ when
     )
 then
     TemporalRisks risk = new TemporalRisks();
-    risk.setChronicDeteriorationRisk(true);
+    risk.setDeteriorationRisk(true);
     insert(risk);
 end
 
@@ -261,6 +264,6 @@ when
     )
 then
     TemporalRisks risk = new TemporalRisks();
-    risk.setRapidEscalationRisk(true);
+    risk.setEscalationRisk(true);
     insert(risk);
 end

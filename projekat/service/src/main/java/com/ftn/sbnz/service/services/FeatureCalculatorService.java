@@ -40,7 +40,7 @@ public class FeatureCalculatorService {
 
         double evi =
                 clamp(a.getMoodSwings()); // ili history
-
+        System.out.println("ESI:"+esi+" NAI:"+nai+" LCI:"+lci);
         return new EmotionalFeatures(esi, nai, evi, lci);
     }
     public SleepFeatures calculatePhysical(UserAssessment a) {

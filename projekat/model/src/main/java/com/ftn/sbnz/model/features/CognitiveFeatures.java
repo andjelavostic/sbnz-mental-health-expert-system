@@ -4,6 +4,9 @@ public class CognitiveFeatures {
     private double CLI;
     private double MFS;
     private double DLI;
+    
+    public CognitiveFeatures() {
+    }
     public CognitiveFeatures(double CLI, double MFS, double DLI) {
         this.CLI = CLI;
         this.MFS = MFS;

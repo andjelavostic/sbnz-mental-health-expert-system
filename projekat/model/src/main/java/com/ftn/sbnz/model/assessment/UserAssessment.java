@@ -59,6 +59,8 @@ public class UserAssessment {
     private double stressTrend;
     private double moodDegradationTrend;
     private double productivityDeclineTrend;
+    public UserAssessment() {
+    }
     public double getStressLevel() {
         return stressLevel;
     }

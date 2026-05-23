@@ -1,40 +1,43 @@
 package com.ftn.sbnz.model.risks;
 
 public class EmotionalRisks {
-    private double emotionalStressRisk;
-    private double emotionalOverloadRisk;
-    private double emotionalInstabilityRisk;
-    private double emotionalCrisisRisk;
-    public EmotionalRisks(double emotionalStressRisk, double emotionalOverloadRisk, double emotionalInstabilityRisk,
-            double emotionalCrisisRisk) {
+    private boolean emotionalStressRisk;
+    private boolean emotionalOverloadRisk;
+    private boolean emotionalInstabilityRisk;
+    private boolean emotionalCrisisRisk;
+    public EmotionalRisks() {
+    }
+    public EmotionalRisks(boolean emotionalStressRisk, boolean emotionalOverloadRisk, boolean emotionalInstabilityRisk,
+            boolean emotionalCrisisRisk) {
         this.emotionalStressRisk = emotionalStressRisk;
         this.emotionalOverloadRisk = emotionalOverloadRisk;
         this.emotionalInstabilityRisk = emotionalInstabilityRisk;
         this.emotionalCrisisRisk = emotionalCrisisRisk;
     }
-    public double getEmotionalStressRisk() {
+    public boolean isEmotionalStressRisk() {
         return emotionalStressRisk;
     }
-    public void setEmotionalStressRisk(double emotionalStressRisk) {
+    public void setEmotionalStressRisk(boolean emotionalStressRisk) {
         this.emotionalStressRisk = emotionalStressRisk;
     }
-    public double getEmotionalOverloadRisk() {
+    public boolean isEmotionalOverloadRisk() {
         return emotionalOverloadRisk;
     }
-    public void setEmotionalOverloadRisk(double emotionalOverloadRisk) {
+    public void setEmotionalOverloadRisk(boolean emotionalOverloadRisk) {
         this.emotionalOverloadRisk = emotionalOverloadRisk;
     }
-    public double getEmotionalInstabilityRisk() {
+    public boolean isEmotionalInstabilityRisk() {
         return emotionalInstabilityRisk;
     }
-    public void setEmotionalInstabilityRisk(double emotionalInstabilityRisk) {
+    public void setEmotionalInstabilityRisk(boolean emotionalInstabilityRisk) {
         this.emotionalInstabilityRisk = emotionalInstabilityRisk;
     }
-    public double getEmotionalCrisisRisk() {
+    public boolean isEmotionalCrisisRisk() {
         return emotionalCrisisRisk;
     }
-    public void setEmotionalCrisisRisk(double emotionalCrisisRisk) {
+    public void setEmotionalCrisisRisk(boolean emotionalCrisisRisk) {
         this.emotionalCrisisRisk = emotionalCrisisRisk;
     }
+    
     
 }

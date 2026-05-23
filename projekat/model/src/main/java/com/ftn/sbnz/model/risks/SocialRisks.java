@@ -1,31 +1,41 @@
 package com.ftn.sbnz.model.risks;
 
 public class SocialRisks {
-    private double socialWithdrawalRisk;
-    private double socialIsolationRisk;
-    private double interpersonalDetachmentRisk;
-    public SocialRisks(double socialWithdrawalRisk, double socialIsolationRisk, double interpersonalDetachmentRisk) {
+    private boolean socialWithdrawalRisk;
+    private boolean socialIsolationRisk;
+    private boolean interpersonalDetachmentRisk;
+    private boolean behavioralWithdrawalRisk;
+    public SocialRisks() {
+    }
+    public SocialRisks(boolean socialWithdrawalRisk, boolean socialIsolationRisk, boolean interpersonalDetachmentRisk,boolean behavioralWithdrawalRisk) {
         this.socialWithdrawalRisk = socialWithdrawalRisk;
         this.socialIsolationRisk = socialIsolationRisk;
         this.interpersonalDetachmentRisk = interpersonalDetachmentRisk;
+        this.behavioralWithdrawalRisk= behavioralWithdrawalRisk;
     }
-    public double getSocialWithdrawalRisk() {
+    public boolean isSocialWithdrawalRisk() {
         return socialWithdrawalRisk;
     }
-    public void setSocialWithdrawalRisk(double socialWithdrawalRisk) {
+    public void setSocialWithdrawalRisk(boolean socialWithdrawalRisk) {
         this.socialWithdrawalRisk = socialWithdrawalRisk;
     }
-    public double getSocialIsolationRisk() {
+    public boolean isSocialIsolationRisk() {
         return socialIsolationRisk;
     }
-    public void setSocialIsolationRisk(double socialIsolationRisk) {
+    public void setSocialIsolationRisk(boolean socialIsolationRisk) {
         this.socialIsolationRisk = socialIsolationRisk;
     }
-    public double getInterpersonalDetachmentRisk() {
+    public boolean isInterpersonalDetachmentRisk() {
         return interpersonalDetachmentRisk;
     }
-    public void setInterpersonalDetachmentRisk(double interpersonalDetachmentRisk) {
+    public void setInterpersonalDetachmentRisk(boolean interpersonalDetachmentRisk) {
         this.interpersonalDetachmentRisk = interpersonalDetachmentRisk;
+    }
+    public boolean isBehavioralWithdrawalRisk() {
+        return behavioralWithdrawalRisk;
+    }
+    public void setBehavioralWithdrawalRisk(boolean behavioralWithdrawalRisk) {
+        this.behavioralWithdrawalRisk = behavioralWithdrawalRisk;
     }
     
 }

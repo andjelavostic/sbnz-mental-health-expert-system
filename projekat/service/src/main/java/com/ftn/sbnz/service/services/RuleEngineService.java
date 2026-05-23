@@ -48,11 +48,9 @@ public class RuleEngineService {
         // 3. KORISNICKI INPUTT
         kieSession.insert(input);
 
-        // 4. FIRE ALL RULES
-        kieSession.fireAllRules();
-
         // 5. VRATI FINAL DECISIONS
-        kieSession.fireAllRules();
+        int fired = kieSession.fireAllRules();
+        System.out.println("RULES FIRED: " + fired);
 
         List<FinalDecision> results = new ArrayList<>();
 

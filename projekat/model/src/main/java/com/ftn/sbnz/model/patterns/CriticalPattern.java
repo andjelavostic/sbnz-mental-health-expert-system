@@ -5,6 +5,8 @@ public class CriticalPattern {
     private boolean emotionalCollapseRisk;
     private boolean selfHarmRisk;
     private boolean crisisInterventionRecommended;
+    public CriticalPattern() {
+    }
     public CriticalPattern(boolean severePsychologicalDeterioration, boolean emotionalCollapseRisk,
             boolean selfHarmRisk, boolean crisisInterventionRecommended) {
         this.severePsychologicalDeterioration = severePsychologicalDeterioration;

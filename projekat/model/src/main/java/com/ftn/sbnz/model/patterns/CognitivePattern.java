@@ -4,6 +4,8 @@ public class CognitivePattern {
     private boolean mentalFatigueSyndrome;
     private boolean concentrationDecline;
     private boolean decisionFatigue;
+    public CognitivePattern() {
+    }
     public CognitivePattern(boolean mentalFatigueSyndrome, boolean concentrationDecline, boolean decisionFatigue) {
         this.mentalFatigueSyndrome = mentalFatigueSyndrome;
         this.concentrationDecline = concentrationDecline;

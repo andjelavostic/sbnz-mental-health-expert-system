@@ -5,6 +5,8 @@ public class DepressivePattern {
     private boolean emotionalNumbnessState;
     private boolean motivationalCollapse;
     private boolean severeDepressiveRisk;
+    public DepressivePattern() {
+    }
     public DepressivePattern(boolean depressivePattern, boolean emotionalNumbnessState, boolean motivationalCollapse,
             boolean severeDepressiveRisk) {
         this.depressivePattern = depressivePattern;
