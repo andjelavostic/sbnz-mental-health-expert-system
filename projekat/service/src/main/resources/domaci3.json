@@ -1,0 +1,45 @@
+{
+  "stressLevel": 0.9,
+  "emotionalExhaustion": 0.9,
+  "nervousness": 0.7,
+  "overloadFeeling": 0.8,
+  "lowMoodFrequency": 0.6,
+  "moodSwings": 0.8,
+  "sadnessLevel": 0.7,
+  "lossOfControlFeeling": 0.8,
+  "irritability": 0.7,
+  
+  "sleepHours": 0.2,
+  "sleepProblems": 0.9,
+  "nightAwakenings": 0.8,
+  "restedAfterSleep": 0.1,
+  "chronicFatigue": 0.9,
+  "lowEnergy": 0.8,
+  "physicalExhaustion": 0.9,
+
+  "concentrationProblems": 0.8,
+  "forgetfulness": 0.7,
+  "decisionDifficulty": 0.8,
+  "mentalConfusion": 0.7,
+  "productivityDrop": 0.8,
+  "attentionSpanIssues": 0.7,
+  "mentalFatigue": 0.9,
+
+  "socialAvoidance": 0.8,
+  "communicationWithdrawal": 0.7,
+  "socialIsolationFeeling": 0.9,
+  "lossOfInterest": 0.8,
+  "familyAvoidance": 0.7,
+  "timeSpentAlone": 0.8,
+  "emotionalDistance": 0.9,
+
+  "workPressure": 0.9,
+  "financialProblems": 0.8,
+  "relationshipIssues": 0.7,
+  "constantPressure": 0.9,
+
+  "symptomDuration": 0.9,
+  "stressTrend": 0.9,
+  "moodDegradationTrend": 0.8,
+  "productivityDeclineTrend": 0.8
+}
