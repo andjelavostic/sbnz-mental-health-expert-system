@@ -4,6 +4,7 @@ public class CognitivePattern {
     private boolean mentalFatigueSyndrome;
     private boolean concentrationDecline;
     private boolean decisionFatigue;
+    private double score;
     public CognitivePattern() {
     }
     public CognitivePattern(boolean mentalFatigueSyndrome, boolean concentrationDecline, boolean decisionFatigue) {
@@ -29,5 +30,10 @@ public class CognitivePattern {
     public void setDecisionFatigue(boolean decisionFatigue) {
         this.decisionFatigue = decisionFatigue;
     }
-    
+    public double getScore() {
+        return score;
+    }
+    public void setScore(double score) {
+        this.score = score;
+    }
 }

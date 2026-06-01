@@ -9,15 +9,17 @@ public class FinalDecision {
     private String recommendation;
 
     private List<String> triggeredPatterns;
+    private double score;
     public FinalDecision() {
     }
     public FinalDecision(FinalState finalState, Severity severity, String explanation, String recommendation,
-            List<String> triggeredPatterns) {
+            List<String> triggeredPatterns, double score) {
         this.finalState = finalState;
         this.severity = severity;
         this.explanation = explanation;
         this.recommendation = recommendation;
         this.triggeredPatterns = triggeredPatterns;
+        this.score=score;
     }
 
     public FinalState getFinalState() {
@@ -59,6 +61,10 @@ public class FinalDecision {
     public void setTriggeredPatterns(List<String> triggeredPatterns) {
         this.triggeredPatterns = triggeredPatterns;
     }
-    
-
+    public double getScore() {
+        return score;
+    }
+    public void setScore(double score) {
+        this.score = score;
+    }
 }

@@ -4,6 +4,7 @@ public class EnvironmentalRisks {
     private boolean externalPressureRisk;
     private boolean highExternalStressRisk;
     private boolean chronicStressRisk;
+    private double score;
     public EnvironmentalRisks() {
     }
     public EnvironmentalRisks(boolean externalPressureRisk, boolean highExternalStressRisk, boolean chronicStressRisk) {
@@ -28,5 +29,11 @@ public class EnvironmentalRisks {
     }
     public void setHighExternalStressRisk(boolean highExternalStressRisk) {
         this.highExternalStressRisk = highExternalStressRisk;
+    }
+    public double getScore() {
+        return score;
+    }
+    public void setScore(double score) {
+        this.score = score;
     }
 }

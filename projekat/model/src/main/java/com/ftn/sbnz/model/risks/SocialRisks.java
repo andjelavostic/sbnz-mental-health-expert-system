@@ -5,6 +5,7 @@ public class SocialRisks {
     private boolean socialIsolationRisk;
     private boolean interpersonalDetachmentRisk;
     private boolean behavioralWithdrawalRisk;
+    private double score;
     public SocialRisks() {
     }
     public SocialRisks(boolean socialWithdrawalRisk, boolean socialIsolationRisk, boolean interpersonalDetachmentRisk,boolean behavioralWithdrawalRisk) {
@@ -37,5 +38,10 @@ public class SocialRisks {
     public void setBehavioralWithdrawalRisk(boolean behavioralWithdrawalRisk) {
         this.behavioralWithdrawalRisk = behavioralWithdrawalRisk;
     }
-    
+    public double getScore() {
+        return score;
+    }
+    public void setScore(double score) {
+        this.score = score;
+    }    
 }

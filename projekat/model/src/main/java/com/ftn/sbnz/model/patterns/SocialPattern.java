@@ -4,6 +4,7 @@ public class SocialPattern {
     private boolean socialWithdrawal;
     private boolean interpersonalDetachment;
     private boolean socialIsolationProgression;
+    private double score;
     public SocialPattern() {
     }
     public SocialPattern(boolean socialWithdrawal, boolean interpersonalDetachment,
@@ -30,5 +31,10 @@ public class SocialPattern {
     public void setSocialIsolationProgression(boolean socialIsolationProgression) {
         this.socialIsolationProgression = socialIsolationProgression;
     }
-    
+    public double getScore() {
+        return score;
+    }
+    public void setScore(double score) {
+        this.score = score;
+    }
 }

@@ -1,7 +1,9 @@
 package com.ftn.sbnz.service.services;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
@@ -26,7 +28,7 @@ public class RuleEngineService {
     @Autowired
     private FeatureCalculatorService featureService;
 
-    public List<FinalDecision> evaluate(UserAssessment input) {
+    public FinalDecision evaluate(UserAssessment input) {
         KieSession kieSession = kieContainer.newKieSession("rulesSession");
 
         // 1. FEATURE LAYER (Java)
@@ -61,7 +63,10 @@ public class RuleEngineService {
         }
 
         kieSession.dispose();
+        
+        Optional<FinalDecision> bestDecision = results.stream()
+            .max(Comparator.comparingDouble(FinalDecision::getScore));
 
-        return results;
+        return bestDecision.orElse(null);
     }
 }

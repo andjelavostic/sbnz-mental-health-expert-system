@@ -6,271 +6,272 @@ import java.util.List;
 //BURNOUT
 rule "Early Burnout Final Decision"
 when
-    BurnoutPattern( earlyBurnout == true )
+    BurnoutPattern( earlyBurnout == true,  $score : score)
 then
     insert(new FinalDecision(
         FinalState.EARLY_BURNOUT_PATTERN,
         Severity.MODERATE,
         "Povišen stres, loš san i mentalno opterećenje.",
         "Smanjiti opterećenje, povećati odmor i stabilizovati rutinu sna.",
-        List.of("EarlyBurnoutPattern")
+        List.of("EarlyBurnoutPattern"),
+        $score
     ));
 end
 rule "Burnout Syndrome Final Decision"
 when
-    BurnoutPattern( burnoutSyndrome == true )
+    BurnoutPattern( burnoutSyndrome == true, $score : score)
 then
     insert(new FinalDecision(
         FinalState.BURNOUT_SYNDROME,
         Severity.HIGH,
         "Emocionalna i fizička iscrpljenost uz mentalni overload.",
         "Redukovati opterećenje i obezbediti oporavak.",
-        List.of("BurnoutSyndrome")
+        List.of("BurnoutSyndrome"), $score
     ));
 end
 rule "Severe Burnout Final Decision"
 when
-    BurnoutPattern( severeBurnoutState == true )
+    BurnoutPattern( severeBurnoutState == true, $score : score)
 then
     insert(new FinalDecision(
         FinalState.SEVERE_BURNOUT_STATE,
         Severity.CRITICAL,
         "Multisistemska iscrpljenost i hronično pogoršanje.",
         "Hitna psihološka intervencija i potpuni odmor.",
-        List.of("SevereBurnoutState")
+        List.of("SevereBurnoutState"), $score
     ));
 end
 rule "Occupational Exhaustion Final Decision"
 when
-    BurnoutPattern( occupationalExhaustion == true )
+    BurnoutPattern( occupationalExhaustion == true, $score : score )
 then
     insert(new FinalDecision(
         FinalState.OCCUPATIONAL_EXHAUSTION_PATTERN,
         Severity.HIGH,
         "Radno/akademsko preopterećenje i fizička iscrpljenost.",
         "Smanjiti radno opterećenje, uvesti odmor i balans aktivnosti.",
-        List.of("OccupationalExhaustion")
+        List.of("OccupationalExhaustion"), $score
     ));
 end
 //ANXIETY
 rule "Anxiety Risk Final Decision"
 when
-    AnxietyPattern( anxietyRisk == true )
+    AnxietyPattern( anxietyRisk == true, $score : score)
 then
     insert(new FinalDecision(
         FinalState.ANXIETY_RISK_PATTERN,
         Severity.MODERATE,
         "Povišen stres i mentalna napetost.",
         "Tehnike relaksacije i stabilizacija rutine.",
-        List.of("AnxietyRisk")
+        List.of("AnxietyRisk"), $score
     ));
 end
 rule "Anxiety Escalation Final Decision"
 when
-    AnxietyPattern( anxietyEscalation == true )
+    AnxietyPattern( anxietyEscalation == true, $score : score)
 then
     insert(new FinalDecision(
         FinalState.ANXIETY_ESCALATION_STATE,
         Severity.HIGH,
         "Eskalacija stresa i emocionalna nestabilnost.",
         "Psihološka podrška i regulacija stresa.",
-        List.of("AnxietyEscalation")
+        List.of("AnxietyEscalation"), $score
     ));
 end
 rule "Panic Attack Final Decision"
 when
-    AnxietyPattern( panicAttack == true )
+    AnxietyPattern( panicAttack == true, $score : score)
 then
     insert(new FinalDecision(
         FinalState.PANIC_ATTACK_PATTERN,
         Severity.CRITICAL,
         "Nagla eskalacija simptoma i visok emocionalni overload.",
         "Hitna stabilizacija i krizna podrška.",
-        List.of("PanicAttack")
+        List.of("PanicAttack"), $score
     ));
 end
 rule "Generalized Anxiety Final Decision"
 when
-    AnxietyPattern( generalizedAnxiety == true )
+    AnxietyPattern( generalizedAnxiety == true, $score : score)
 then
     insert(new FinalDecision(
         FinalState.GENERALIZED_ANXIETY_TENDENCY,
         Severity.HIGH,
         "Hronična izloženost stresu i zabrinutost.",
         "Dugoročna psihološka podrška i coping strategije.",
-        List.of("GeneralizedAnxiety")
+        List.of("GeneralizedAnxiety"), $score
     ));
 end
 //Depressive
 rule "Depressive Pattern Final Decision"
 when
-    DepressivePattern( depressivePattern == true )
+    DepressivePattern( depressivePattern == true, $score : score)
 then
     insert(new FinalDecision(
         FinalState.DEPRESSIVE_PATTERN,
         Severity.MODERATE,
         "Socijalno povlačenje i emocionalni stres.",
         "Povećati socijalne aktivnosti i emocionalnu podršku.",
-        List.of("DepressivePattern")
+        List.of("DepressivePattern"), $score
     ));
 end
 rule "Emotional Numbness Final Decision"
 when
-    DepressivePattern( emotionalNumbnessState == true )
+    DepressivePattern( emotionalNumbnessState == true, $score : score)
 then
     insert(new FinalDecision(
         FinalState.EMOTIONAL_NUMBNESS_STATE,
         Severity.HIGH,
         "Emocionalna iscrpljenost i smanjena reaktivnost.",
         "Psihološka podrška i odmor.",
-        List.of("EmotionalNumbness")
+        List.of("EmotionalNumbness"), $score
     ));
 end
 rule "Motivational Collapse Final Decision"
 when
-    DepressivePattern( motivationalCollapse == true )
+    DepressivePattern( motivationalCollapse == true, $score : score)
 then
     insert(new FinalDecision(
         FinalState.MOTIVATIONAL_COLLAPSE,
         Severity.HIGH,
         "Gubitak motivacije, energije i interesovanja za aktivnosti.",
         "Uvesti strukturu dana, emocionalnu podršku i aktivacione strategije.",
-        List.of("MotivationalCollapse")
+        List.of("MotivationalCollapse"), $score
     ));
 end
 rule "Severe Depressive Final Decision"
 when
-    DepressivePattern( severeDepressiveRisk == true )
+    DepressivePattern( severeDepressiveRisk == true, $score : score)
 then
     insert(new FinalDecision(
         FinalState.SEVERE_DEPRESSIVE_RISK_PATTERN,
         Severity.CRITICAL,
         "Teško i dugotrajno pogoršanje emocionalnog stanja.",
         "Hitna stručna pomoć i intenzivno praćenje.",
-        List.of("SevereDepressiveRisk")
+        List.of("SevereDepressiveRisk"), $score
     ));
 end
 //COGNITIVE
 rule "Mental Fatigue Final Decision"
 when
-    CognitivePattern( mentalFatigueSyndrome == true )
+    CognitivePattern( mentalFatigueSyndrome == true, $score : score)
 then
     insert(new FinalDecision(
         FinalState.MENTAL_FATIGUE_SYNDROME,
         Severity.HIGH,
         "Mentalna iscrpljenost i pad koncentracije.",
         "Mentalni odmor i redukcija multitaskinga.",
-        List.of("MentalFatigue")
+        List.of("MentalFatigue"), $score
     ));
 end
 rule "Concentration Decline Final Decision"
 when
-    CognitivePattern( concentrationDecline == true )
+    CognitivePattern( concentrationDecline == true, $score : score)
 then
     insert(new FinalDecision(
         FinalState.CONCENTRATION_DECLINE_PATTERN,
         Severity.HIGH,
         "Smanjena koncentracija i kognitivni pad fokusa.",
         "Smanjiti distrakcije, organizovati rad u blokove, uvesti pauze.",
-        List.of("ConcentrationDecline")
+        List.of("ConcentrationDecline"), $score
     ));
 end
 rule "Decision Fatigue Final Decision"
 when
-    CognitivePattern( decisionFatigue == true )
+    CognitivePattern( decisionFatigue == true, $score : score)
 then
     insert(new FinalDecision(
         FinalState.DECISION_FATIGUE_STATE,
         Severity.HIGH,
         "Otežano donošenje odluka i kognitivno preopterećenje.",
         "Smanjiti broj odluka i reorganizovati prioritete.",
-        List.of("DecisionFatigue")
+        List.of("DecisionFatigue"), $score
     ));
 end
 //SOCIAL
 rule "Social Withdrawal Final Decision"
 when
-    SocialPattern( socialWithdrawal == true )
+    SocialPattern( socialWithdrawal == true, $score : score)
 then
     insert(new FinalDecision(
         FinalState.SOCIAL_WITHDRAWAL_SYNDROME,
         Severity.HIGH,
         "Povlačenje iz društvenih aktivnosti i izolacija.",
         "Postepeno povećanje socijalnih kontakata.",
-        List.of("SocialWithdrawal")
+        List.of("SocialWithdrawal"), $score
     ));
 end
 rule "Interpersonal Detachment Final Decision"
 when
-    SocialPattern( interpersonalDetachment == true )
+    SocialPattern( interpersonalDetachment == true, $score : score)
 then
     insert(new FinalDecision(
         FinalState.INTERPERSONAL_DETACHMENT_PATTERN,
         Severity.HIGH,
         "Emocionalno udaljavanje od drugih.",
         "Rad na odnosima i emocionalna podrška.",
-        List.of("InterpersonalDetachment")
+        List.of("InterpersonalDetachment"), $score
     ));
 end
 rule "Social Isolation Progression Final Decision"
 when
-    SocialPattern( socialIsolationProgression == true )
+    SocialPattern( socialIsolationProgression == true, $score : score)
 then
     insert(new FinalDecision(
         FinalState.SOCIAL_ISOLATION_PROGRESSION,
         Severity.CRITICAL,
         "Progresivna socijalna izolacija.",
         "Hitna socijalna i psihološka intervencija.",
-        List.of("SocialIsolationProgression")
+        List.of("SocialIsolationProgression"), $score
     ));
 end
 //CRITICAL
 rule "Severe Psychological Deterioration Final Decision"
 when
-    CriticalPattern( severePsychologicalDeterioration == true )
+    CriticalPattern( severePsychologicalDeterioration == true, $score : score)
 then
     insert(new FinalDecision(
         FinalState.SEVERE_PSYCHOLOGICAL_DETERIORATION,
         Severity.CRITICAL,
         "Multisistemsko pogoršanje psihološkog stanja.",
         "Hitna stručna pomoć i kontinuirano praćenje.",
-        List.of("SeverePsychologicalDeterioration")
+        List.of("SeverePsychologicalDeterioration"), $score
     ));
 end
 rule "Emotional Collapse Final Decision"
 when
-    CriticalPattern( emotionalCollapseRisk == true )
+    CriticalPattern( emotionalCollapseRisk == true, $score : score)
 then
     insert(new FinalDecision(
         FinalState.EMOTIONAL_COLLAPSE_RISK,
         Severity.CRITICAL,
         "Ekstremna emocionalna nestabilnost.",
         "Krizna intervencija i stabilizacija.",
-        List.of("EmotionalCollapseRisk")
+        List.of("EmotionalCollapseRisk"), $score
     ));
 end
 rule "Self Harm Final Decision"
 when
-    CriticalPattern( selfHarmRisk == true )
-    DepressivePattern( severeDepressiveRisk == true )
+    CriticalPattern( selfHarmRisk == true, $score1 : score)
+    DepressivePattern( severeDepressiveRisk == true, $score2 : score)
 then
     insert(new FinalDecision(
         FinalState.SELF_HARM_RISK_PATTERN,
         Severity.CRITICAL,
         "Visok rizik od samopovređivanja.",
         "HITNA stručna intervencija.",
-        List.of("SelfHarmRisk")
+        List.of("SelfHarmRisk"), ($score1+$score2)/2.0
     ));
 end
 rule "Crisis Intervention Final Decision"
 when
-    CriticalPattern( crisisInterventionRecommended == true )
+    CriticalPattern( crisisInterventionRecommended == true, $score : score)
 then
     insert(new FinalDecision(
         FinalState.CRISIS_INTERVENTION_RECOMMENDED,
         Severity.CRITICAL,
         "Kritično stanje psihološke iscrpljenosti.",
         "Hitna stručna pomoć i krizna podrška.",
-        List.of("CrisisIntervention")
+        List.of("CrisisIntervention"), $score
     ));
 end

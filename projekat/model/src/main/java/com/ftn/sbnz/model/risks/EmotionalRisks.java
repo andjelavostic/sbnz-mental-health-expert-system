@@ -5,6 +5,7 @@ public class EmotionalRisks {
     private boolean emotionalOverloadRisk;
     private boolean emotionalInstabilityRisk;
     private boolean emotionalCrisisRisk;
+    private double score;
     public EmotionalRisks() {
     }
     public EmotionalRisks(boolean emotionalStressRisk, boolean emotionalOverloadRisk, boolean emotionalInstabilityRisk,
@@ -38,6 +39,10 @@ public class EmotionalRisks {
     public void setEmotionalCrisisRisk(boolean emotionalCrisisRisk) {
         this.emotionalCrisisRisk = emotionalCrisisRisk;
     }
-    
-    
+    public double getScore() {
+        return score;
+    }
+    public void setScore(double score) {
+        this.score = score;
+    }
 }

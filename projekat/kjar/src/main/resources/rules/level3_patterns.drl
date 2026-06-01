@@ -4,138 +4,151 @@ import com.ftn.sbnz.model.patterns.*;
 //ANXIETY PATTERNS
 rule "Early Burnout Pattern"
 when
-    EmotionalRisks( emotionalStressRisk == true )
-    PhysicalRisks( sleepDisturbanceRisk == true )
-    CognitiveRisks( cognitiveStrainRisk == true )
+    EmotionalRisks( emotionalStressRisk == true, $s1 : score)
+    PhysicalRisks( sleepDisturbanceRisk == true, $s2 : score)
+    CognitiveRisks( cognitiveStrainRisk == true, $s3 : score)
 then
     BurnoutPattern bp = new BurnoutPattern();
     bp.setEarlyBurnout(true);
+    bp.setScore(($s1 + $s2 + $s3) / 3.0);
     insert(bp);
 end
 rule "Burnout Syndrome Pattern"
 when
-    EmotionalRisks( emotionalOverloadRisk == true )
-    PhysicalRisks( sleepDeprivationRisk == true )
-    CognitiveRisks( cognitiveOverloadRisk == true )
+    EmotionalRisks( emotionalOverloadRisk == true,  $s1 : score)
+    PhysicalRisks( sleepDeprivationRisk == true,  $s2 : score)
+    CognitiveRisks( cognitiveOverloadRisk == true,  $s3 : score)
 then
     BurnoutPattern bp = new BurnoutPattern();
     bp.setBurnoutSyndrome(true);
+    bp.setScore(($s1 + $s2 + $s3) / 3.0);
     insert(bp);
 end
 //CEP??
 rule "Severe Burnout Pattern"
 when
-    PhysicalRisks( exhaustionRisk == true )
-    SocialRisks( socialIsolationRisk == true )
-    TemporalRisks( deteriorationRisk == true )
-    EmotionalRisks( emotionalInstabilityRisk == true )
+    PhysicalRisks( exhaustionRisk == true,  $s1 : score)
+    SocialRisks( socialIsolationRisk == true,  $s2 : score)
+    TemporalRisks( deteriorationRisk == true,  $s3 : score)
+    EmotionalRisks( emotionalInstabilityRisk == true,  $s4 : score)
 then
     BurnoutPattern bp = new BurnoutPattern();
     bp.setSevereBurnoutState(true);
+    bp.setScore(($s1 + $s2 + $s3 + $s4) / 4.0);
     insert(bp);
 end
 //CEP ZA SEVERE
 rule "Occupational Exhaustion Pattern"
 when
-    EnvironmentalRisks( highExternalStressRisk == true )
-    PhysicalRisks( physicalFatigueRisk == true )
-    BurnoutPattern( burnoutSyndrome == true )
+    EnvironmentalRisks( highExternalStressRisk == true, $s1 : score)
+    PhysicalRisks( physicalFatigueRisk == true, $s2 : score)
+    BurnoutPattern( burnoutSyndrome == true, $s3 : score)
 then
     BurnoutPattern bp = new BurnoutPattern();
     bp.setOccupationalExhaustion(true);
+    bp.setScore(($s1 + $s2 + $s3) / 3.0);
     insert(bp);
 end
 //DEPRESSIVE PATTERNS
 rule "Depressive Pattern"
 when
-    SocialRisks( socialIsolationRisk == true )
-    EmotionalRisks( emotionalStressRisk == true )
+    SocialRisks( socialIsolationRisk == true,  $s1 : score)
+    EmotionalRisks( emotionalStressRisk == true,  $s2 : score)
 then
     DepressivePattern dp = new DepressivePattern();
     dp.setDepressivePattern(true);
+    dp.setScore(($s1 + $s2) / 2.0);
     insert(dp);
 end
 rule "Emotional Numbness State - Cognitive + Emotional"
 when
-    EmotionalRisks( emotionalInstabilityRisk == true )
-    CognitiveRisks( cognitiveOverloadRisk == true )
+    EmotionalRisks( emotionalInstabilityRisk == true, $s1 : score)
+    CognitiveRisks( cognitiveOverloadRisk == true, $s2 : score)
 then
     DepressivePattern dp = new DepressivePattern();
     dp.setEmotionalNumbnessState(true);
+    dp.setScore(($s1 + $s2) / 2.0);
     insert(dp);
 end
 //CEP ZA NUMBNES
 rule "Motivational Collapse"
 when
-    SocialRisks( behavioralWithdrawalRisk == true )
-    CognitiveRisks( mentalFatigueRisk == true )
+    SocialRisks( behavioralWithdrawalRisk == true, $s1 : score)
+    CognitiveRisks( mentalFatigueRisk == true, $s2 : score)
     //SocialCollapseEvent()
 then
     DepressivePattern dp = new DepressivePattern();
     dp.setMotivationalCollapse(true);
+    dp.setScore(($s1 + $s2) / 2.0);
     insert(dp);
 end
 rule "Severe Depressive Risk Pattern"
 when
-    TemporalRisks( deteriorationRisk == true )
-    SocialRisks( socialIsolationRisk == true )
-    EmotionalRisks( emotionalOverloadRisk == true )
+    TemporalRisks( deteriorationRisk == true, $s1 : score)
+    SocialRisks( socialIsolationRisk == true, $s2 : score)
+    EmotionalRisks( emotionalOverloadRisk == true, $s3 : score)
 then
     DepressivePattern dp = new DepressivePattern();
     dp.setSevereDepressiveRisk(true);
+    dp.setScore(($s1 + $s2 + $s3) / 3.0);
     insert(dp);
 end
 //CEP ZA SEVERE
 //ANXIETY PATTERNS
 rule "Anxiety Pattern"
 when
-    EmotionalRisks( emotionalStressRisk == true )
-    CognitiveRisks( cognitiveStrainRisk == true )
+    EmotionalRisks( emotionalStressRisk == true, $s1 : score)
+    CognitiveRisks( cognitiveStrainRisk == true, $s2 : score)
 then
     AnxietyPattern ap = new AnxietyPattern();
     ap.setAnxietyRisk(true);
+    ap.setScore(($s1 + $s2) / 2.0);
     insert(ap);
 end
 rule "Anxiety Escalation State"
 when
-    TemporalRisks( stressProgressionRisk == true )
-    EmotionalRisks( emotionalInstabilityRisk == true )
+    TemporalRisks( stressProgressionRisk == true, $s1 : score)
+    EmotionalRisks( emotionalInstabilityRisk == true, $s2 : score)
 then
     AnxietyPattern ap = new AnxietyPattern();
     ap.setAnxietyEscalation(true);
+    ap.setScore(($s1 + $s2) / 2.0);
     insert(ap);
 end
 //CEPP
 rule "Panic Attack Pattern"
 when
-    EmotionalRisks( emotionalOverloadRisk == true )
-    TemporalRisks( escalationRisk == true )
-    PhysicalRisks( sleepDeprivationRisk == true )
+    EmotionalRisks( emotionalOverloadRisk == true, $s1 : score)
+    TemporalRisks( escalationRisk == true, $s2 : score)
+    PhysicalRisks( sleepDeprivationRisk == true, $s3 : score)
 then
     AnxietyPattern ap = new AnxietyPattern();
     ap.setPanicAttack(true);
+    ap.setScore(($s1 + $s2 + $s3) / 3.0);
     insert(ap);
 end
 //CEP
 rule "Generalized Anxiety Tendency"
 when
-    EmotionalRisks( emotionalStressRisk == true )
-    EnvironmentalRisks( chronicStressRisk == true )
+    EmotionalRisks( emotionalStressRisk == true, $s1 : score)
+    EnvironmentalRisks( chronicStressRisk == true, $s2 : score)
     //event
 then
     AnxietyPattern ap = new AnxietyPattern();
     ap.setGeneralizedAnxiety(true);
+    ap.setScore(($s1 + $s2) / 2.0);
     insert(ap);
 end
 //COGNITIVE PATTERN
 rule "Mental fatigue syndrome - feature based"
 when
-    CognitiveRisks( cognitiveOverloadRisk == true )
-    PhysicalRisks( sleepDeprivationRisk == true )
-    EmotionalRisks( emotionalStressRisk == true )
+    CognitiveRisks( cognitiveOverloadRisk == true, $s1 : score)
+    PhysicalRisks( sleepDeprivationRisk == true, $s2 : score)
+    EmotionalRisks( emotionalStressRisk == true, $s3 : score)
 then
     CognitivePattern p = new CognitivePattern();
     p.setMentalFatigueSyndrome(true);
+    p.setScore(($s1 + $s2 + $s3) / 3.0);
     insert(p);
 end
 //CEP
@@ -150,56 +163,61 @@ end
 // end
 rule "Decision collapse state - risk based"
 when
-    CognitiveRisks( decisionImpairmentRisk == true )
-    CognitiveRisks( cognitiveOverloadRisk == true )
-    EmotionalRisks( emotionalInstabilityRisk == true )
+    CognitiveRisks( decisionImpairmentRisk == true, $s1 : score)
+    CognitiveRisks( cognitiveOverloadRisk == true, $s2 : score)
+    EmotionalRisks( emotionalInstabilityRisk == true, $s3 : score)
 then
     CognitivePattern p = new CognitivePattern();
     p.setDecisionFatigue(true);
+    p.setScore(($s1 + $s2 + $s3) / 3.0);
     insert(p);
 end
 //cep
 //SOCIAL PATTERN
 rule "Social withdrawal syndrome - risk based"
 when
-    SocialRisks( socialIsolationRisk == true )
-    EmotionalRisks( emotionalStressRisk == true )
-    CognitiveRisks( mentalFatigueRisk == true )
+    SocialRisks( socialIsolationRisk == true, $s1 : score)
+    EmotionalRisks( emotionalStressRisk == true, $s2 : score)
+    CognitiveRisks( mentalFatigueRisk == true, $s3 : score)
 then
     SocialPattern p = new SocialPattern();
     p.setSocialWithdrawal(true);
+    p.setScore(($s1 + $s2 + $s3) / 3.0);
     insert(p);
 end
 //CEP
 rule "Interpersonal detachment pattern - risk"
 when
-    SocialRisks( interpersonalDetachmentRisk == true )
-    EmotionalRisks( emotionalInstabilityRisk == true )
+    SocialRisks( interpersonalDetachmentRisk == true, $s1 : score)
+    EmotionalRisks( emotionalInstabilityRisk == true, $s2 : score)
 then
     SocialPattern p = new SocialPattern();
     p.setInterpersonalDetachment(true);
+    p.setScore(($s1 + $s2) / 2.0);
     insert(p);
 end
 //cep
 rule "Social isolation progression"
 when
     //SocialEvents( socialCollapseEvent == true ) EVENT
-    TemporalRisks( deteriorationRisk == true )
+    TemporalRisks( deteriorationRisk == true, $s1 : score)
 then
     SocialPattern p = new SocialPattern();
     p.setSocialIsolationProgression(true);
+    p.setScore($s1);
     insert(p);
 end
 //CRITICAL PATTERNS
 rule "Severe psychological deterioration - full system"
 when
-    TemporalRisks( deteriorationRisk == true )
-    EmotionalRisks( emotionalInstabilityRisk == true )
-    CognitiveRisks( cognitiveOverloadRisk == true )
-    SocialRisks( socialIsolationRisk == true )
+    TemporalRisks( deteriorationRisk == true, $s1 : score)
+    EmotionalRisks( emotionalInstabilityRisk == true, $s2 : score)
+    CognitiveRisks( cognitiveOverloadRisk == true, $s3 : score)
+    SocialRisks( socialIsolationRisk == true, $s4 : score)
 then
     CriticalPattern p = new CriticalPattern();
     p.setSeverePsychologicalDeterioration(true);
+    p.setScore(($s1 + $s2 + $s3 + $s4) / 4.0);
     insert(p);
 end
 //CEP
@@ -215,21 +233,23 @@ end
 // end
 rule "Self-harm risk pattern"
 when
-    DepressivePattern( severeDepressiveRisk == true )
-    CriticalPattern( severePsychologicalDeterioration == true )
-    CriticalPattern( emotionalCollapseRisk == true )
+    DepressivePattern( severeDepressiveRisk == true, $s1 : score)
+    CriticalPattern( severePsychologicalDeterioration == true, $s2 : score)
+    CriticalPattern( emotionalCollapseRisk == true, $s3 : score)
 then
     CriticalPattern p = new CriticalPattern();
     p.setSelfHarmRisk(true);
+    p.setScore(($s1 + $s2 + $s3) / 3.0);
     insert(p);
 end
 rule "Crisis intervention recommended"
 when
-    PhysicalRisks( exhaustionRisk == true )
-    EmotionalRisks( emotionalCrisisRisk == true )
+    PhysicalRisks( exhaustionRisk == true, $s1 : score)
+    EmotionalRisks( emotionalCrisisRisk == true, $s2 : score)
 then
     CriticalPattern p = new CriticalPattern();
     p.setCrisisInterventionRecommended(true);
+    p.setScore(($s1 + $s2) / 2.0);
     insert(p);
 end
 //CEP

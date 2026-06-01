@@ -5,6 +5,7 @@ public class CognitiveRisks {
     private boolean cognitiveOverloadRisk;
     private boolean decisionImpairmentRisk;
     private boolean mentalFatigueRisk;
+    private double score;
     public CognitiveRisks() {
     }
     public CognitiveRisks(boolean cognitiveStrainRisk, boolean cognitiveOverloadRisk, boolean decisionImpairmentRisk,
@@ -38,5 +39,10 @@ public class CognitiveRisks {
     public void setMentalFatigueRisk(boolean mentalFatigueRisk) {
         this.mentalFatigueRisk = mentalFatigueRisk;
     }
-    
+    public double getScore() {
+        return score;
+    }
+    public void setScore(double score) {
+        this.score = score;
+    }
 }

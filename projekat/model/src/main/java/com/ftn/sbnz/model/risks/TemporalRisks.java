@@ -5,6 +5,7 @@ public class TemporalRisks {
     private boolean deteriorationRisk;
     private boolean escalationRisk;
     private boolean emotionalInstabilityTemporalRisk;
+    private double score;
     public TemporalRisks() {
     }
     public TemporalRisks(boolean stressProgressionRisk, boolean deteriorationRisk, boolean escalationRisk, boolean emotionalInstabilityTemporalRisk) {
@@ -37,5 +38,10 @@ public class TemporalRisks {
     public void setEmotionalInstabilityTemporalRisk(boolean emotionalInstabilityTemporalRisk) {
         this.emotionalInstabilityTemporalRisk = emotionalInstabilityTemporalRisk;
     }
-    
+    public double getScore() {
+        return score;
+    }
+    public void setScore(double score) {
+        this.score = score;
+    }
 }

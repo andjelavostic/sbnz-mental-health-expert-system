@@ -5,6 +5,7 @@ public class DepressivePattern {
     private boolean emotionalNumbnessState;
     private boolean motivationalCollapse;
     private boolean severeDepressiveRisk;
+    private double score;
     public DepressivePattern() {
     }
     public DepressivePattern(boolean depressivePattern, boolean emotionalNumbnessState, boolean motivationalCollapse,
@@ -38,5 +39,10 @@ public class DepressivePattern {
     public void setSevereDepressiveRisk(boolean severeDepressiveRisk) {
         this.severeDepressiveRisk = severeDepressiveRisk;
     }
-    
+    public double getScore() {
+        return score;
+    }
+    public void setScore(double score) {
+        this.score = score;
+    }
 }

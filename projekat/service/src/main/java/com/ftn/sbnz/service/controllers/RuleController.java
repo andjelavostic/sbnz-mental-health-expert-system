@@ -1,7 +1,5 @@
 package com.ftn.sbnz.service.controllers;
 
-import java.util.List;
-
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +20,7 @@ public class RuleController {
     }
 
     @PostMapping("/evaluate")
-    public List<FinalDecision> evaluate(@RequestBody UserAssessment input) {
+    public FinalDecision evaluate(@RequestBody UserAssessment input) {
         return service.evaluate(input);
     }
 }

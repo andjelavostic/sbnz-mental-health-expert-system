@@ -5,6 +5,7 @@ public class PhysicalRisks {
     private boolean sleepDeprivationRisk;
     private boolean physicalFatigueRisk;
     private boolean exhaustionRisk;
+    private double score;
     public PhysicalRisks() {
     }
     public PhysicalRisks(boolean sleepDisturbanceRisk, boolean sleepDeprivationRisk, boolean physicalFatigueRisk,
@@ -37,5 +38,11 @@ public class PhysicalRisks {
     }
     public void setExhaustionRisk(boolean exhaustionRisk) {
         this.exhaustionRisk = exhaustionRisk;
+    }
+    public double getScore() {
+        return score;
+    }
+    public void setScore(double score) {
+        this.score = score;
     }
 }

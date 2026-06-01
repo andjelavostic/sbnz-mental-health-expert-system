@@ -5,6 +5,7 @@ public class CriticalPattern {
     private boolean emotionalCollapseRisk;
     private boolean selfHarmRisk;
     private boolean crisisInterventionRecommended;
+    private double score;
     public CriticalPattern() {
     }
     public CriticalPattern(boolean severePsychologicalDeterioration, boolean emotionalCollapseRisk,
@@ -38,5 +39,10 @@ public class CriticalPattern {
     public void setCrisisInterventionRecommended(boolean crisisInterventionRecommended) {
         this.crisisInterventionRecommended = crisisInterventionRecommended;
     }
-    
+    public double getScore() {
+        return score;
+    }
+    public void setScore(double score) {
+        this.score = score;
+    }
 }

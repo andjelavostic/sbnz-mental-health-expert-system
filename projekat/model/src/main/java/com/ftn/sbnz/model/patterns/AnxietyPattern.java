@@ -5,6 +5,7 @@ public class AnxietyPattern {
     private boolean anxietyEscalation;
     private boolean panicAttack;
     private boolean generalizedAnxiety;
+    private double score;
     public AnxietyPattern() {
     }
     public AnxietyPattern(boolean anxietyRisk, boolean anxietyEscalation, boolean panicAttack,
@@ -38,5 +39,10 @@ public class AnxietyPattern {
     public void setGeneralizedAnxiety(boolean generalizedAnxiety) {
         this.generalizedAnxiety = generalizedAnxiety;
     }
-    
+    public double getScore() {
+        return score;
+    }
+    public void setScore(double score) {
+        this.score = score;
+    }
 }

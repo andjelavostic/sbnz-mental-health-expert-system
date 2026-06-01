@@ -5,6 +5,7 @@ public class BurnoutPattern {
     private boolean burnoutSyndrome;
     private boolean severeBurnoutState;
     private boolean occupationalExhaustion;
+    private double score;
     public BurnoutPattern() {
     }
     public BurnoutPattern(boolean earlyBurnout, boolean burnoutSyndrome, boolean severeBurnoutState,
@@ -38,5 +39,10 @@ public class BurnoutPattern {
     public void setOccupationalExhaustion(boolean occupationalExhaustion) {
         this.occupationalExhaustion = occupationalExhaustion;
     }
-    
+    public double getScore() {
+        return score;
+    }
+    public void setScore(double score) {
+        this.score = score;
+    }
 }
