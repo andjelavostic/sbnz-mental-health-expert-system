@@ -10,18 +10,31 @@ import org.drools.template.DataProvider;
 import org.drools.template.DataProviderCompiler;
 import org.drools.template.objects.ArrayDataProvider;
 
-public class GenerateFinalDecisionRules {
+public class GenerateTemplateRules {
 
     public static void main(String[] args) throws Exception {
+        Path resources = resolveResourcesPath();
+
+        generate(
+                resources.resolve("templates/final_decision_template.drt"),
+                resources.resolve("templates/final_decision.csv"),
+                resources.resolve("rules/generated_final_decisions.drl"));
+
+        generate(
+                resources.resolve("templates/two_feature_risk_template.drt"),
+                resources.resolve("templates/two_feature_risk.csv"),
+                resources.resolve("rules/generated_two_feature_risks.drl"));
+    }
+
+    private static Path resolveResourcesPath() {
         Path resources = Path.of("src/main/resources");
-        if (!Files.exists(resources.resolve("templates/final_decision.csv"))) {
-            resources = Path.of("kjar/src/main/resources");
+        if (Files.exists(resources.resolve("templates/final_decision.csv"))) {
+            return resources;
         }
+        return Path.of("kjar/src/main/resources");
+    }
 
-        Path templatePath = resources.resolve("templates/final_decision_template.drt");
-        Path csvPath = resources.resolve("templates/final_decision.csv");
-        Path outputPath = resources.resolve("rules/generated_final_decisions.drl");
-
+    private static void generate(Path templatePath, Path csvPath, Path outputPath) throws Exception {
         List<String[]> rows = Files.readAllLines(csvPath, StandardCharsets.UTF_8)
                 .stream()
                 .skip(1)

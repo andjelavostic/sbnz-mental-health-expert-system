@@ -40,24 +40,6 @@ then
     insert(risk);
 end
 //PHYSICAL RISKS
-rule "Sleep Disturbance Risk"
-when
-    SleepFeatures( $sqi : SQI, $sfi : SFI, SQI >= 0.3 && SQI < 0.6, SFI >= 0.3 && SFI < 0.6 )
-then
-    PhysicalRisks risk = new PhysicalRisks();
-    risk.setSleepDisturbanceRisk(true);
-    risk.setScore(($sqi + $sfi) / 2.0);
-    insert(risk);
-end
-rule "Sleep Deprivation Risk"
-when
-    SleepFeatures( $sqi : SQI, $sfi : SFI, SQI < 0.3, SFI >= 0.6 )
-then
-    PhysicalRisks risk = new PhysicalRisks();
-    risk.setSleepDeprivationRisk(true);
-    risk.setScore(($sqi + $sfi) / 2.0);
-    insert(risk);
-end
 rule "Physical Fatigue Risk"
 when
     SleepFeatures( $sqi : SQI, $fi : FI, FI >= 0.6, SQI < 0.3 )
@@ -79,42 +61,6 @@ then
     insert(risk);
 end
 //COGNITIVE RISKS
-rule "Cognitive Strain Risk"
-when
-    CognitiveFeatures($cli : CLI, $mfs:MFS,
-        CLI >= 0.3 && CLI < 0.6,
-        MFS >= 0.3 && MFS < 0.6
-    )
-then
-    CognitiveRisks risk = new CognitiveRisks();
-    risk.setCognitiveStrainRisk(true);
-    risk.setScore(($cli + $mfs) / 2.0);
-    insert(risk);
-end
-rule "Cognitive Overload Risk"
-when
-    CognitiveFeatures($cli : CLI, $mfs:MFS,
-        CLI >= 0.6,
-        MFS >= 0.6
-    )
-then
-    CognitiveRisks risk = new CognitiveRisks();
-    risk.setCognitiveOverloadRisk(true);
-    risk.setScore(($cli + $mfs) / 2.0);
-    insert(risk);
-end
-rule "Decision Impairment Risk"
-when
-    CognitiveFeatures( $dli : DLI, $cli:CLI,
-        DLI >= 0.6,
-        CLI >= 0.6
-    )
-then
-    CognitiveRisks risk = new CognitiveRisks();
-    risk.setDecisionImpairmentRisk(true);
-    risk.setScore(($cli + $dli) / 2.0);
-    insert(risk);
-end
 rule "Mental Fatigue Risk"
 when
     CognitiveFeatures($mfs:MFS,
@@ -130,42 +76,6 @@ then
     insert(risk);
 end
 //SOCIAL RISKS
-rule "Social Withdrawal Risk"
-when
-    SocialFeatures($swi : SWI, $sad:SAD,
-        SWI >= 0.3 && SWI < 0.6,
-        SAD >= 0.3 && SAD < 0.6
-    )
-then
-    SocialRisks risk = new SocialRisks();
-    risk.setSocialWithdrawalRisk(true);
-    risk.setScore(($swi + $sad) / 2.0);
-    insert(risk);
-end
-rule "Social Isolation Risk"
-when
-    SocialFeatures($swi : SWI, $sad:SAD,
-        SWI >= 0.6,
-        SAD >= 0.6
-    )
-then
-    SocialRisks risk = new SocialRisks();
-    risk.setSocialIsolationRisk(true);
-    risk.setScore(($swi + $sad) / 2.0);
-    insert(risk);
-end
-rule "Interpersonal Detachment Risk"
-when
-    SocialFeatures($idi : IDI, $swi:SWI,
-        IDI >= 0.6,
-        SWI >= 0.6
-    )
-then
-    SocialRisks risk = new SocialRisks();
-    risk.setInterpersonalDetachmentRisk(true);
-    risk.setScore(($swi + $idi) / 2.0);
-    insert(risk);
-end
 rule "Behavioral Withdrawal Risk"
 when
     SocialFeatures($sad:SAD,
@@ -230,19 +140,6 @@ then
     insert(risk);
 end
 //TEMPORAL RISKS
-rule "Stress Progression Risk"
-when
-    TemporalFeatures($dr:DR,$evl:EVL,
-        DR >= 0.6,
-        EVL >= 0.6
-    )
-then
-    TemporalRisks risk = new TemporalRisks();
-    risk.setStressProgressionRisk(true);
-    risk.setScore(($dr + $evl) / 2.0);
-    insert(risk);
-end
-
 rule "Emotional Instability Temporal Risk"
 when
     TemporalFeatures($tii:TII,
@@ -256,19 +153,6 @@ then
     TemporalRisks risk = new TemporalRisks();
     risk.setEmotionalInstabilityTemporalRisk(true);
     risk.setScore(($tii + $evi) / 2.0);
-    insert(risk);
-end
-
-rule "Chronic Deterioration Risk"
-when
-    TemporalFeatures($sps:SPS,$dr:DR,
-        SPS >= 0.6,
-        DR >= 0.6
-    )
-then
-    TemporalRisks risk = new TemporalRisks();
-    risk.setDeteriorationRisk(true);
-    risk.setScore(($sps+$dr) / 2.0);
     insert(risk);
 end
 

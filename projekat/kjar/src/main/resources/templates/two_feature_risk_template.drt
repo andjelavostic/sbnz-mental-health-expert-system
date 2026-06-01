@@ -1,0 +1,30 @@
+template header
+ruleName
+featureClass
+riskClass
+setter
+binding1
+field1
+condition1
+binding2
+field2
+condition2
+
+package rules;
+
+import com.ftn.sbnz.model.features.*;
+import com.ftn.sbnz.model.risks.*;
+
+template "TwoFeatureRiskTemplate"
+
+rule "@{ruleName}"
+when
+    @{featureClass}( @{binding1} : @{field1}, @{binding2} : @{field2}, @{condition1}, @{condition2} )
+then
+    @{riskClass} risk = new @{riskClass}();
+    risk.@{setter}(true);
+    risk.setScore((@{binding1} + @{binding2}) / 2.0);
+    insert(risk);
+end
+
+end template

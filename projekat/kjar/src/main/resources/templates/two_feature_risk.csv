@@ -1,0 +1,11 @@
+ruleName,featureClass,riskClass,setter,binding1,field1,condition1,binding2,field2,condition2
+Sleep Disturbance Risk,SleepFeatures,PhysicalRisks,setSleepDisturbanceRisk,$sqi,SQI,SQI >= 0.3 && SQI < 0.6,$sfi,SFI,SFI >= 0.3 && SFI < 0.6
+Sleep Deprivation Risk,SleepFeatures,PhysicalRisks,setSleepDeprivationRisk,$sqi,SQI,SQI < 0.3,$sfi,SFI,SFI >= 0.6
+Cognitive Strain Risk,CognitiveFeatures,CognitiveRisks,setCognitiveStrainRisk,$cli,CLI,CLI >= 0.3 && CLI < 0.6,$mfs,MFS,MFS >= 0.3 && MFS < 0.6
+Cognitive Overload Risk,CognitiveFeatures,CognitiveRisks,setCognitiveOverloadRisk,$cli,CLI,CLI >= 0.6,$mfs,MFS,MFS >= 0.6
+Decision Impairment Risk,CognitiveFeatures,CognitiveRisks,setDecisionImpairmentRisk,$dli,DLI,DLI >= 0.6,$cli,CLI,CLI >= 0.6
+Social Withdrawal Risk,SocialFeatures,SocialRisks,setSocialWithdrawalRisk,$swi,SWI,SWI >= 0.3 && SWI < 0.6,$sad,SAD,SAD >= 0.3 && SAD < 0.6
+Social Isolation Risk,SocialFeatures,SocialRisks,setSocialIsolationRisk,$swi,SWI,SWI >= 0.6,$sad,SAD,SAD >= 0.6
+Interpersonal Detachment Risk,SocialFeatures,SocialRisks,setInterpersonalDetachmentRisk,$idi,IDI,IDI >= 0.6,$swi,SWI,SWI >= 0.6
+Stress Progression Risk,TemporalFeatures,TemporalRisks,setStressProgressionRisk,$dr,DR,DR >= 0.6,$evl,EVL,EVL >= 0.6
+Chronic Deterioration Risk,TemporalFeatures,TemporalRisks,setDeteriorationRisk,$sps,SPS,SPS >= 0.6,$dr,DR,DR >= 0.6
