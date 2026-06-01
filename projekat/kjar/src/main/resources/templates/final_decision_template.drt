@@ -1,0 +1,33 @@
+template header
+ruleName
+patternClass
+patternField
+finalState
+severity
+description
+recommendation
+evidence
+
+package rules;
+
+import com.ftn.sbnz.model.patterns.*;
+import com.ftn.sbnz.model.decision.*;
+import java.util.List;
+
+template "FinalDecisionTemplate"
+
+rule "@{ruleName}"
+when
+    @{patternClass}( @{patternField} == true, $score : score )
+then
+    insert(new FinalDecision(
+        FinalState.@{finalState},
+        Severity.@{severity},
+        "@{description}",
+        "@{recommendation}",
+        List.of("@{evidence}"),
+        $score
+    ));
+end
+
+end template
