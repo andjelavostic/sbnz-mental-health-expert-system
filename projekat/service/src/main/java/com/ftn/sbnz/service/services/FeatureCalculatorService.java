@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.ftn.sbnz.model.assessment.UserAssessment;
+import com.ftn.sbnz.model.assessment.UserAssessmentEvent;
 import com.ftn.sbnz.model.features.CognitiveFeatures;
 import com.ftn.sbnz.model.features.EmotionalFeatures;
 import com.ftn.sbnz.model.features.EnvironmentalFeatures;
@@ -161,5 +162,16 @@ public class FeatureCalculatorService {
                     .mapToDouble(Double::doubleValue)
                     .average()
                     .orElse(0.0);
+    }
+    public double calculateAverageEsi(List<UserAssessmentEvent> events) {
+        return events.stream()
+            .mapToDouble(e -> calculateEmotional(e.getAssessment()).getESI())
+            .average().orElse(0.0);
+    }
+
+    public double calculateAverageFi(List<UserAssessmentEvent> events) {
+        return events.stream()
+            .mapToDouble(e -> calculatePhysical(e.getAssessment()).getFI())
+            .average().orElse(0.0);
     }
 }

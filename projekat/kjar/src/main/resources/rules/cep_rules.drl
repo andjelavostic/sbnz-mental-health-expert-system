@@ -242,3 +242,32 @@ then
     insert(new SocialCollapseEvent($uid, LocalDateTime.now(), score));
     System.out.println("Detektovana socijalna kolaps putanja za korisnika: " + $uid + " | Score: " + score);
 end
+
+rule "Crisis buildup event"
+salience 40
+when
+    $t0 : UserAssessmentEvent($uid : assessment.userId)
+    
+    // 1. Skupimo evente za poslednja 3 dana
+    $lista : List() from accumulate(
+        $e : UserAssessmentEvent(assessment.userId == $uid) over window:time(72h),
+        collectList($e)
+    )
+    eval($lista.size() >= 3)
+    
+    // 2. Izračunajmo proseke za ESI i FI (koristimo pomoćne metode)
+    $avgEsi : Double() from featureService.calculateAverageEsi($lista)
+    $avgFi : Double() from featureService.calculateAverageFi($lista)
+    
+    // 3. Uzimamo najnoviji SPS iz TemporalFeatures
+    $temp0 : TemporalFeatures() from featureService.calculateTemporal($t0.getAssessment())
+    
+    // 4. USLOV: Sustained HIGH 
+    eval($avgEsi > 0.6 && $avgFi > 0.6 && $temp0.getSPS() > 0.6)
+then
+    // Score je prosek sva tri visoka faktora
+    double score = ($avgEsi + $avgFi + $temp0.getSPS()) / 3.0;
+    score = Math.max(0.0, Math.min(1.0, score));
+    insert(new CrisisBuildUpEvent($uid, LocalDateTime.now(), score));
+    System.out.println("Detektovana kriza u nastajanju za korisnika: " + $uid + " | Score: " + score);
+end
