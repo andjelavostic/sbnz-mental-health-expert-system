@@ -1,7 +1,10 @@
 import com.ftn.sbnz.model.assessment.UserAssessmentEvent;
-import com.ftn.sbnz.model.features.EmotionalFeatures;
+import com.ftn.sbnz.model.features.*;
 global com.ftn.sbnz.service.services.FeatureCalculatorService featureService;
 import com.ftn.sbnz.model.events.*;
+import com.ftn.sbnz.model.patterns.*;
+import com.ftn.sbnz.model.risks.*;
+import java.time.LocalDateTime;
 declare UserAssessmentEvent
     @role(event)
     @timestamp(timestampMillis)
@@ -15,11 +18,41 @@ declare CrisisBuildUpEvent @role(event) @timestamp(timestampMillis) end
 
 rule "Analiza istorijskog stresa"
 when
-    // 1. Uhvati event iz prošlosti
+    // event iz proslosti
     $e : UserAssessmentEvent($assessment : assessment) over window:time(10m)
     
-    // 2. Izračunaj mu indekse "na licu mesta"
+    // indeksi
     $ef : EmotionalFeatures() from featureService.calculateEmotional($assessment)
 then
     System.out.println("U prošlosti je stres bio visok: " + $ef.getESI());
+end
+
+rule "Stress escalation - kontinuirani rast (po danima)"
+when
+    //danasnji
+    $t0 : UserAssessmentEvent($uid : assessment.userId)
+    
+    // onaj od pre oko 1 dan (t0 - 24h)
+    //  od +- 2h da ne bude baš u sekund precizno
+    $t1 : UserAssessmentEvent(assessment.userId == $uid, 
+                              this after[22h, 26h] $t0)
+                              
+    // onaj od pre oko 2 dana (t0 - 48h)
+    $t2 : UserAssessmentEvent(assessment.userId == $uid, 
+                              this after[46h, 50h] $t0)
+    
+    //indeksi
+    $feat0 : EmotionalFeatures() from featureService.calculateEmotional($t0.getAssessment())
+    $feat1 : EmotionalFeatures() from featureService.calculateEmotional($t1.getAssessment())
+    $feat2 : EmotionalFeatures() from featureService.calculateEmotional($t2.getAssessment())
+    
+    // trend rasta
+    eval($feat0.getESI() > $feat1.getESI() && $feat1.getESI() > $feat2.getESI())
+    
+    // dr high
+    $temp : TemporalFeatures() from featureService.calculateTemporal($t0.getAssessment())
+    eval($temp.getDR() > 0.6)
+then
+    double score = ($feat0.getESI() + $temp.getDR()) / 2.0;
+    insert(new StressEscalationEvent($uid, LocalDateTime.now(), score));
 end
