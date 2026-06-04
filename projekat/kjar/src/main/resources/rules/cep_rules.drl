@@ -69,9 +69,13 @@ when
     // 9. Sprečavanje duplikata (da ne insertujemo isti event više puta za istog korisnika)
     //not StressEscalationEvent(userId == $uid, this after[24h] )
 then
-    double score = ($feat0.getESI() + $temp.getDR()) / 2.0;
+    double trendSlope = ($feat0.getESI() - $feat2.getESI());
+    
+    double score = (trendSlope * 0.5) + ($feat0.getESI() * 0.3) + ($temp.getDR() * 0.2);
+    score = Math.max(0.0, Math.min(1.0, score));
+    // 4. Insertuj event 
     insert(new StressEscalationEvent($uid, LocalDateTime.now(), score));
-    System.out.println("Detektovan Stress Escalation za korisnika: " + $uid + " sa score-om: " + score);
+    System.out.println("Stress Escalation za " + $uid + " | Score: " + score);
 end
 
 rule "Burnout emergence event"
@@ -120,8 +124,44 @@ then
     
     // 2. Normalizujemo score (pretpostavimo da su delte u opsegu 0-1)
     double score = (fiDelta + sqiDelta + mfsDelta) / 3.0;
-    
+    score = Math.max(0.0, Math.min(1.0, score));
     // 3. Insertujemo Burnout event
     insert(new BurnoutEmergenceEvent($uid, LocalDateTime.now(), score));
     System.out.println("Burnout rizik detektovan! Score: " + score);
+end
+
+rule "Emotional volatility burst"
+salience 80
+when
+    $t0 : UserAssessmentEvent($uid : assessment.userId)
+    
+    // 1. Trenutni EVI i TII
+    $feat0 : EmotionalFeatures() from featureService.calculateEmotional($t0.getAssessment())
+    $temp0 : TemporalFeatures() from featureService.calculateTemporal($t0.getAssessment())
+    
+    // 2. Skupi EVI vrednosti za poslednja 24h
+    $eviValues : List() from accumulate(
+        $e : UserAssessmentEvent(assessment.userId == $uid) over window:time(24h),
+        collectList(featureService.calculateEmotional($e.getAssessment()).getEVI())
+    )
+    
+    // 3. Proveri da imamo dovoljno podataka (bar 3 unosa)
+    eval($eviValues.size() >= 3)
+    
+    // 4. Izračunaj prosek (manualno ili preko servisa)
+    // Ovde koristimo servis da ne komplikujemo DRL
+    eval(featureService.isSpike($feat0.getEVI(), $eviValues))
+    
+    // 5. TII HIGH (prag npr. > 0.7)
+    eval($temp0.getTII() > 0.6)
+then
+    double avg = featureService.calculateAverage($eviValues);
+    double spikeIntensity = ($feat0.getEVI() / avg) - 1.0; 
+    
+    // 2. Formiraj score (npr. kombinacija intenziteta skoka i TII vrednosti)
+    double score = (spikeIntensity * 0.6) + ($temp0.getTII() * 0.4);
+    score = Math.max(0.0, Math.min(1.0, score));
+    // 3. Insertuj event sa score-om
+    insert(new EmotionalVolatilityBurstEvent($uid, LocalDateTime.now(), score));
+    System.out.println("Volatility burst detektovan za: " + $uid + " | Score: " + score);
 end

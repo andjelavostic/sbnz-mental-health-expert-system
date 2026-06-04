@@ -1,5 +1,7 @@
 package com.ftn.sbnz.service.services;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.ftn.sbnz.model.assessment.UserAssessment;
@@ -40,7 +42,6 @@ public class FeatureCalculatorService {
 
         double evi =
                 clamp(a.getMoodSwings()); // ili history
-        System.out.println("ESI:"+esi+" NAI:"+nai+" LCI:"+lci);
         return new EmotionalFeatures(esi, nai, evi, lci);
     }
     public SleepFeatures calculatePhysical(UserAssessment a) {
@@ -143,5 +144,22 @@ public class FeatureCalculatorService {
         double tii = clamp(a.getProductivityDeclineTrend());
 
         return new TemporalFeatures(sps, dr, evl, tii);
+    }
+    public boolean isSpike(double currentEvi, List<Double> history) {
+        double sum = 0;
+        for (double val : history) sum += val;
+        double average = sum / history.size();
+        
+        // "Spike" je ako je trenutni EVI bar 50% veći od proseka
+        return currentEvi > (average * 1.5);
+    }
+    public double calculateAverage(List<Double> values) {
+        if (values == null || values.isEmpty()) {
+            return 0.0;
+        }
+        return values.stream()
+                    .mapToDouble(Double::doubleValue)
+                    .average()
+                    .orElse(0.0);
     }
 }
