@@ -1,5 +1,6 @@
 package com.ftn.sbnz.service.services;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -18,6 +19,8 @@ import com.ftn.sbnz.model.features.EnvironmentalFeatures;
 import com.ftn.sbnz.model.features.SleepFeatures;
 import com.ftn.sbnz.model.features.SocialFeatures;
 import com.ftn.sbnz.model.features.TemporalFeatures;
+import com.ftn.sbnz.service.entity.AssessmentEntity;
+import com.ftn.sbnz.service.repo.AssessmentRepository;
 
 @Service
 public class RuleEngineService {
@@ -28,7 +31,14 @@ public class RuleEngineService {
     @Autowired
     private FeatureCalculatorService featureService;
 
+    @Autowired
+    private AssessmentRepository repo;
+
     public FinalDecision evaluate(UserAssessment input) {
+        AssessmentEntity entity = new AssessmentEntity(input); 
+        entity.setTimestamp(LocalDateTime.now());
+        repo.save(entity);
+
         KieSession kieSession = kieContainer.newKieSession("rulesSession");
 
         // 1. FEATURE LAYER (Java)

@@ -1,6 +1,14 @@
 package com.ftn.sbnz.model.assessment;
 
+import java.time.LocalDateTime;
+
+import jakarta.persistence.MappedSuperclass;
+@MappedSuperclass
 public class UserAssessment {
+    private Long userId;
+    private LocalDateTime timestamp;
+
+
     // Emotional
     private double stressLevel;
     private double emotionalExhaustion;
@@ -60,6 +68,12 @@ public class UserAssessment {
     private double moodDegradationTrend;
     private double productivityDeclineTrend;
     public UserAssessment() {
+    }
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
     }
     public double getStressLevel() {
         return stressLevel;
@@ -342,6 +356,14 @@ public class UserAssessment {
     }
     public void setProductivityDeclineTrend(double productivityDeclineTrend) {
         this.productivityDeclineTrend = productivityDeclineTrend;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
     
     
