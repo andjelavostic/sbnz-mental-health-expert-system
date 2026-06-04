@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ftn.sbnz.model.assessment.UserAssessment;
+import com.ftn.sbnz.model.assessment.UserAssessmentEvent;
 import com.ftn.sbnz.model.decision.FinalDecision;
 import com.ftn.sbnz.model.features.CognitiveFeatures;
 import com.ftn.sbnz.model.features.EmotionalFeatures;
@@ -41,6 +42,14 @@ public class RuleEngineService {
 
         KieSession kieSession = kieContainer.newKieSession("rulesSession");
 
+        List<AssessmentEntity> history = repo.findByUserIdAndTimestampAfter(
+            input.getUserId(), LocalDateTime.now().minusDays(7)
+        );
+
+        for (AssessmentEntity oldData : history) {
+            kieSession.insert(new UserAssessmentEvent(oldData));
+        }
+
         // 1. FEATURE LAYER (Java)
         EmotionalFeatures ef = featureService.calculateEmotional(input);
         SleepFeatures sf = featureService.calculatePhysical(input);
@@ -61,6 +70,7 @@ public class RuleEngineService {
         kieSession.insert(input);
 
         // 5. VRATI FINAL DECISIONS
+        kieSession.setGlobal("featureService", featureService); // Ovo dodaješ
         int fired = kieSession.fireAllRules();
         System.out.println("RULES FIRED: " + fired);
 

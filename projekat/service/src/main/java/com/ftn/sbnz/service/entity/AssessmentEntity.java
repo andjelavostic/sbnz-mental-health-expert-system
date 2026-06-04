@@ -18,6 +18,7 @@ public class AssessmentEntity extends UserAssessment{
     public void setId(Long id) {
         this.id = id;
     }
+    public AssessmentEntity() {}
     public AssessmentEntity(UserAssessment input) {
         // Osnovno
         this.setUserId(input.getUserId());

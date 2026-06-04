@@ -1,0 +1,19 @@
+import com.ftn.sbnz.model.assessment.UserAssessmentEvent;
+import com.ftn.sbnz.model.features.EmotionalFeatures;
+global com.ftn.sbnz.service.services.FeatureCalculatorService featureService;
+declare UserAssessmentEvent
+    @role(event)
+    @timestamp(timestampMillis)
+end
+
+
+rule "Analiza istorijskog stresa"
+when
+    // 1. Uhvati event iz prošlosti
+    $e : UserAssessmentEvent($assessment : assessment) over window:time(10m)
+    
+    // 2. Izračunaj mu indekse "na licu mesta"
+    $ef : EmotionalFeatures() from featureService.calculateEmotional($assessment)
+then
+    System.out.println("U prošlosti je stres bio visok: " + $ef.getESI());
+end
