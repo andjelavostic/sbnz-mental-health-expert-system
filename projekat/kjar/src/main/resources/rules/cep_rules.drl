@@ -165,3 +165,42 @@ then
     insert(new EmotionalVolatilityBurstEvent($uid, LocalDateTime.now(), score));
     System.out.println("Volatility burst detektovan za: " + $uid + " | Score: " + score);
 end
+rule "Cognitive degradation event"
+salience 60
+when
+    $t0 : UserAssessmentEvent($uid : assessment.userId)
+    
+    // 1. Skupimo evente u zadnjih 7 dana
+    $lista : List() from accumulate(
+        $e : UserAssessmentEvent(assessment.userId == $uid) over window:time(7d),
+        collectList($e)
+    )
+    eval($lista.size() >= 4)
+    
+    // 2. Izvlačimo poslednja 3 elementa (t0, t1, t2)
+    $t1 : UserAssessmentEvent() from $lista.get($lista.size() - 2)
+    $t2 : UserAssessmentEvent() from $lista.get($lista.size() - 3)
+    
+    // 3. Računamo CognitiveFeatures za sva tri
+    $c0 : CognitiveFeatures() from featureService.calculateCognitive($t0.getAssessment())
+    $c1 : CognitiveFeatures() from featureService.calculateCognitive($t1.getAssessment())
+    $c2 : CognitiveFeatures() from featureService.calculateCognitive($t2.getAssessment())
+    
+    // 4. USLOV: Sva tri parametra rastu (t0 > t1 > t2)
+    eval($c0.getCLI() > $c1.getCLI() && $c1.getCLI() > $c2.getCLI())
+    eval($c0.getDLI() > $c1.getDLI() && $c1.getDLI() > $c2.getDLI())
+    eval($c0.getMFS() > $c1.getMFS() && $c1.getMFS() > $c2.getMFS())
+
+then
+    // Izračunaj score: prosek rasta sva tri faktora
+    double cliDelta = $c0.getCLI() - $c2.getCLI();
+    double dliDelta = $c0.getDLI() - $c2.getDLI();
+    double mfsDelta = $c0.getMFS() - $c2.getMFS();
+    
+    double score = (cliDelta + dliDelta + mfsDelta) / 3.0;
+    score = Math.max(0.0, Math.min(1.0, score));
+    
+    insert(new CognitiveDegradationEvent($uid, LocalDateTime.now(), score));
+    
+    System.out.println("Detektovano kognitivno propadanje za korisnika: " + $uid + " | Score: " + score);
+end
