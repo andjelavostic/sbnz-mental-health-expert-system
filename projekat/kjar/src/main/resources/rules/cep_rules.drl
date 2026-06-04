@@ -1,11 +1,17 @@
 import com.ftn.sbnz.model.assessment.UserAssessmentEvent;
 import com.ftn.sbnz.model.features.EmotionalFeatures;
 global com.ftn.sbnz.service.services.FeatureCalculatorService featureService;
+import com.ftn.sbnz.model.events.*;
 declare UserAssessmentEvent
     @role(event)
     @timestamp(timestampMillis)
 end
-
+declare StressEscalationEvent @role(event) @timestamp(timestampMillis) end
+declare BurnoutEmergenceEvent @role(event) @timestamp(timestampMillis) end
+declare EmotionalVolatilityBurstEvent @role(event) @timestamp(timestampMillis) end
+declare CognitiveDegradationEvent @role(event) @timestamp(timestampMillis) end
+declare SocialCollapseEvent @role(event) @timestamp(timestampMillis) end
+declare CrisisBuildUpEvent @role(event) @timestamp(timestampMillis) end
 
 rule "Analiza istorijskog stresa"
 when
