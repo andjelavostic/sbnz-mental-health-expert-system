@@ -73,3 +73,55 @@ then
     insert(new StressEscalationEvent($uid, LocalDateTime.now(), score));
     System.out.println("Detektovan Stress Escalation za korisnika: " + $uid + " sa score-om: " + score);
 end
+
+rule "Burnout emergence event"
+salience 70 // Nešto manji prioritet od eskalacije, jer je ovo ozbiljnije stanje
+when
+    $t0 : UserAssessmentEvent($uid : assessment.userId)
+    
+    // 1. Skupimo sve evente u zadnjih 7 dana
+    $lista : List() from accumulate(
+        $e : UserAssessmentEvent(assessment.userId == $uid) over window:time(7d),
+        collectList($e)
+    )
+    eval($lista.size() >= 4) // Treba nam bar 4 tačke za pouzdan trend
+    
+    // 2. Izvlačimo poslednja 3 elementa (t0, t1, t2)
+    $t1 : UserAssessmentEvent() from $lista.get($lista.size() - 2)
+    $t2 : UserAssessmentEvent() from $lista.get($lista.size() - 3)
+    
+    // 3. Računamo feature za ta tri trenutka
+    // Za FI i SQI koristimo PhysicalFeatures
+    $f0 : SleepFeatures() from featureService.calculatePhysical($t0.getAssessment())
+    $f1 : SleepFeatures() from featureService.calculatePhysical($t1.getAssessment())
+    $f2 : SleepFeatures() from featureService.calculatePhysical($t2.getAssessment())
+    
+    // Za MFS koristimo CognitiveFeatures
+    $c0 : CognitiveFeatures() from featureService.calculateCognitive($t0.getAssessment())
+    $c1 : CognitiveFeatures() from featureService.calculateCognitive($t1.getAssessment())
+    $c2 : CognitiveFeatures() from featureService.calculateCognitive($t2.getAssessment())
+    
+    // 4. USLOVI TRENDA:
+    // FI increasing (t0 > t1 > t2)
+    eval($f0.getFI() > $f1.getFI() && $f1.getFI() > $f2.getFI())
+    
+    // SQI decreasing (t0 < t1 < t2)
+    eval($f0.getSQI() < $f1.getSQI() && $f1.getSQI() < $f2.getSQI())
+    
+    // MFS increasing (t0 > t1 > t2)
+    eval($c0.getMFS() > $c1.getMFS() && $c1.getMFS() > $c2.getMFS())
+    
+then
+    // 1. Računam "delta" vrednosti (koliko su se promenile)
+    // Što je veća promena, to je veći score
+    double fiDelta = $f0.getFI() - $f2.getFI();
+    double sqiDelta = $f2.getSQI() - $f0.getSQI(); // Obrnuto jer SQI pada
+    double mfsDelta = $c0.getMFS() - $c2.getMFS();
+    
+    // 2. Normalizujemo score (pretpostavimo da su delte u opsegu 0-1)
+    double score = (fiDelta + sqiDelta + mfsDelta) / 3.0;
+    
+    // 3. Insertujemo Burnout event
+    insert(new BurnoutEmergenceEvent($uid, LocalDateTime.now(), score));
+    System.out.println("Burnout rizik detektovan! Score: " + score);
+end
