@@ -5,6 +5,9 @@ import com.ftn.sbnz.model.events.*;
 import com.ftn.sbnz.model.patterns.*;
 import com.ftn.sbnz.model.risks.*;
 import java.time.LocalDateTime;
+import java.time.Duration;
+import java.util.List;
+
 declare UserAssessmentEvent
     @role(event)
     @timestamp(timestampMillis)
@@ -27,32 +30,46 @@ then
     System.out.println("U prošlosti je stres bio visok: " + $ef.getESI());
 end
 
-rule "Stress escalation - kontinuirani rast (po danima)"
+rule "Stress escalation - Pametni trend"
+salience 100
 when
-    //danasnji
-    $t0 : UserAssessmentEvent($uid : assessment.userId)
+    // 1. Uzimamo najnoviji event kao polaznu tačku
+    $t0 : UserAssessmentEvent($uid : assessment.userId, $ts0 : timestampMillis)
     
-    // onaj od pre oko 1 dan (t0 - 24h)
-    //  od +- 2h da ne bude baš u sekund precizno
-    $t1 : UserAssessmentEvent(assessment.userId == $uid, 
-                              this after[22h, 26h] $t0)
-                              
-    // onaj od pre oko 2 dana (t0 - 48h)
-    $t2 : UserAssessmentEvent(assessment.userId == $uid, 
-                              this after[46h, 50h] $t0)
+    // 2. Skupimo sve evente za istog korisnika u zadnja 72h
+    $lista : List() from accumulate(
+        $e : UserAssessmentEvent(assessment.userId == $uid) over window:time(72h),
+        collectList($e)
+    )
     
-    //indeksi
+    // 3. Moramo imati bar 3 eventa za trend
+    eval($lista.size() >= 3)
+    
+    // 4. Uzimamo prethodna dva iz liste (sortirane po vremenu)
+    $t1 : UserAssessmentEvent($ts1 : timestampMillis) from $lista.get($lista.size() - 2)
+    $t2 : UserAssessmentEvent($ts2 : timestampMillis) from $lista.get($lista.size() - 3)
+    
+    // 5. Pametna provera: Da li su unosi razumni?
+    // Proveravamo da li je između najstarijeg ($t2) i najnovijeg ($t0) prošlo bar 24h
+    // (Ovo sprečava da pravilo okine ako korisnik greškom unese 3 testa u istom satu)
+    eval(Duration.ofMillis($ts0 - $ts2).toHours() >= 24)
+    
+    // 6. Izračunaj indekse za sva tri
     $feat0 : EmotionalFeatures() from featureService.calculateEmotional($t0.getAssessment())
     $feat1 : EmotionalFeatures() from featureService.calculateEmotional($t1.getAssessment())
     $feat2 : EmotionalFeatures() from featureService.calculateEmotional($t2.getAssessment())
     
-    // trend rasta
+    // 7. Trend rasta: t0 > t1 > t2
     eval($feat0.getESI() > $feat1.getESI() && $feat1.getESI() > $feat2.getESI())
     
-    // dr high
+    // 8. Proveri DR (MoodDegradationTrend) za najnoviji ($t0)
     $temp : TemporalFeatures() from featureService.calculateTemporal($t0.getAssessment())
     eval($temp.getDR() > 0.6)
+    
+    // 9. Sprečavanje duplikata (da ne insertujemo isti event više puta za istog korisnika)
+    //not StressEscalationEvent(userId == $uid, this after[24h] )
 then
     double score = ($feat0.getESI() + $temp.getDR()) / 2.0;
     insert(new StressEscalationEvent($uid, LocalDateTime.now(), score));
+    System.out.println("Detektovan Stress Escalation za korisnika: " + $uid + " sa score-om: " + score);
 end
