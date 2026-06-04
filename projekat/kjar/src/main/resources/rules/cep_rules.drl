@@ -204,3 +204,41 @@ then
     
     System.out.println("Detektovano kognitivno propadanje za korisnika: " + $uid + " | Score: " + score);
 end
+
+rule "Social collapse trajectory"
+salience 50
+when
+    $t0 : UserAssessmentEvent($uid : assessment.userId)
+    
+    // 1. Skupimo evente u zadnjih 7 dana
+    $lista : List() from accumulate(
+        $e : UserAssessmentEvent(assessment.userId == $uid) over window:time(7d),
+        collectList($e)
+    )
+    eval($lista.size() >= 4)
+    
+    // 2. Izvlačimo poslednja 3 elementa (t0, t1, t2)
+    $t1 : UserAssessmentEvent() from $lista.get($lista.size() - 2)
+    $t2 : UserAssessmentEvent() from $lista.get($lista.size() - 3)
+    
+    // 3. Računamo SocialFeatures za sva tri
+    $s0 : SocialFeatures() from featureService.calculateSocial($t0.getAssessment())
+    $s1 : SocialFeatures() from featureService.calculateSocial($t1.getAssessment())
+    $s2 : SocialFeatures() from featureService.calculateSocial($t2.getAssessment())
+    
+    // 4. USLOV: Sva tri socijalna parametra rastu (t0 > t1 > t2)
+    eval($s0.getSWI() > $s1.getSWI() && $s1.getSWI() > $s2.getSWI())
+    eval($s0.getSAD() > $s1.getSAD() && $s1.getSAD() > $s2.getSAD())
+    eval($s0.getIDI() > $s1.getIDI() && $s1.getIDI() > $s2.getIDI())
+    
+then
+    // Izračunaj score: prosek rasta sva tri socijalna faktora
+    double swiDelta = $s0.getSWI() - $s2.getSWI();
+    double sadDelta = $s0.getSAD() - $s2.getSAD();
+    double idiDelta = $s0.getIDI() - $s2.getIDI();
+    
+    double score = (swiDelta + sadDelta + idiDelta) / 3.0;
+    score = Math.max(0.0, Math.min(1.0, score));
+    insert(new SocialCollapseEvent($uid, LocalDateTime.now(), score));
+    System.out.println("Detektovana socijalna kolaps putanja za korisnika: " + $uid + " | Score: " + score);
+end
