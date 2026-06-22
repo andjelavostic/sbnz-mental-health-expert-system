@@ -1,0 +1,88 @@
+.survey-wrapper {
+  padding: 30px;
+  max-width: 750px;
+  margin: auto;
+  font-family: Arial, sans-serif;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.subtitle {
+  text-align: center;
+  color: #666;
+  margin-bottom: 25px;
+}
+
+/* ===== QUESTION CARD ===== */
+.question-card {
+  background: #ffffff;
+  padding: 18px 20px;
+  margin-bottom: 14px;
+  border-radius: 12px;
+
+  border-left: 5px solid #6cba9c; /* naglasak */
+
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.question-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+/* ===== QUESTION TEXT ===== */
+.question-card p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+/* ===== RADIO GROUP ===== */
+.radio-group {
+  display: flex;
+  gap: 14px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+/* malo lepši izgled radio button-a */
+mat-radio-button {
+  font-size: 14px;
+}
+
+/* ===== ACTION BUTTONS ===== */
+.actions {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.actions button {
+  padding: 10px 22px;
+  font-size: 15px;
+  border-radius: 8px;
+}
+
+/* ===== MAT EXPANSION PANEL spacing tweak ===== */
+mat-expansion-panel {
+  margin-bottom: 12px;
+  border-radius: 12px !important;
+  overflow: hidden;
+}
+
+/* header lepši */
+mat-expansion-panel-header {
+  font-weight: 600;
+}
+.number-input {
+  width: 120px;
+  padding: 6px;
+  margin-top: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}

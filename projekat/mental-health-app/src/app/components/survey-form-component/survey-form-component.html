@@ -1,1 +1,157 @@
-<p>survey-form-component works!</p>
+<div class="survey-wrapper">
+  <h2>Anketa o zdravlju</h2>
+
+  <!-- EMOCIONALNO STANJE -->
+  <mat-expansion-panel expanded>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Emocionalno stanje</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    @for (q of emotionalQuestions; track q.field; let i = $index) {
+      <div class="question-card">
+        <p><strong>{{ i + 1 }}. {{ q.text }}</strong></p>
+
+        <mat-radio-group [(ngModel)]="q.answer" class="radio-group">
+          <mat-radio-button [value]="1">1 - Nikad</mat-radio-button>
+          <mat-radio-button [value]="2">2 - Retko</mat-radio-button>
+          <mat-radio-button [value]="3">3 - Ponekad</mat-radio-button>
+          <mat-radio-button [value]="4">4 - Često</mat-radio-button>
+          <mat-radio-button [value]="5">5 - Uvek</mat-radio-button>
+        </mat-radio-group>
+      </div>
+    }
+  </mat-expansion-panel>
+
+  <!-- SAN I FIZIČKO STANJE -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>San i fizičko stanje</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    @for (q of sleepPhysicalQuestions; track q.field; let i = $index) {
+      <div class="question-card">
+        <p><strong>{{ i + 1 }}. {{ q.text }}</strong></p>
+
+        <div class="input-area">
+          @if (q.type === 'number') {
+            <input type="number" [(ngModel)]="q.answer" class="number-input" />
+          } @else {
+            <mat-radio-group [(ngModel)]="q.answer" class="radio-group">
+
+              <mat-radio-button [value]="1">1 - Nikad</mat-radio-button>
+              <mat-radio-button [value]="2">2 - Retko</mat-radio-button>
+              <mat-radio-button [value]="3">3 - Ponekad</mat-radio-button>
+              <mat-radio-button [value]="4">4 - Često</mat-radio-button>
+              <mat-radio-button [value]="5">5 - Uvek</mat-radio-button>
+
+            </mat-radio-group>
+          }
+        </div>
+      </div>
+    }
+  </mat-expansion-panel>
+
+  <!-- KOGNITIVNO STANJE -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Kognitivno stanje</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    @for (q of cognitiveQuestions; track q.field; let i = $index) {
+      <div class="question-card">
+        <p><strong>{{ i + 1 }}. {{ q.text }}</strong></p>
+
+        <mat-radio-group [(ngModel)]="q.answer" class="radio-group">
+          <mat-radio-button [value]="1">1 - Nikad</mat-radio-button>
+          <mat-radio-button [value]="2">2 - Retko</mat-radio-button>
+          <mat-radio-button [value]="3">3 - Ponekad</mat-radio-button>
+          <mat-radio-button [value]="4">4 - Često</mat-radio-button>
+          <mat-radio-button [value]="5">5 - Uvek</mat-radio-button>
+        </mat-radio-group>
+      </div>
+    }
+  </mat-expansion-panel>
+
+  <!-- SOCIJALNO PONAŠANJE -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Socijalno ponašanje</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    @for (q of socialQuestions; track q.field; let i = $index) {
+      <div class="question-card">
+        <p><strong>{{ i + 1 }}. {{ q.text }}</strong></p>
+
+        <mat-radio-group [(ngModel)]="q.answer" class="radio-group">
+          <mat-radio-button [value]="1">1 - Nikad</mat-radio-button>
+          <mat-radio-button [value]="2">2 - Retko</mat-radio-button>
+          <mat-radio-button [value]="3">3 - Ponekad</mat-radio-button>
+          <mat-radio-button [value]="4">4 - Često</mat-radio-button>
+          <mat-radio-button [value]="5">5 - Uvek</mat-radio-button>
+        </mat-radio-group>
+      </div>
+    }
+  </mat-expansion-panel>
+
+  <!-- STRESORI -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Životne okolnosti i stresori</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    @for (q of stressorsQuestions; track q.field; let i = $index) {
+      <div class="question-card">
+        <p><strong>{{ i + 1 }}. {{ q.text }}</strong></p>
+
+        <mat-radio-group [(ngModel)]="q.answer" class="radio-group">
+          <mat-radio-button [value]="1">1 - Nikad</mat-radio-button>
+          <mat-radio-button [value]="2">2 - Retko</mat-radio-button>
+          <mat-radio-button [value]="3">3 - Ponekad</mat-radio-button>
+          <mat-radio-button [value]="4">4 - Često</mat-radio-button>
+          <mat-radio-button [value]="5">5 - Uvek</mat-radio-button>
+        </mat-radio-group>
+      </div>
+    }
+  </mat-expansion-panel>
+
+  <!-- TEMPORALNO PRAĆENJE -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Temporalno praćenje simptoma</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    @for (q of temporalQuestions; track q.field; let i = $index) {
+      <div class="question-card">
+        <p><strong>{{ i + 1 }}. {{ q.text }}</strong></p>
+
+        <div class="input-area">
+
+          @if (q.type === 'number') {
+            <input type="number" [(ngModel)]="q.answer" class="number-input" />
+          } @else {
+            <mat-radio-group [(ngModel)]="q.answer" class="radio-group">
+              <mat-radio-button [value]="1">1</mat-radio-button>
+              <mat-radio-button [value]="2">2</mat-radio-button>
+              <mat-radio-button [value]="3">3</mat-radio-button>
+              <mat-radio-button [value]="4">4</mat-radio-button>
+              <mat-radio-button [value]="5">5</mat-radio-button>
+            </mat-radio-group>
+          }
+
+        </div>
+      </div>
+    }
+  </mat-expansion-panel>
+
+  <!-- SUBMIT -->
+  <div class="actions">
+    <button
+      mat-flat-button
+      color="primary"
+      (click)="finishSurvey()"
+      [disabled]="!isFormValid()">
+      Završi procenu
+    </button>
+  </div>
+
+</div>

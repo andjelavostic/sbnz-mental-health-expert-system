@@ -5,8 +5,8 @@ import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'app-home',
-  standalone: true, // OVO JE KLJUČ
-  imports: [MatButtonModule, MatCardModule, RouterLink, MatIconModule], // Importuješ šta ti treba direktno
+  standalone: true, 
+  imports: [MatButtonModule, MatCardModule, RouterLink, MatIconModule], 
   templateUrl: 'home-component.html',
   styleUrls: ['home-component.css']
 })
