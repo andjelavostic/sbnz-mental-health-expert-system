@@ -1,7 +1,13 @@
 package com.ftn.sbnz.model.decision;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class FinalDecision {
+    private Long id; 
+
+    private LocalDateTime date;
+
     private FinalState finalState;
     private Severity severity;
 
@@ -10,16 +16,42 @@ public class FinalDecision {
 
     private List<String> triggeredPatterns;
     private double score;
+
     public FinalDecision() {
     }
-    public FinalDecision(FinalState finalState, Severity severity, String explanation, String recommendation,
-            List<String> triggeredPatterns, double score) {
+
+    public FinalDecision(Long id,
+            LocalDateTime date,
+            FinalState finalState,
+            Severity severity,
+            String explanation,
+            String recommendation,
+            List<String> triggeredPatterns,
+            double score) {
+        this.id = id;
+        this.date = date;
         this.finalState = finalState;
         this.severity = severity;
         this.explanation = explanation;
         this.recommendation = recommendation;
         this.triggeredPatterns = triggeredPatterns;
-        this.score=score;
+        this.score = score;
+    }
+    
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDateTime date) {
+        this.date = date;
     }
 
     public FinalState getFinalState() {
@@ -61,9 +93,11 @@ public class FinalDecision {
     public void setTriggeredPatterns(List<String> triggeredPatterns) {
         this.triggeredPatterns = triggeredPatterns;
     }
+
     public double getScore() {
         return score;
     }
+
     public void setScore(double score) {
         this.score = score;
     }

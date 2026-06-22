@@ -1,0 +1,47 @@
+<div class="history-container">
+  <h2>Istorija procena</h2>
+
+  <div class="timeline">
+
+    <div class="timeline-item" *ngFor="let h of history">
+
+      <div class="dot" [ngClass]="h.severity"></div>
+
+      <div class="card">
+
+        <div class="top">
+          <span class="date">{{ h.date }}</span>
+
+          <span class="badge" [ngClass]="h.severity">
+            {{ h.severity }}
+          </span>
+        </div>
+
+        <div class="score">
+          Score: {{ h.score | number:'1.2-2' }}
+        </div>
+
+        <div class="state">
+          {{ h.finalState }}
+        </div>
+
+        <p class="text">
+          {{ h.explanation }}
+        </p>
+
+        <p class="rec">
+          {{ h.recommendation }}
+        </p>
+
+        <div class="chips">
+          <span class="chip" *ngFor="let p of h.triggeredPatterns">
+            {{ p }}
+          </span>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>

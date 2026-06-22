@@ -1,0 +1,133 @@
+.history-container {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+  font-family: Arial;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* TIMELINE LINE */
+.timeline {
+  position: relative;
+  padding-left: 30px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 0;
+  width: 3px;
+  height: 100%;
+  background: #ddd;
+}
+
+/* ITEM */
+.timeline-item {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+/* DOT */
+.dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  position: absolute;
+  left: 4px;
+  top: 18px;
+}
+
+.dot.MODERATE {
+  background: #2e7d32;
+}
+
+.dot.HIGH {
+  background: #ef6c00;
+}
+
+.dot.CRITICAL {
+  background: #c62828;
+}
+
+/* CARD */
+.card {
+  background: white;
+  padding: 14px;
+  border-radius: 12px;
+  margin-left: 20px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+  border-left: 4px solid #6cba9c;
+}
+
+/* TOP ROW */
+.top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.date {
+  font-weight: bold;
+  color: #444;
+}
+
+/* BADGES */
+.badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  color: white;
+}
+
+.badge.MODERATE {
+  background: #2e7d32;
+}
+
+.badge.HIGH {
+  background: #ef6c00;
+}
+
+.badge.CRITICAL {
+  background: #c62828;
+}
+
+/* TEXT */
+.score {
+  font-weight: bold;
+  color: #2e7d32;
+}
+
+.state {
+  font-size: 13px;
+  color: #555;
+}
+
+.text {
+  margin: 6px 0;
+  color: #333;
+}
+
+.rec {
+  font-size: 13px;
+  color: #444;
+}
+
+/* CHIPS */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.chip {
+  background: #eef2f7;
+  padding: 4px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+}
