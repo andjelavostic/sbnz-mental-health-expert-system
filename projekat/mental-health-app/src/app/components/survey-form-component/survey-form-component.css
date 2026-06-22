@@ -65,10 +65,8 @@ mat-radio-button {
 .actions button {
   padding: 10px 22px;
   font-size: 15px;
-  border-radius: 8px;
 }
 
-/* ===== MAT EXPANSION PANEL spacing tweak ===== */
 mat-expansion-panel {
   margin-bottom: 12px;
   border-radius: 12px !important;
@@ -85,4 +83,135 @@ mat-expansion-panel-header {
   margin-top: 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
+}
+
+.result-page {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+  background: #f5f7fb;
+}
+
+.result-card {
+  width: 650px;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header h2 {
+  margin: 0;
+}
+
+.score-circle {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6cba9c, #2e7d32);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.badges {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.state {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+}
+
+.severity {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid transparent;
+}
+
+.MODERATE {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border-color: #a5d6a7;
+}
+
+.HIGH {
+  background: #fff3e0;
+  color: #ef6c00;
+  border-color: #ffcc80;
+}
+
+.CRITICAL {
+  background: #ffebee;
+  color: #c62828;
+  border-color: #ef9a9a;
+}
+.HIGH {
+  animation: pulseOrange 1.5s infinite;
+}
+
+.CRITICAL {
+  animation: pulseRed 1.2s infinite;
+}
+
+@keyframes pulseOrange {
+  0% { box-shadow: 0 0 0 0 rgba(239, 108, 0, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(239, 108, 0, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 108, 0, 0); }
+}
+
+@keyframes pulseRed {
+  0% { box-shadow: 0 0 0 0 rgba(198, 40, 40, 0.5); }
+  70% { box-shadow: 0 0 0 12px rgba(198, 40, 40, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(198, 40, 40, 0); }
+}
+
+.section {
+  margin-bottom: 18px;
+}
+
+.section h3 {
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #555;
+}
+
+.section p {
+  margin: 0;
+  color: #333;
+  line-height: 1.5;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  background: #eef2f7;
+  padding: 6px 10px;
+  border-radius: 12px;
+  font-size: 12px;
 }

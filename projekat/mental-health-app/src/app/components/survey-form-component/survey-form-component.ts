@@ -7,7 +7,32 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatCardModule } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { UserAssessment } from '../../models/user-assessment.model';
+import { FinalDecision } from '../../models/final-decision.model';
+export const MOCK_FINAL_DECISION: FinalDecision = {
+  finalState: 'AT_RISK',
+  severity: 'HIGH',
 
+  score: 0.74,
+
+  explanation: `
+    Na osnovu odgovora, primećen je povišen nivo stresa,
+    smanjena kvaliteta sna i blagi kognitivni zamor.
+    Obrasci ukazuju na povećano emocionalno opterećenje.
+  `,
+
+  recommendation: `
+    Preporučuje se smanjenje dnevnog stresa, poboljšanje higijene sna
+    i uvođenje redovnih pauza tokom dana. Ako simptomi potraju,
+    savetuje se razgovor sa stručnim licem.
+  `,
+
+  triggeredPatterns: [
+    'HIGH_STRESS_LEVEL',
+    'SLEEP_DEGRADATION',
+    'COGNITIVE_FATIGUE',
+    'MODERATE_SOCIAL_WITHDRAWAL'
+  ]
+};
 @Component({
   selector: 'app-survey-form',
   standalone: true,
@@ -340,7 +365,9 @@ export class SurveyFormComponent {
 
     return result;
   }
-
+  
+  finalDecision: FinalDecision | null = MOCK_FINAL_DECISION;
+  loading = false;
   finishSurvey() {
     if (!this.isFormValid()) {
       alert('Molimo vas da odgovorite na sva pitanja pre završetka.');
