@@ -8,6 +8,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { UserAssessment } from '../../models/user-assessment.model';
 import { FinalDecision } from '../../models/final-decision.model';
+import { RouterModule } from '@angular/router';
 export const MOCK_FINAL_DECISION: FinalDecision = {
   finalState: 'AT_RISK',
   severity: 'HIGH',
@@ -44,6 +45,7 @@ export const MOCK_FINAL_DECISION: FinalDecision = {
     MatRadioModule,
     MatCardModule,
     MatExpansionModule,
+    RouterModule
   ],
   templateUrl: './survey-form-component.html',
   styleUrls: ['./survey-form-component.css'],

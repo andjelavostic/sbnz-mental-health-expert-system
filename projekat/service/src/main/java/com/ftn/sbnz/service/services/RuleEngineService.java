@@ -20,6 +20,7 @@ import com.ftn.sbnz.model.features.EnvironmentalFeatures;
 import com.ftn.sbnz.model.features.SleepFeatures;
 import com.ftn.sbnz.model.features.SocialFeatures;
 import com.ftn.sbnz.model.features.TemporalFeatures;
+import com.ftn.sbnz.service.dto.FinalDecisionDTO;
 import com.ftn.sbnz.service.entity.AssessmentEntity;
 import com.ftn.sbnz.service.entity.FinalDecisionEntity;
 import com.ftn.sbnz.service.repo.AssessmentRepository;
@@ -100,5 +101,14 @@ public class RuleEngineService {
 
         finalDecisionRepository.save(decisionEntity);
         return decision;
+    }
+
+    public List<FinalDecisionDTO> getHistory(Long userId) {
+
+        return finalDecisionRepository
+                .findByUserIdOrderByTimestampDesc(userId)
+                .stream()
+                .map(FinalDecisionDTO::new)
+                .toList();
     }
 }
