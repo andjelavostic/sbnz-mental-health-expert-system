@@ -22,11 +22,10 @@ public class FinalDecisionEntity extends FinalDecision {
     private LocalDateTime timestamp;
 
     public FinalDecisionEntity() {
-        super();
+       
     }
 
     public FinalDecisionEntity(FinalDecision decision, Long userId) {
-        super();
 
         this.setFinalState(decision.getFinalState());
         this.setSeverity(decision.getSeverity());

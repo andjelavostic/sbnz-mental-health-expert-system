@@ -3,6 +3,8 @@ package com.ftn.sbnz.model.decision;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import jakarta.persistence.MappedSuperclass;
+@MappedSuperclass
 public class FinalDecision {
     private Long id; 
 

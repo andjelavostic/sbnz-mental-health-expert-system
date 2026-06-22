@@ -21,7 +21,9 @@ import com.ftn.sbnz.model.features.SleepFeatures;
 import com.ftn.sbnz.model.features.SocialFeatures;
 import com.ftn.sbnz.model.features.TemporalFeatures;
 import com.ftn.sbnz.service.entity.AssessmentEntity;
+import com.ftn.sbnz.service.entity.FinalDecisionEntity;
 import com.ftn.sbnz.service.repo.AssessmentRepository;
+import com.ftn.sbnz.service.repo.FinalDecisionRepository;
 
 @Service
 public class RuleEngineService {
@@ -35,16 +37,18 @@ public class RuleEngineService {
     @Autowired
     private AssessmentRepository repo;
 
+    @Autowired
+    private FinalDecisionRepository finalDecisionRepository;
+
     public FinalDecision evaluate(UserAssessment input) {
-        AssessmentEntity entity = new AssessmentEntity(input); 
+        AssessmentEntity entity = new AssessmentEntity(input);
         entity.setTimestamp(LocalDateTime.now());
         repo.save(entity);
 
         KieSession kieSession = kieContainer.newKieSession("rulesSession");
 
         List<AssessmentEntity> history = repo.findByUserIdAndTimestampAfter(
-            input.getUserId(), LocalDateTime.now().minusDays(7)
-        );
+                input.getUserId(), LocalDateTime.now().minusDays(7));
 
         for (AssessmentEntity oldData : history) {
             kieSession.insert(new UserAssessmentEvent(oldData));
@@ -83,10 +87,18 @@ public class RuleEngineService {
         }
 
         kieSession.dispose();
-        
-        Optional<FinalDecision> bestDecision = results.stream()
-            .max(Comparator.comparingDouble(FinalDecision::getScore));
 
-        return bestDecision.orElse(null);
+        Optional<FinalDecision> bestDecision = results.stream()
+                .max(Comparator.comparingDouble(FinalDecision::getScore));
+
+        FinalDecision decision = bestDecision.orElse(null);
+
+        if (decision == null)
+            return null;
+
+        FinalDecisionEntity decisionEntity = new FinalDecisionEntity(decision, input.getUserId());
+
+        finalDecisionRepository.save(decisionEntity);
+        return decision;
     }
 }
