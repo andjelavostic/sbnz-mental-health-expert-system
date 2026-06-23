@@ -13,7 +13,9 @@ import { AssessmentService } from '../../services/assesment-service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
 import { ChangeDetectorRef, NgZone } from '@angular/core';
+import { BackwardCheckResult } from '../../models/final-decision.model';
 type NumberRule = {
   min: number;
   max: number;
@@ -34,6 +36,7 @@ type NumberRule = {
     MatFormFieldModule,
     MatInputModule,
     MatProgressSpinnerModule,
+    MatSelectModule,
   ],
   templateUrl: './survey-form-component.html',
   styleUrls: ['./survey-form-component.css'],
@@ -384,9 +387,42 @@ export class SurveyFormComponent {
 
     return result;
   }
-  view: 'form' | 'loading' | 'result' = 'form';
+  view: 'form' | 'loading' | 'result' | 'backwardResult' = 'form';
   finalDecision: FinalDecision | null = null;
+  backwardResult: BackwardCheckResult | null = null;
+  selectedTargetState = 'ANXIETY_RISK_PATTERN';
   loading = false;
+  hypothesisOptions = [
+    { value: 'LOW_EMOTIONAL_TENSION', label: 'Blag emocionalni pritisak' },
+    { value: 'LOW_MOOD_VULNERABILITY', label: 'Blago snizeno raspolozenje' },
+    { value: 'LOW_SLEEP_STRAIN', label: 'Blago odstupanje sna' },
+    { value: 'LOW_FATIGUE', label: 'Blag umor' },
+    { value: 'LOW_COGNITIVE_LOAD', label: 'Blago kognitivno opterecenje' },
+    { value: 'LOW_SOCIAL_WITHDRAWAL', label: 'Blago socijalno povlacenje' },
+    { value: 'LOW_EXTERNAL_PRESSURE', label: 'Blag spoljasnji pritisak' },
+    { value: 'EARLY_BURNOUT_PATTERN', label: 'Rani burnout obrazac' },
+    { value: 'BURNOUT_SYNDROME', label: 'Burnout sindrom' },
+    { value: 'SEVERE_BURNOUT_STATE', label: 'Tezak burnout' },
+    { value: 'OCCUPATIONAL_EXHAUSTION_PATTERN', label: 'Radna/akademska iscrpljenost' },
+    { value: 'ANXIETY_RISK_PATTERN', label: 'Rizik anksioznosti' },
+    { value: 'ANXIETY_ESCALATION_STATE', label: 'Eskalacija anksioznosti' },
+    { value: 'PANIC_ATTACK_PATTERN', label: 'Panicni obrazac' },
+    { value: 'GENERALIZED_ANXIETY_TENDENCY', label: 'Generalizovana anksiozna tendencija' },
+    { value: 'DEPRESSIVE_PATTERN', label: 'Depresivni obrazac' },
+    { value: 'EMOTIONAL_NUMBNESS_STATE', label: 'Emocionalna utrnulost' },
+    { value: 'MOTIVATIONAL_COLLAPSE', label: 'Motivacioni kolaps' },
+    { value: 'SEVERE_DEPRESSIVE_RISK_PATTERN', label: 'Tezak depresivni rizik' },
+    { value: 'MENTAL_FATIGUE_SYNDROME', label: 'Mentalni zamor' },
+    { value: 'CONCENTRATION_DECLINE_PATTERN', label: 'Pad koncentracije' },
+    { value: 'DECISION_FATIGUE_STATE', label: 'Zamor pri odlucivanju' },
+    { value: 'SOCIAL_WITHDRAWAL_SYNDROME', label: 'Socijalno povlacenje' },
+    { value: 'INTERPERSONAL_DETACHMENT_PATTERN', label: 'Interpersonalno udaljavanje' },
+    { value: 'SOCIAL_ISOLATION_PROGRESSION', label: 'Progresija socijalne izolacije' },
+    { value: 'SEVERE_PSYCHOLOGICAL_DETERIORATION', label: 'Tesko psiholosko pogorsanje' },
+    { value: 'EMOTIONAL_COLLAPSE_RISK', label: 'Rizik emocionalnog kolapsa' },
+    { value: 'SELF_HARM_RISK_PATTERN', label: 'Rizik samopovredjivanja' },
+    { value: 'CRISIS_INTERVENTION_RECOMMENDED', label: 'Preporucena krizna intervencija' },
+  ];
   getAnswer(field: string) {
     const all = [
       ...this.emotionalQuestions,
@@ -402,6 +438,91 @@ export class SurveyFormComponent {
 
   isCepDecision(decision: FinalDecision | null): boolean {
     return decision?.triggeredPatterns?.includes('CEP') ?? false;
+  }
+
+  buildAssessment() {
+    return {
+      userId: 1,
+      timestamp: new Date(),
+
+      stressLevel: this.getAnswer('stressLevel'),
+      emotionalExhaustion: this.getAnswer('emotionalExhaustion'),
+      nervousness: this.getAnswer('nervousness'),
+      overloadFeeling: this.getAnswer('overloadFeeling'),
+      lowMoodFrequency: this.getAnswer('lowMoodFrequency'),
+      moodSwings: this.getAnswer('moodSwings'),
+      sadnessLevel: this.getAnswer('sadnessLevel'),
+      lossOfControlFeeling: this.getAnswer('lossOfControlFeeling'),
+      irritability: this.getAnswer('irritability'),
+      worryFrequency: this.getAnswer('worryFrequency'),
+
+      sleepHours: this.getAnswer('sleepHours'),
+      sleepProblems: this.getAnswer('sleepProblems'),
+      nightAwakenings: this.getAnswer('nightAwakenings'),
+      restedAfterSleep: this.getAnswer('restedAfterSleep'),
+      chronicFatigue: this.getAnswer('chronicFatigue'),
+      stressHeadaches: this.getAnswer('stressHeadaches'),
+      appetiteChanges: this.getAnswer('appetiteChanges'),
+      lowEnergy: this.getAnswer('lowEnergy'),
+      physicalExhaustion: this.getAnswer('physicalExhaustion'),
+
+      concentrationProblems: this.getAnswer('concentrationProblems'),
+      forgetfulness: this.getAnswer('forgetfulness'),
+      decisionDifficulty: this.getAnswer('decisionDifficulty'),
+      mentalConfusion: this.getAnswer('mentalConfusion'),
+      productivityDrop: this.getAnswer('productivityDrop'),
+      attentionSpanIssues: this.getAnswer('attentionSpanIssues'),
+      mentalFatigue: this.getAnswer('mentalFatigue'),
+
+      socialAvoidance: this.getAnswer('socialAvoidance'),
+      communicationWithdrawal: this.getAnswer('communicationWithdrawal'),
+      socialIsolationFeeling: this.getAnswer('socialIsolationFeeling'),
+      lossOfInterest: this.getAnswer('lossOfInterest'),
+      familyAvoidance: this.getAnswer('familyAvoidance'),
+      timeSpentAlone: this.getAnswer('timeSpentAlone'),
+      emotionalDistance: this.getAnswer('emotionalDistance'),
+
+      workPressure: this.getAnswer('workPressure'),
+      financialProblems: this.getAnswer('financialProblems'),
+      recentStressEvent: this.getAnswer('recentStressEvent'),
+      relationshipIssues: this.getAnswer('relationshipIssues'),
+      lackOfRestTime: this.getAnswer('lackOfRestTime'),
+      constantPressure: this.getAnswer('constantPressure'),
+      ruminationOnTasks: this.getAnswer('ruminationOnTasks'),
+
+      symptomDuration: this.getAnswer('symptomDuration'),
+      isolationDuration: this.getAnswer('isolationDuration'),
+      exhaustionDuration: this.getAnswer('exhaustionDuration'),
+      panicFrequency: this.getAnswer('panicFrequency'),
+      stressTrend: this.getAnswer('stressTrend'),
+      moodDegradationTrend: this.getAnswer('moodDegradationTrend'),
+      productivityDeclineTrend: this.getAnswer('productivityDeclineTrend'),
+    };
+  }
+
+  checkBackwardHypothesis() {
+    if (!this.isFormValid()) {
+      alert('Molimo vas da odgovorite na sva pitanja pre provere hipoteze.');
+      return;
+    }
+
+    this.view = 'loading';
+    this.backwardResult = null;
+
+    this.assessmentService.checkBackward(this.buildAssessment(), this.selectedTargetState).subscribe({
+      next: (res) => {
+        this.zone.run(() => {
+          this.backwardResult = res;
+          this.view = 'backwardResult';
+          this.cdr.detectChanges();
+        });
+      },
+      error: (err) => {
+        console.error(err);
+        this.view = 'form';
+        alert('Greska pri backward proveri');
+      },
+    });
   }
 
   finishSurvey() {
@@ -497,6 +618,7 @@ export class SurveyFormComponent {
   resetSurvey() {
   this.zone.run(() => {
     this.finalDecision = null;
+    this.backwardResult = null;
     this.loading = false;
     this.view = 'form';
 

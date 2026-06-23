@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { FinalDecision } from '../models/final-decision.model';
+import { BackwardCheckResult, FinalDecision } from '../models/final-decision.model';
 
 @Injectable({ providedIn: 'root' })
 export class AssessmentService {
@@ -10,6 +10,13 @@ export class AssessmentService {
 
   evaluate(data: any) {
     return this.http.post<FinalDecision>(`${this.baseUrl}/evaluate`, data);
+  }
+
+  checkBackward(assessment: any, targetState: string) {
+    return this.http.post<BackwardCheckResult>(`${this.baseUrl}/backward-check`, {
+      assessment,
+      targetState,
+    });
   }
 
   getHistory(userId: number) {

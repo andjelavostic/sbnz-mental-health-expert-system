@@ -1,0 +1,486 @@
+package rules;
+
+import com.ftn.sbnz.model.evidence.EvidenceLink;
+import com.ftn.sbnz.model.features.*;
+import com.ftn.sbnz.model.risks.*;
+import com.ftn.sbnz.model.events.*;
+import com.ftn.sbnz.model.patterns.*;
+
+rule "Evidence - Generic Low Risk"
+when
+    EmotionalFeatures(ESI < 0.3, NAI < 0.3, EVI < 0.3, LCI < 0.3)
+    SleepFeatures(FI < 0.3, SFI < 0.3)
+    CognitiveFeatures(CLI < 0.3, MFS < 0.3, DLI < 0.3)
+    SocialFeatures(SWI < 0.3, IDI < 0.3, SAD < 0.3)
+    EnvironmentalFeatures(externalStressIndex < 0.3, chronicStressExposure < 0.3)
+then
+    insert(new EvidenceLink("LOW_RISK", "lowEmotionalFeatures"));
+    insert(new EvidenceLink("LOW_RISK", "lowSleepFeatures"));
+    insert(new EvidenceLink("LOW_RISK", "lowCognitiveFeatures"));
+    insert(new EvidenceLink("LOW_RISK", "lowSocialFeatures"));
+    insert(new EvidenceLink("LOW_RISK", "lowEnvironmentalFeatures"));
+end
+
+rule "Evidence - Low Emotional Tension"
+when
+    EmotionalFeatures(ESI >= 0.2 && ESI < 0.3, NAI < 0.3, EVI < 0.3, LCI < 0.3)
+then
+    insert(new EvidenceLink("LOW_EMOTIONAL_TENSION", "ESI"));
+    insert(new EvidenceLink("LOW_EMOTIONAL_TENSION", "NAI"));
+    insert(new EvidenceLink("LOW_EMOTIONAL_TENSION", "EVI"));
+    insert(new EvidenceLink("LOW_EMOTIONAL_TENSION", "LCI"));
+end
+
+rule "Evidence - Low Mood Vulnerability"
+when
+    EmotionalFeatures(NAI >= 0.2 && NAI < 0.3, ESI < 0.3, EVI < 0.3, LCI < 0.3)
+then
+    insert(new EvidenceLink("LOW_MOOD_VULNERABILITY", "NAI"));
+    insert(new EvidenceLink("LOW_MOOD_VULNERABILITY", "ESI"));
+    insert(new EvidenceLink("LOW_MOOD_VULNERABILITY", "EVI"));
+    insert(new EvidenceLink("LOW_MOOD_VULNERABILITY", "LCI"));
+end
+
+rule "Evidence - Low Sleep Strain"
+when
+    SleepFeatures(SQI >= 0.2 && SQI < 0.3, FI < 0.3, SFI < 0.3)
+then
+    insert(new EvidenceLink("LOW_SLEEP_STRAIN", "SQI"));
+    insert(new EvidenceLink("LOW_SLEEP_STRAIN", "FI"));
+    insert(new EvidenceLink("LOW_SLEEP_STRAIN", "SFI"));
+end
+
+rule "Evidence - Low Fatigue"
+when
+    SleepFeatures(FI >= 0.2 && FI < 0.3, SQI < 0.3, SFI < 0.3)
+then
+    insert(new EvidenceLink("LOW_FATIGUE", "FI"));
+    insert(new EvidenceLink("LOW_FATIGUE", "SQI"));
+    insert(new EvidenceLink("LOW_FATIGUE", "SFI"));
+end
+
+rule "Evidence - Low Cognitive Load"
+when
+    CognitiveFeatures(CLI >= 0.2 && CLI < 0.3, MFS < 0.3, DLI < 0.3)
+then
+    insert(new EvidenceLink("LOW_COGNITIVE_LOAD", "CLI"));
+    insert(new EvidenceLink("LOW_COGNITIVE_LOAD", "MFS"));
+    insert(new EvidenceLink("LOW_COGNITIVE_LOAD", "DLI"));
+end
+
+rule "Evidence - Low Social Withdrawal"
+when
+    SocialFeatures(SWI >= 0.2 && SWI < 0.3, IDI < 0.3, SAD < 0.3)
+then
+    insert(new EvidenceLink("LOW_SOCIAL_WITHDRAWAL", "SWI"));
+    insert(new EvidenceLink("LOW_SOCIAL_WITHDRAWAL", "IDI"));
+    insert(new EvidenceLink("LOW_SOCIAL_WITHDRAWAL", "SAD"));
+end
+
+rule "Evidence - Low External Pressure"
+when
+    EnvironmentalFeatures(externalStressIndex >= 0.2 && externalStressIndex < 0.3, chronicStressExposure < 0.3)
+then
+    insert(new EvidenceLink("LOW_EXTERNAL_PRESSURE", "externalStressIndex"));
+    insert(new EvidenceLink("LOW_EXTERNAL_PRESSURE", "chronicStressExposure"));
+end
+
+rule "Evidence - Emotional Stress Risk"
+when
+    EmotionalRisks(emotionalStressRisk == true)
+then
+    insert(new EvidenceLink("emotionalStressRisk", "ESI"));
+    insert(new EvidenceLink("emotionalStressRisk", "NAI"));
+end
+
+rule "Evidence - Emotional Overload Risk"
+when
+    EmotionalRisks(emotionalOverloadRisk == true)
+then
+    insert(new EvidenceLink("emotionalOverloadRisk", "ESI"));
+    insert(new EvidenceLink("emotionalOverloadRisk", "LCI"));
+end
+
+rule "Evidence - Emotional Instability Risk"
+when
+    EmotionalRisks(emotionalInstabilityRisk == true)
+then
+    insert(new EvidenceLink("emotionalInstabilityRisk", "ESI"));
+    insert(new EvidenceLink("emotionalInstabilityRisk", "EVI"));
+end
+
+rule "Evidence - Emotional Crisis Risk"
+when
+    EmotionalRisks(emotionalCrisisRisk == true)
+then
+    insert(new EvidenceLink("emotionalCrisisRisk", "ESI"));
+    insert(new EvidenceLink("emotionalCrisisRisk", "NAI"));
+    insert(new EvidenceLink("emotionalCrisisRisk", "LCI"));
+end
+
+rule "Evidence - Sleep Disturbance Risk"
+when
+    PhysicalRisks(sleepDisturbanceRisk == true)
+then
+    insert(new EvidenceLink("sleepDisturbanceRisk", "SQI"));
+    insert(new EvidenceLink("sleepDisturbanceRisk", "SFI"));
+end
+
+rule "Evidence - Sleep Deprivation Risk"
+when
+    PhysicalRisks(sleepDeprivationRisk == true)
+then
+    insert(new EvidenceLink("sleepDeprivationRisk", "SQI"));
+    insert(new EvidenceLink("sleepDeprivationRisk", "SFI"));
+end
+
+rule "Evidence - Physical Fatigue Risk"
+when
+    PhysicalRisks(physicalFatigueRisk == true)
+then
+    insert(new EvidenceLink("physicalFatigueRisk", "FI"));
+    insert(new EvidenceLink("physicalFatigueRisk", "SQI"));
+end
+
+rule "Evidence - Exhaustion Risk"
+when
+    PhysicalRisks(exhaustionRisk == true)
+then
+    insert(new EvidenceLink("exhaustionRisk", "FI"));
+    insert(new EvidenceLink("exhaustionRisk", "SFI"));
+    insert(new EvidenceLink("exhaustionRisk", "SQI"));
+end
+
+rule "Evidence - Cognitive Strain Risk"
+when
+    CognitiveRisks(cognitiveStrainRisk == true)
+then
+    insert(new EvidenceLink("cognitiveStrainRisk", "CLI"));
+    insert(new EvidenceLink("cognitiveStrainRisk", "MFS"));
+end
+
+rule "Evidence - Cognitive Overload Risk"
+when
+    CognitiveRisks(cognitiveOverloadRisk == true)
+then
+    insert(new EvidenceLink("cognitiveOverloadRisk", "CLI"));
+    insert(new EvidenceLink("cognitiveOverloadRisk", "MFS"));
+end
+
+rule "Evidence - Decision Impairment Risk"
+when
+    CognitiveRisks(decisionImpairmentRisk == true)
+then
+    insert(new EvidenceLink("decisionImpairmentRisk", "DLI"));
+    insert(new EvidenceLink("decisionImpairmentRisk", "CLI"));
+end
+
+rule "Evidence - Mental Fatigue Risk"
+when
+    CognitiveRisks(mentalFatigueRisk == true)
+then
+    insert(new EvidenceLink("mentalFatigueRisk", "MFS"));
+    insert(new EvidenceLink("mentalFatigueRisk", "FI"));
+end
+
+rule "Evidence - Social Withdrawal Risk"
+when
+    SocialRisks(socialWithdrawalRisk == true)
+then
+    insert(new EvidenceLink("socialWithdrawalRisk", "SWI"));
+    insert(new EvidenceLink("socialWithdrawalRisk", "SAD"));
+end
+
+rule "Evidence - Social Isolation Risk"
+when
+    SocialRisks(socialIsolationRisk == true)
+then
+    insert(new EvidenceLink("socialIsolationRisk", "SWI"));
+    insert(new EvidenceLink("socialIsolationRisk", "SAD"));
+end
+
+rule "Evidence - Interpersonal Detachment Risk"
+when
+    SocialRisks(interpersonalDetachmentRisk == true)
+then
+    insert(new EvidenceLink("interpersonalDetachmentRisk", "IDI"));
+    insert(new EvidenceLink("interpersonalDetachmentRisk", "SWI"));
+end
+
+rule "Evidence - Behavioral Withdrawal Risk"
+when
+    SocialRisks(behavioralWithdrawalRisk == true)
+then
+    insert(new EvidenceLink("behavioralWithdrawalRisk", "SAD"));
+    insert(new EvidenceLink("behavioralWithdrawalRisk", "CLI"));
+end
+
+rule "Evidence - External Pressure Risk"
+when
+    EnvironmentalRisks(externalPressureRisk == true)
+then
+    insert(new EvidenceLink("externalPressureRisk", "externalStressIndex"));
+    insert(new EvidenceLink("externalPressureRisk", "ESI"));
+end
+
+rule "Evidence - High External Stress Risk"
+when
+    EnvironmentalRisks(highExternalStressRisk == true)
+then
+    insert(new EvidenceLink("highExternalStressRisk", "externalStressIndex"));
+    insert(new EvidenceLink("highExternalStressRisk", "ESI"));
+end
+
+rule "Evidence - Chronic Stress Risk"
+when
+    EnvironmentalRisks(chronicStressRisk == true)
+then
+    insert(new EvidenceLink("chronicStressRisk", "chronicStressExposure"));
+    insert(new EvidenceLink("chronicStressRisk", "SPS"));
+end
+
+rule "Evidence - Stress Progression Risk"
+when
+    TemporalRisks(stressProgressionRisk == true)
+then
+    insert(new EvidenceLink("stressProgressionRisk", "DR"));
+    insert(new EvidenceLink("stressProgressionRisk", "EVL"));
+end
+
+rule "Evidence - Deterioration Risk"
+when
+    TemporalRisks(deteriorationRisk == true)
+then
+    insert(new EvidenceLink("deteriorationRisk", "SPS"));
+    insert(new EvidenceLink("deteriorationRisk", "DR"));
+end
+
+rule "Evidence - Escalation Risk"
+when
+    TemporalRisks(escalationRisk == true)
+then
+    insert(new EvidenceLink("escalationRisk", "EVL"));
+    insert(new EvidenceLink("escalationRisk", "ESI"));
+end
+
+rule "Evidence - Emotional Instability Temporal Risk"
+when
+    TemporalRisks(emotionalInstabilityTemporalRisk == true)
+then
+    insert(new EvidenceLink("emotionalInstabilityTemporalRisk", "TII"));
+    insert(new EvidenceLink("emotionalInstabilityTemporalRisk", "EVI"));
+end
+
+rule "Evidence - Early Burnout"
+when
+    BurnoutPattern(earlyBurnout == true)
+then
+    insert(new EvidenceLink("EARLY_BURNOUT_PATTERN", "emotionalStressRisk"));
+    insert(new EvidenceLink("EARLY_BURNOUT_PATTERN", "sleepDisturbanceRisk"));
+    insert(new EvidenceLink("EARLY_BURNOUT_PATTERN", "cognitiveStrainRisk"));
+end
+
+rule "Evidence - Burnout Syndrome"
+when
+    BurnoutPattern(burnoutSyndrome == true)
+then
+    insert(new EvidenceLink("BURNOUT_SYNDROME", "emotionalOverloadRisk"));
+    insert(new EvidenceLink("BURNOUT_SYNDROME", "sleepDeprivationRisk"));
+    insert(new EvidenceLink("BURNOUT_SYNDROME", "cognitiveOverloadRisk"));
+end
+
+rule "Evidence - Severe Burnout"
+when
+    BurnoutPattern(severeBurnoutState == true)
+then
+    insert(new EvidenceLink("SEVERE_BURNOUT_STATE", "exhaustionRisk"));
+    insert(new EvidenceLink("SEVERE_BURNOUT_STATE", "socialIsolationRisk"));
+    insert(new EvidenceLink("SEVERE_BURNOUT_STATE", "deteriorationRisk"));
+    insert(new EvidenceLink("SEVERE_BURNOUT_STATE", "emotionalInstabilityRisk"));
+    insert(new EvidenceLink("SEVERE_BURNOUT_STATE", "BurnoutEmergenceEvent"));
+    insert(new EvidenceLink("SEVERE_BURNOUT_STATE", "SocialCollapseEvent"));
+    insert(new EvidenceLink("SEVERE_BURNOUT_STATE", "emotionalInstabilityTemporalRisk"));
+end
+
+rule "Evidence - Occupational Exhaustion"
+when
+    BurnoutPattern(occupationalExhaustion == true)
+then
+    insert(new EvidenceLink("OCCUPATIONAL_EXHAUSTION_PATTERN", "highExternalStressRisk"));
+    insert(new EvidenceLink("OCCUPATIONAL_EXHAUSTION_PATTERN", "physicalFatigueRisk"));
+    insert(new EvidenceLink("OCCUPATIONAL_EXHAUSTION_PATTERN", "BURNOUT_SYNDROME"));
+end
+
+rule "Evidence - Anxiety Risk"
+when
+    AnxietyPattern(anxietyRisk == true)
+then
+    insert(new EvidenceLink("ANXIETY_RISK_PATTERN", "emotionalStressRisk"));
+    insert(new EvidenceLink("ANXIETY_RISK_PATTERN", "cognitiveStrainRisk"));
+end
+
+rule "Evidence - Anxiety Escalation"
+when
+    AnxietyPattern(anxietyEscalation == true)
+then
+    insert(new EvidenceLink("ANXIETY_ESCALATION_STATE", "stressProgressionRisk"));
+    insert(new EvidenceLink("ANXIETY_ESCALATION_STATE", "emotionalInstabilityRisk"));
+    insert(new EvidenceLink("ANXIETY_ESCALATION_STATE", "StressEscalationEvent"));
+    insert(new EvidenceLink("ANXIETY_ESCALATION_STATE", "EmotionalVolatilityBurstEvent"));
+end
+
+rule "Evidence - Panic Attack"
+when
+    AnxietyPattern(panicAttack == true)
+then
+    insert(new EvidenceLink("PANIC_ATTACK_PATTERN", "emotionalOverloadRisk"));
+    insert(new EvidenceLink("PANIC_ATTACK_PATTERN", "escalationRisk"));
+    insert(new EvidenceLink("PANIC_ATTACK_PATTERN", "sleepDeprivationRisk"));
+    insert(new EvidenceLink("PANIC_ATTACK_PATTERN", "StressEscalationEvent"));
+    insert(new EvidenceLink("PANIC_ATTACK_PATTERN", "EmotionalVolatilityBurstEvent"));
+end
+
+rule "Evidence - Generalized Anxiety"
+when
+    AnxietyPattern(generalizedAnxiety == true)
+then
+    insert(new EvidenceLink("GENERALIZED_ANXIETY_TENDENCY", "emotionalStressRisk"));
+    insert(new EvidenceLink("GENERALIZED_ANXIETY_TENDENCY", "chronicStressRisk"));
+    insert(new EvidenceLink("GENERALIZED_ANXIETY_TENDENCY", "StressEscalationEvent"));
+end
+
+rule "Evidence - Depressive Pattern"
+when
+    DepressivePattern(depressivePattern == true)
+then
+    insert(new EvidenceLink("DEPRESSIVE_PATTERN", "socialIsolationRisk"));
+    insert(new EvidenceLink("DEPRESSIVE_PATTERN", "emotionalStressRisk"));
+end
+
+rule "Evidence - Emotional Numbness"
+when
+    DepressivePattern(emotionalNumbnessState == true)
+then
+    insert(new EvidenceLink("EMOTIONAL_NUMBNESS_STATE", "emotionalInstabilityRisk"));
+    insert(new EvidenceLink("EMOTIONAL_NUMBNESS_STATE", "cognitiveOverloadRisk"));
+    insert(new EvidenceLink("EMOTIONAL_NUMBNESS_STATE", "EmotionalVolatilityBurstEvent"));
+    insert(new EvidenceLink("EMOTIONAL_NUMBNESS_STATE", "CognitiveDegradationEvent"));
+end
+
+rule "Evidence - Motivational Collapse"
+when
+    DepressivePattern(motivationalCollapse == true)
+then
+    insert(new EvidenceLink("MOTIVATIONAL_COLLAPSE", "behavioralWithdrawalRisk"));
+    insert(new EvidenceLink("MOTIVATIONAL_COLLAPSE", "mentalFatigueRisk"));
+    insert(new EvidenceLink("MOTIVATIONAL_COLLAPSE", "SocialCollapseEvent"));
+end
+
+rule "Evidence - Severe Depressive Risk"
+when
+    DepressivePattern(severeDepressiveRisk == true)
+then
+    insert(new EvidenceLink("SEVERE_DEPRESSIVE_RISK_PATTERN", "deteriorationRisk"));
+    insert(new EvidenceLink("SEVERE_DEPRESSIVE_RISK_PATTERN", "socialIsolationRisk"));
+    insert(new EvidenceLink("SEVERE_DEPRESSIVE_RISK_PATTERN", "emotionalOverloadRisk"));
+    insert(new EvidenceLink("SEVERE_DEPRESSIVE_RISK_PATTERN", "SocialCollapseEvent"));
+    insert(new EvidenceLink("SEVERE_DEPRESSIVE_RISK_PATTERN", "EmotionalVolatilityBurstEvent"));
+    insert(new EvidenceLink("SEVERE_DEPRESSIVE_RISK_PATTERN", "CrisisBuildUpEvent"));
+end
+
+rule "Evidence - Mental Fatigue Syndrome"
+when
+    CognitivePattern(mentalFatigueSyndrome == true)
+then
+    insert(new EvidenceLink("MENTAL_FATIGUE_SYNDROME", "cognitiveOverloadRisk"));
+    insert(new EvidenceLink("MENTAL_FATIGUE_SYNDROME", "sleepDeprivationRisk"));
+    insert(new EvidenceLink("MENTAL_FATIGUE_SYNDROME", "emotionalStressRisk"));
+    insert(new EvidenceLink("MENTAL_FATIGUE_SYNDROME", "CognitiveDegradationEvent"));
+    insert(new EvidenceLink("MENTAL_FATIGUE_SYNDROME", "BurnoutEmergenceEvent"));
+end
+
+rule "Evidence - Concentration Decline"
+when
+    CognitivePattern(concentrationDecline == true)
+then
+    insert(new EvidenceLink("CONCENTRATION_DECLINE_PATTERN", "CognitiveDegradationEvent"));
+    insert(new EvidenceLink("CONCENTRATION_DECLINE_PATTERN", "decisionImpairmentRisk"));
+end
+
+rule "Evidence - Decision Fatigue"
+when
+    CognitivePattern(decisionFatigue == true)
+then
+    insert(new EvidenceLink("DECISION_FATIGUE_STATE", "decisionImpairmentRisk"));
+    insert(new EvidenceLink("DECISION_FATIGUE_STATE", "cognitiveOverloadRisk"));
+    insert(new EvidenceLink("DECISION_FATIGUE_STATE", "emotionalInstabilityRisk"));
+    insert(new EvidenceLink("DECISION_FATIGUE_STATE", "CognitiveDegradationEvent"));
+    insert(new EvidenceLink("DECISION_FATIGUE_STATE", "EmotionalVolatilityBurstEvent"));
+end
+
+rule "Evidence - Social Withdrawal"
+when
+    SocialPattern(socialWithdrawal == true)
+then
+    insert(new EvidenceLink("SOCIAL_WITHDRAWAL_SYNDROME", "socialIsolationRisk"));
+    insert(new EvidenceLink("SOCIAL_WITHDRAWAL_SYNDROME", "emotionalStressRisk"));
+    insert(new EvidenceLink("SOCIAL_WITHDRAWAL_SYNDROME", "mentalFatigueRisk"));
+    insert(new EvidenceLink("SOCIAL_WITHDRAWAL_SYNDROME", "SocialCollapseEvent"));
+    insert(new EvidenceLink("SOCIAL_WITHDRAWAL_SYNDROME", "emotionalOverloadRisk"));
+end
+
+rule "Evidence - Interpersonal Detachment"
+when
+    SocialPattern(interpersonalDetachment == true)
+then
+    insert(new EvidenceLink("INTERPERSONAL_DETACHMENT_PATTERN", "interpersonalDetachmentRisk"));
+    insert(new EvidenceLink("INTERPERSONAL_DETACHMENT_PATTERN", "emotionalInstabilityRisk"));
+    insert(new EvidenceLink("INTERPERSONAL_DETACHMENT_PATTERN", "SocialCollapseEvent"));
+    insert(new EvidenceLink("INTERPERSONAL_DETACHMENT_PATTERN", "EmotionalVolatilityBurstEvent"));
+end
+
+rule "Evidence - Social Isolation Progression"
+when
+    SocialPattern(socialIsolationProgression == true)
+then
+    insert(new EvidenceLink("SOCIAL_ISOLATION_PROGRESSION", "SocialCollapseEvent"));
+    insert(new EvidenceLink("SOCIAL_ISOLATION_PROGRESSION", "deteriorationRisk"));
+end
+
+rule "Evidence - Severe Psychological Deterioration"
+when
+    CriticalPattern(severePsychologicalDeterioration == true)
+then
+    insert(new EvidenceLink("SEVERE_PSYCHOLOGICAL_DETERIORATION", "CrisisBuildUpEvent"));
+    insert(new EvidenceLink("SEVERE_PSYCHOLOGICAL_DETERIORATION", "CognitiveDegradationEvent"));
+    insert(new EvidenceLink("SEVERE_PSYCHOLOGICAL_DETERIORATION", "SocialCollapseEvent"));
+end
+
+rule "Evidence - Emotional Collapse"
+when
+    CriticalPattern(emotionalCollapseRisk == true)
+then
+    insert(new EvidenceLink("EMOTIONAL_COLLAPSE_RISK", "emotionalCrisisRisk"));
+    insert(new EvidenceLink("EMOTIONAL_COLLAPSE_RISK", "EmotionalVolatilityBurstEvent"));
+    insert(new EvidenceLink("EMOTIONAL_COLLAPSE_RISK", "CrisisBuildUpEvent"));
+end
+
+rule "Evidence - Self Harm"
+when
+    CriticalPattern(selfHarmRisk == true)
+then
+    insert(new EvidenceLink("SELF_HARM_RISK_PATTERN", "SEVERE_DEPRESSIVE_RISK_PATTERN"));
+    insert(new EvidenceLink("SELF_HARM_RISK_PATTERN", "SEVERE_PSYCHOLOGICAL_DETERIORATION"));
+    insert(new EvidenceLink("SELF_HARM_RISK_PATTERN", "EMOTIONAL_COLLAPSE_RISK"));
+end
+
+rule "Evidence - Crisis Intervention"
+when
+    CriticalPattern(crisisInterventionRecommended == true)
+then
+    insert(new EvidenceLink("CRISIS_INTERVENTION_RECOMMENDED", "exhaustionRisk"));
+    insert(new EvidenceLink("CRISIS_INTERVENTION_RECOMMENDED", "emotionalCrisisRisk"));
+    insert(new EvidenceLink("CRISIS_INTERVENTION_RECOMMENDED", "CrisisBuildUpEvent"));
+    insert(new EvidenceLink("CRISIS_INTERVENTION_RECOMMENDED", "EMOTIONAL_COLLAPSE_RISK"));
+    insert(new EvidenceLink("CRISIS_INTERVENTION_RECOMMENDED", "SEVERE_PSYCHOLOGICAL_DETERIORATION"));
+end

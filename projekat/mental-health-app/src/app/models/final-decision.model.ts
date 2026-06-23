@@ -10,3 +10,11 @@ export interface FinalDecision {
   score: number;
   date?: string | Date;
 }
+
+export interface BackwardCheckResult {
+  targetState: any;
+  confirmed: boolean;
+  cepBased: boolean;
+  explanation: string;
+  evidence: string[];
+}

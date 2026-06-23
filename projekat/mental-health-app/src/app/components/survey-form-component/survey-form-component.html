@@ -186,6 +186,21 @@
       }
     </mat-expansion-panel>
 
+    <div class="backward-panel">
+      <mat-form-field appearance="outline">
+        <mat-label>Hipoteza</mat-label>
+        <mat-select [(ngModel)]="selectedTargetState">
+          <mat-option *ngFor="let option of hypothesisOptions" [value]="option.value">
+            {{ option.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-stroked-button color="primary" (click)="checkBackwardHypothesis()" [disabled]="!isFormValid()">
+        Proveri hipotezu
+      </button>
+    </div>
+
     <!-- SUBMIT -->
     <div class="actions">
       <button mat-flat-button color="primary" (click)="finishSurvey()" [disabled]="!isFormValid()">
@@ -237,5 +252,36 @@
     </div>
 
     <button mat-raised-button color="primary" (click)="resetSurvey()">Nova procena</button>
+  </mat-card>
+</div>
+<div *ngIf="view === 'backwardResult' && backwardResult" class="result-page">
+  <mat-card class="result-card">
+    <div class="header">
+      <h2>Backward rezultat</h2>
+      <span class="status-pill" [ngClass]="backwardResult.confirmed ? 'confirmed' : 'rejected'">
+        {{ backwardResult.confirmed ? 'POTVRDJENO' : 'NIJE POTVRDJENO' }}
+      </span>
+    </div>
+
+    <div class="badges">
+      <span class="badge state">{{ backwardResult.targetState }}</span>
+      <span class="badge severity" *ngIf="backwardResult.cepBased">CEP</span>
+    </div>
+
+    <div class="section">
+      <h3>Objasnjenje</h3>
+      <p>{{ backwardResult.explanation }}</p>
+    </div>
+
+    <div class="section" *ngIf="backwardResult.evidence?.length">
+      <h3>Dokazi</h3>
+      <div class="chips">
+        <span class="chip" *ngFor="let item of backwardResult.evidence">
+          {{ item }}
+        </span>
+      </div>
+    </div>
+
+    <button mat-raised-button color="primary" (click)="resetSurvey()">Nova provera</button>
   </mat-card>
 </div>

@@ -19,7 +19,7 @@ when
     )
 then
     insert(new FinalDecision(
-        FinalState.LOW_RISK,
+        FinalState.LOW_EMOTIONAL_TENSION,
         Severity.LOW,
         "Prisutan je blag emocionalni pritisak bez sirenja na druge oblasti",
         "Pratiti stres tokom narednih dana i odrzati rutinu odmora",
@@ -42,7 +42,7 @@ when
     )
 then
     insert(new FinalDecision(
-        FinalState.LOW_RISK,
+        FinalState.LOW_MOOD_VULNERABILITY,
         Severity.LOW,
         "Uoceni su blagi znaci snizenog raspolozenja",
         "Uvesti prijatne aktivnosti i pratiti da li se raspolozenje stabilizuje",
@@ -63,7 +63,7 @@ when
     )
 then
     insert(new FinalDecision(
-        FinalState.LOW_RISK,
+        FinalState.LOW_SLEEP_STRAIN,
         Severity.LOW,
         "San pokazuje blago odstupanje bez izrazenog umora",
         "Stabilizovati vreme odlaska na spavanje i smanjiti stimuluse pred spavanje",
@@ -84,7 +84,7 @@ when
     )
 then
     insert(new FinalDecision(
-        FinalState.LOW_RISK,
+        FinalState.LOW_FATIGUE,
         Severity.LOW,
         "Prisutan je blag umor bez jasnog obrasca iscrpljenosti",
         "Planirati kratke pauze i proveriti da li umor raste kroz nedelju",
@@ -105,7 +105,7 @@ when
     )
 then
     insert(new FinalDecision(
-        FinalState.LOW_RISK,
+        FinalState.LOW_COGNITIVE_LOAD,
         Severity.LOW,
         "Uoceno je blago kognitivno opterecenje",
         "Raditi u kracim blokovima i pratiti koncentraciju",
@@ -126,7 +126,7 @@ when
     )
 then
     insert(new FinalDecision(
-        FinalState.LOW_RISK,
+        FinalState.LOW_SOCIAL_WITHDRAWAL,
         Severity.LOW,
         "Postoji blaga tendencija ka smanjenju socijalnog kontakta",
         "Odrzati makar jedan planirani kontakt ili aktivnost tokom nedelje",
@@ -145,7 +145,7 @@ when
     )
 then
     insert(new FinalDecision(
-        FinalState.LOW_RISK,
+        FinalState.LOW_EXTERNAL_PRESSURE,
         Severity.LOW,
         "Spoljasnji pritisak je blag i za sada nije hronican",
         "Urediti prioritete i ostaviti prostor za oporavak",

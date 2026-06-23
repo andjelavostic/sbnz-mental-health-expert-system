@@ -3,6 +3,13 @@ package com.ftn.sbnz.model.decision;
 public enum FinalState {
 
     LOW_RISK,
+    LOW_EMOTIONAL_TENSION,
+    LOW_MOOD_VULNERABILITY,
+    LOW_SLEEP_STRAIN,
+    LOW_FATIGUE,
+    LOW_COGNITIVE_LOAD,
+    LOW_SOCIAL_WITHDRAWAL,
+    LOW_EXTERNAL_PRESSURE,
 
     // BURNOUT
     EARLY_BURNOUT_PATTERN,

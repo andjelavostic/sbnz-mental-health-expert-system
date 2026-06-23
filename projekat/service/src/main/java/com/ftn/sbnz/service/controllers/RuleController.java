@@ -11,8 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ftn.sbnz.model.assessment.UserAssessment;
 import com.ftn.sbnz.model.decision.FinalDecision;
+import com.ftn.sbnz.service.dto.BackwardCheckDTO;
+import com.ftn.sbnz.service.dto.BackwardCheckRequest;
 import com.ftn.sbnz.service.dto.FinalDecisionDTO;
-import com.ftn.sbnz.service.entity.FinalDecisionEntity;
 import com.ftn.sbnz.service.services.RuleEngineService;
 
 @RestController
@@ -28,6 +29,11 @@ public class RuleController {
     @PostMapping("/evaluate")
     public FinalDecision evaluate(@RequestBody UserAssessment input) {
         return service.evaluate(input);
+    }
+
+    @PostMapping("/backward-check")
+    public BackwardCheckDTO backwardCheck(@RequestBody BackwardCheckRequest request) {
+        return service.checkHypothesis(request.getAssessment(), request.getTargetState());
     }
 
     @GetMapping("/history/{userId}")
