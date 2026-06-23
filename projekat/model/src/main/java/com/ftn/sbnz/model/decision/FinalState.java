@@ -2,6 +2,8 @@ package com.ftn.sbnz.model.decision;
 
 public enum FinalState {
 
+    LOW_RISK,
+
     // BURNOUT
     EARLY_BURNOUT_PATTERN,
     BURNOUT_SYNDROME,

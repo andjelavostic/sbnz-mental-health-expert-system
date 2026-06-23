@@ -6,7 +6,7 @@ import java.util.List;
 import jakarta.persistence.MappedSuperclass;
 @MappedSuperclass
 public class FinalDecision {
-    private Long id; 
+    private Long userId; 
 
     private LocalDateTime date;
 
@@ -30,7 +30,7 @@ public class FinalDecision {
             String recommendation,
             List<String> triggeredPatterns,
             double score) {
-        this.id = id;
+        this.userId = id;
         this.date = date;
         this.finalState = finalState;
         this.severity = severity;
@@ -39,13 +39,27 @@ public class FinalDecision {
         this.triggeredPatterns = triggeredPatterns;
         this.score = score;
     }
+    public FinalDecision(
+            FinalState finalState,
+            Severity severity,
+            String explanation,
+            String recommendation,
+            List<String> triggeredPatterns,
+            double score) {
+        this.finalState = finalState;
+        this.severity = severity;
+        this.explanation = explanation;
+        this.recommendation = recommendation;
+        this.triggeredPatterns = triggeredPatterns;
+        this.score = score;
+    }
     
-    public Long getId() {
-        return id;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setUserId(Long id) {
+        this.userId = id;
     }
 
     public LocalDateTime getDate() {

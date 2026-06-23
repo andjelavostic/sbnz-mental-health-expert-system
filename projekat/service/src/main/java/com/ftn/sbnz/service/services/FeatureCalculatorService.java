@@ -16,6 +16,7 @@ import com.ftn.sbnz.model.features.TemporalFeatures;
 
 @Service
 public class FeatureCalculatorService {
+
         @Autowired
         private NormalizationService normalization;
 

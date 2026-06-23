@@ -12,31 +12,8 @@ import { RouterModule } from '@angular/router';
 import { AssessmentService } from '../../services/assesment-service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-export const MOCK_FINAL_DECISION: FinalDecision = {
-  finalState: 'AT_RISK',
-  severity: 'HIGH',
-
-  score: 0.74,
-
-  explanation: `
-    Na osnovu odgovora, primećen je povišen nivo stresa,
-    smanjena kvaliteta sna i blagi kognitivni zamor.
-    Obrasci ukazuju na povećano emocionalno opterećenje.
-  `,
-
-  recommendation: `
-    Preporučuje se smanjenje dnevnog stresa, poboljšanje higijene sna
-    i uvođenje redovnih pauza tokom dana. Ako simptomi potraju,
-    savetuje se razgovor sa stručnim licem.
-  `,
-
-  triggeredPatterns: [
-    'HIGH_STRESS_LEVEL',
-    'SLEEP_DEGRADATION',
-    'COGNITIVE_FATIGUE',
-    'MODERATE_SOCIAL_WITHDRAWAL',
-  ],
-};
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ChangeDetectorRef, NgZone } from '@angular/core';
 type NumberRule = {
   min: number;
   max: number;
@@ -56,12 +33,17 @@ type NumberRule = {
     RouterModule,
     MatFormFieldModule,
     MatInputModule,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './survey-form-component.html',
   styleUrls: ['./survey-form-component.css'],
 })
 export class SurveyFormComponent {
-  constructor(private assessmentService: AssessmentService) {}
+  constructor(
+    private assessmentService: AssessmentService,
+    private cdr: ChangeDetectorRef,
+    private zone: NgZone,
+  ) {}
   numberRules: Record<string, NumberRule> = {
     hours: { min: 0, max: 24, message: '0–24 sati' },
     days: { min: 0, max: 365, message: '0–365 dana' },
@@ -377,8 +359,8 @@ export class SurveyFormComponent {
 
     return result;
   }
-
-  finalDecision: FinalDecision | null = MOCK_FINAL_DECISION;
+  view: 'form' | 'loading' | 'result' = 'form';
+  finalDecision: FinalDecision | null = null;
   loading = false;
   finishSurvey() {
     if (!this.isFormValid()) {
@@ -398,18 +380,40 @@ export class SurveyFormComponent {
     };
 
     console.log(assessment);
-    this.loading = true;
+
+    this.view = 'loading';
+    this.finalDecision = null;
 
     this.assessmentService.evaluate(assessment).subscribe({
-      next: (res: FinalDecision) => {
-        this.finalDecision = res;
-        this.loading = false;
+      next: (res) => {
+        this.zone.run(() => {
+          this.finalDecision = res;
+          this.view = 'result';
+
+          this.cdr.detectChanges(); 
+        });
       },
+
       error: (err) => {
         console.error(err);
-        this.loading = false;
+        this.view = 'form';
         alert('Greška pri evaluaciji');
       },
     });
+  }
+  resetSurvey() {
+    this.finalDecision = null;
+    this.loading = false;
+
+    const reset = (arr: any[]) => {
+      arr.forEach((q) => (q.answer = null));
+    };
+
+    reset(this.emotionalQuestions);
+    reset(this.sleepPhysicalQuestions);
+    reset(this.cognitiveQuestions);
+    reset(this.socialQuestions);
+    reset(this.stressorsQuestions);
+    reset(this.temporalQuestions);
   }
 }

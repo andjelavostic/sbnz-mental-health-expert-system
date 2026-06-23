@@ -17,7 +17,7 @@ public class FinalDecisionDTO {
     private List<String> triggeredPatterns;
     private double score;
 
-    private LocalDateTime timestamp;
+    private LocalDateTime date;
 
     public FinalDecisionDTO() {}
 
@@ -28,7 +28,7 @@ public class FinalDecisionDTO {
         this.recommendation = e.getRecommendation();
         this.triggeredPatterns = e.getTriggeredPatterns();
         this.score = e.getScore();
-        this.timestamp = e.getTimestamp();
+        this.date = e.getDate();
     }
 
     public FinalState getFinalState() {
@@ -79,12 +79,12 @@ public class FinalDecisionDTO {
         this.score = score;
     }
 
-    public LocalDateTime getTimestamp() {
-        return timestamp;
+    public LocalDateTime getDate() {
+        return date;
     }
 
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
+    public void setDate(LocalDateTime date) {
+        this.date= date;
     }
 
     

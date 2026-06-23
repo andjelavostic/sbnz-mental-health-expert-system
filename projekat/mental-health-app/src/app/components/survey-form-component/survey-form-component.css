@@ -235,3 +235,28 @@ mat-expansion-panel-header {
 .home-link a:hover {
   background: #e8f5e9;
 }
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: rgba(0, 0, 0, 0.4); /* zatamnjenje pozadine */
+  z-index: 1000;
+}
+
+.loading-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+}

@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import com.ftn.sbnz.model.assessment.UserAssessment;
 import com.ftn.sbnz.model.assessment.UserAssessmentEvent;
 import com.ftn.sbnz.model.decision.FinalDecision;
+import com.ftn.sbnz.model.decision.FinalState;
+import com.ftn.sbnz.model.decision.Severity;
 import com.ftn.sbnz.model.features.CognitiveFeatures;
 import com.ftn.sbnz.model.features.EmotionalFeatures;
 import com.ftn.sbnz.model.features.EnvironmentalFeatures;
@@ -75,7 +77,7 @@ public class RuleEngineService {
         kieSession.insert(input);
 
         // 5. VRATI FINAL DECISIONS
-        kieSession.setGlobal("featureService", featureService); // Ovo dodaješ
+        kieSession.setGlobal("featureService", featureService);
         int fired = kieSession.fireAllRules();
         System.out.println("RULES FIRED: " + fired);
 
@@ -93,9 +95,15 @@ public class RuleEngineService {
                 .max(Comparator.comparingDouble(FinalDecision::getScore));
 
         FinalDecision decision = bestDecision.orElse(null);
-
-        if (decision == null)
-            return null;
+        if (decision == null) {
+            decision = new FinalDecision(
+                    FinalState.LOW_RISK,
+                    Severity.LOW,
+                    "Nije detektovan značajan rizik",
+                    "Rezultati ne ukazuju na zabrinjavajuće obrasce.",
+                    new ArrayList<>(),
+                    0.1);
+        }
 
         FinalDecisionEntity decisionEntity = new FinalDecisionEntity(decision, input.getUserId());
 
@@ -106,7 +114,7 @@ public class RuleEngineService {
     public List<FinalDecisionDTO> getHistory(Long userId) {
 
         return finalDecisionRepository
-                .findByUserIdOrderByTimestampDesc(userId)
+                .findByUserIdOrderByDateDesc(userId)
                 .stream()
                 .map(FinalDecisionDTO::new)
                 .toList();

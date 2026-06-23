@@ -1,7 +1,7 @@
 <div class="home-link">
   <a routerLink="/">🏠 Home</a>
 </div>
-<div *ngIf="!finalDecision">
+<div *ngIf="view === 'form'">
   <div class="survey-wrapper">
     <h2>Anketa o zdravlju</h2>
 
@@ -194,8 +194,13 @@
     </div>
   </div>
 </div>
-<div *ngIf="loading" class="loading">Evaluacija u toku...</div>
-<div *ngIf="finalDecision" class="result-page">
+<div *ngIf="view === 'loading'" class="loading-overlay">
+  <mat-card class="loading-card">
+    <mat-spinner></mat-spinner>
+    <p>Evaluacija u toku...</p>
+  </mat-card>
+</div>
+<div *ngIf="view === 'result' && finalDecision" class="result-page">
   <mat-card class="result-card">
     <div class="header">
       <h2>Rezultat procene</h2>
@@ -221,16 +226,16 @@
       <p>{{ finalDecision.recommendation }}</p>
     </div>
 
-    <div class="section" *ngIf="finalDecision.triggeredPatterns?.length">
+    <div class="section" *ngIf="finalDecision?.triggeredPatterns?.length">
       <h3>Aktivirani obrasci</h3>
 
       <div class="chips">
-        <span class="chip" *ngFor="let p of finalDecision.triggeredPatterns">
+        <span class="chip" *ngFor="let p of finalDecision?.triggeredPatterns">
           {{ p }}
         </span>
       </div>
     </div>
 
-    <button mat-raised-button color="primary" (click)="finalDecision = null">Nova procena</button>
+    <button mat-raised-button color="primary" (click)="resetSurvey()">Nova procena</button>
   </mat-card>
 </div>

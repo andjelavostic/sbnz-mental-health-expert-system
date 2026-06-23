@@ -1,5 +1,4 @@
 package com.ftn.sbnz.service.entity;
-
 import java.time.LocalDateTime;
 
 import com.ftn.sbnz.model.decision.FinalDecision;
@@ -17,10 +16,6 @@ public class FinalDecisionEntity extends FinalDecision {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long userId;
-
-    private LocalDateTime timestamp;
-
     public FinalDecisionEntity() {
        
     }
@@ -33,9 +28,8 @@ public class FinalDecisionEntity extends FinalDecision {
         this.setRecommendation(decision.getRecommendation());
         this.setTriggeredPatterns(decision.getTriggeredPatterns());
         this.setScore(decision.getScore());
-
-        this.userId = userId;
-        this.timestamp = LocalDateTime.now();
+        this.setUserId(userId);
+        this.setDate(LocalDateTime.now());
     }
 
     public Long getId() {
@@ -46,20 +40,6 @@ public class FinalDecisionEntity extends FinalDecision {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
-    }
+  
 
 }
