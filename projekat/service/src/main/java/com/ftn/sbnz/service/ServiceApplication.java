@@ -22,6 +22,4 @@ public class ServiceApplication {
 		kScanner.start(1000);
 		return kContainer;
 	}
-
-
 }

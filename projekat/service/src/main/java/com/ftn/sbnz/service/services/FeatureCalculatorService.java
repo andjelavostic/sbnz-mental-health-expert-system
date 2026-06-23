@@ -1,5 +1,7 @@
 package com.ftn.sbnz.service.services;
 
+import java.time.Duration;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -261,5 +263,181 @@ public class FeatureCalculatorService {
                 return events.stream()
                                 .mapToDouble(e -> calculatePhysical(e.getAssessment()).getFI())
                                 .average().orElse(0.0);
+        }
+
+        public double calculateStressEscalationScore(UserAssessmentEvent current, List<UserAssessmentEvent> events) {
+                List<UserAssessmentEvent> timeline = timelineUpTo(current, events);
+                if (timeline.size() < 3) {
+                        return -1.0;
+                }
+
+                UserAssessmentEvent t0 = timeline.get(timeline.size() - 1);
+                UserAssessmentEvent t1 = timeline.get(timeline.size() - 2);
+                UserAssessmentEvent t2 = timeline.get(timeline.size() - 3);
+
+                long hoursBetween = Duration.between(t2.getTimestamp(), t0.getTimestamp()).toHours();
+                if (hoursBetween < 24) {
+                        return -1.0;
+                }
+
+                EmotionalFeatures f0 = calculateEmotional(t0.getAssessment());
+                EmotionalFeatures f1 = calculateEmotional(t1.getAssessment());
+                EmotionalFeatures f2 = calculateEmotional(t2.getAssessment());
+                TemporalFeatures temporal = calculateTemporal(t0.getAssessment());
+
+                if (!(f0.getESI() > f1.getESI() && f1.getESI() > f2.getESI() && temporal.getDR() > 0.6)) {
+                        return -1.0;
+                }
+
+                double trendSlope = f0.getESI() - f2.getESI();
+                return clamp((trendSlope * 0.5) + (f0.getESI() * 0.3) + (temporal.getDR() * 0.2));
+        }
+
+        public double calculateBurnoutEmergenceScore(UserAssessmentEvent current, List<UserAssessmentEvent> events) {
+                List<UserAssessmentEvent> timeline = timelineUpTo(current, events);
+                if (timeline.size() < 4) {
+                        return -1.0;
+                }
+
+                UserAssessmentEvent t0 = timeline.get(timeline.size() - 1);
+                UserAssessmentEvent t1 = timeline.get(timeline.size() - 2);
+                UserAssessmentEvent t2 = timeline.get(timeline.size() - 3);
+
+                SleepFeatures f0 = calculatePhysical(t0.getAssessment());
+                SleepFeatures f1 = calculatePhysical(t1.getAssessment());
+                SleepFeatures f2 = calculatePhysical(t2.getAssessment());
+                CognitiveFeatures c0 = calculateCognitive(t0.getAssessment());
+                CognitiveFeatures c1 = calculateCognitive(t1.getAssessment());
+                CognitiveFeatures c2 = calculateCognitive(t2.getAssessment());
+
+                boolean burnoutTrend = f0.getFI() > f1.getFI()
+                                && f1.getFI() > f2.getFI()
+                                && f0.getSQI() < f1.getSQI()
+                                && f1.getSQI() < f2.getSQI()
+                                && c0.getMFS() > c1.getMFS()
+                                && c1.getMFS() > c2.getMFS();
+                if (!burnoutTrend) {
+                        return -1.0;
+                }
+
+                double fiDelta = f0.getFI() - f2.getFI();
+                double sqiDelta = f2.getSQI() - f0.getSQI();
+                double mfsDelta = c0.getMFS() - c2.getMFS();
+                return clamp((fiDelta + sqiDelta + mfsDelta) / 3.0);
+        }
+
+        public double calculateEmotionalVolatilityBurstScore(UserAssessmentEvent current, List<UserAssessmentEvent> events) {
+                List<UserAssessmentEvent> timeline = timelineUpTo(current, events);
+                if (timeline.size() < 3) {
+                        return -1.0;
+                }
+
+                EmotionalFeatures currentFeatures = calculateEmotional(current.getAssessment());
+                TemporalFeatures temporal = calculateTemporal(current.getAssessment());
+                List<Double> eviValues = timeline.stream()
+                                .map(e -> calculateEmotional(e.getAssessment()).getEVI())
+                                .toList();
+
+                double average = calculateAverage(eviValues);
+                if (average <= 0.0 || currentFeatures.getEVI() <= average * 1.5 || temporal.getTII() <= 0.6) {
+                        return -1.0;
+                }
+
+                double spikeIntensity = (currentFeatures.getEVI() / average) - 1.0;
+                return clamp((spikeIntensity * 0.6) + (temporal.getTII() * 0.4));
+        }
+
+        public double calculateCognitiveDegradationScore(UserAssessmentEvent current, List<UserAssessmentEvent> events) {
+                List<UserAssessmentEvent> timeline = timelineUpTo(current, events);
+                if (timeline.size() < 4) {
+                        return -1.0;
+                }
+
+                UserAssessmentEvent t0 = timeline.get(timeline.size() - 1);
+                UserAssessmentEvent t1 = timeline.get(timeline.size() - 2);
+                UserAssessmentEvent t2 = timeline.get(timeline.size() - 3);
+
+                CognitiveFeatures c0 = calculateCognitive(t0.getAssessment());
+                CognitiveFeatures c1 = calculateCognitive(t1.getAssessment());
+                CognitiveFeatures c2 = calculateCognitive(t2.getAssessment());
+
+                boolean degradationTrend = c0.getCLI() > c1.getCLI()
+                                && c1.getCLI() > c2.getCLI()
+                                && c0.getDLI() > c1.getDLI()
+                                && c1.getDLI() > c2.getDLI()
+                                && c0.getMFS() > c1.getMFS()
+                                && c1.getMFS() > c2.getMFS();
+                if (!degradationTrend) {
+                        return -1.0;
+                }
+
+                double cliDelta = c0.getCLI() - c2.getCLI();
+                double dliDelta = c0.getDLI() - c2.getDLI();
+                double mfsDelta = c0.getMFS() - c2.getMFS();
+                return clamp((cliDelta + dliDelta + mfsDelta) / 3.0);
+        }
+
+        public double calculateSocialCollapseScore(UserAssessmentEvent current, List<UserAssessmentEvent> events) {
+                List<UserAssessmentEvent> timeline = timelineUpTo(current, events);
+                if (timeline.size() < 4) {
+                        return -1.0;
+                }
+
+                UserAssessmentEvent t0 = timeline.get(timeline.size() - 1);
+                UserAssessmentEvent t1 = timeline.get(timeline.size() - 2);
+                UserAssessmentEvent t2 = timeline.get(timeline.size() - 3);
+
+                SocialFeatures s0 = calculateSocial(t0.getAssessment());
+                SocialFeatures s1 = calculateSocial(t1.getAssessment());
+                SocialFeatures s2 = calculateSocial(t2.getAssessment());
+
+                boolean collapseTrend = s0.getSWI() > s1.getSWI()
+                                && s1.getSWI() > s2.getSWI()
+                                && s0.getSAD() > s1.getSAD()
+                                && s1.getSAD() > s2.getSAD()
+                                && s0.getIDI() > s1.getIDI()
+                                && s1.getIDI() > s2.getIDI();
+                if (!collapseTrend) {
+                        return -1.0;
+                }
+
+                double swiDelta = s0.getSWI() - s2.getSWI();
+                double sadDelta = s0.getSAD() - s2.getSAD();
+                double idiDelta = s0.getIDI() - s2.getIDI();
+                return clamp((swiDelta + sadDelta + idiDelta) / 3.0);
+        }
+
+        public double calculateCrisisBuildUpScore(UserAssessmentEvent current, List<UserAssessmentEvent> events) {
+                List<UserAssessmentEvent> timeline = timelineUpTo(current, events);
+                if (timeline.size() < 3) {
+                        return -1.0;
+                }
+
+                double averageEsi = calculateAverageEsi(timeline);
+                double averageFi = calculateAverageFi(timeline);
+                TemporalFeatures temporal = calculateTemporal(current.getAssessment());
+
+                if (!(averageEsi > 0.6 && averageFi > 0.6 && temporal.getSPS() > 0.6)) {
+                        return -1.0;
+                }
+
+                return clamp((averageEsi + averageFi + temporal.getSPS()) / 3.0);
+        }
+
+        private List<UserAssessmentEvent> timelineUpTo(UserAssessmentEvent current, List<UserAssessmentEvent> events) {
+                if (current == null || events == null) {
+                        return List.of();
+                }
+                long currentTimestamp = current.getTimestampMillis();
+                boolean currentIsLatest = events.stream()
+                                .filter(e -> e != null)
+                                .noneMatch(e -> e.getTimestampMillis() > currentTimestamp);
+                if (!currentIsLatest) {
+                        return List.of();
+                }
+                return events.stream()
+                                .filter(e -> e != null && e.getTimestampMillis() <= currentTimestamp)
+                                .sorted(Comparator.comparingLong(UserAssessmentEvent::getTimestampMillis))
+                                .toList();
         }
 }
