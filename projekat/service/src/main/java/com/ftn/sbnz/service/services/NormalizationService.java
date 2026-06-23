@@ -6,16 +6,16 @@ import org.springframework.stereotype.Service;
 public class NormalizationService {
 
     public double likert(double value) {
-        return (value - 1) / 4.0;
+        return clamp((value - 1) / 4.0);
     }
 
     public double yesNo(double value) {
-        return value;
+        return clamp(value);
     }
 
     public double frequency(double timesPerWeek) {
 
-        if (timesPerWeek == 0)
+        if (timesPerWeek <= 0)
             return 0.0;
         if (timesPerWeek <= 2)
             return 0.25;

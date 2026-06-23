@@ -16,6 +16,12 @@ import com.ftn.sbnz.model.assessment.UserAssessmentEvent;
 import com.ftn.sbnz.model.decision.FinalDecision;
 import com.ftn.sbnz.model.decision.FinalState;
 import com.ftn.sbnz.model.decision.Severity;
+import com.ftn.sbnz.model.events.BurnoutEmergenceEvent;
+import com.ftn.sbnz.model.events.CognitiveDegradationEvent;
+import com.ftn.sbnz.model.events.CrisisBuildUpEvent;
+import com.ftn.sbnz.model.events.EmotionalVolatilityBurstEvent;
+import com.ftn.sbnz.model.events.SocialCollapseEvent;
+import com.ftn.sbnz.model.events.StressEscalationEvent;
 import com.ftn.sbnz.model.features.CognitiveFeatures;
 import com.ftn.sbnz.model.features.EmotionalFeatures;
 import com.ftn.sbnz.model.features.EnvironmentalFeatures;
@@ -82,11 +88,23 @@ public class RuleEngineService {
         System.out.println("RULES FIRED: " + fired);
 
         List<FinalDecision> results = new ArrayList<>();
+        boolean stressEscalationEvent = false;
+        boolean burnoutEmergenceEvent = false;
+        boolean emotionalVolatilityBurstEvent = false;
+        boolean cognitiveDegradationEvent = false;
+        boolean socialCollapseEvent = false;
+        boolean crisisBuildUpEvent = false;
 
         for (Object obj : kieSession.getObjects()) {
             if (obj instanceof FinalDecision fd) {
                 results.add(fd);
             }
+            stressEscalationEvent = stressEscalationEvent || obj instanceof StressEscalationEvent;
+            burnoutEmergenceEvent = burnoutEmergenceEvent || obj instanceof BurnoutEmergenceEvent;
+            emotionalVolatilityBurstEvent = emotionalVolatilityBurstEvent || obj instanceof EmotionalVolatilityBurstEvent;
+            cognitiveDegradationEvent = cognitiveDegradationEvent || obj instanceof CognitiveDegradationEvent;
+            socialCollapseEvent = socialCollapseEvent || obj instanceof SocialCollapseEvent;
+            crisisBuildUpEvent = crisisBuildUpEvent || obj instanceof CrisisBuildUpEvent;
         }
 
         kieSession.dispose();
@@ -105,10 +123,55 @@ public class RuleEngineService {
                     0.1);
         }
 
+        if (isCepDecision(
+                decision.getFinalState(),
+                stressEscalationEvent,
+                burnoutEmergenceEvent,
+                emotionalVolatilityBurstEvent,
+                cognitiveDegradationEvent,
+                socialCollapseEvent,
+                crisisBuildUpEvent)) {
+            List<String> patterns = new ArrayList<>(decision.getTriggeredPatterns());
+            if (!patterns.contains("CEP")) {
+                patterns.add("CEP");
+            }
+            decision.setTriggeredPatterns(patterns);
+        }
+
         FinalDecisionEntity decisionEntity = new FinalDecisionEntity(decision, input.getUserId());
 
         finalDecisionRepository.save(decisionEntity);
         return decision;
+    }
+
+    private boolean isCepDecision(
+            FinalState finalState,
+            boolean stressEscalationEvent,
+            boolean burnoutEmergenceEvent,
+            boolean emotionalVolatilityBurstEvent,
+            boolean cognitiveDegradationEvent,
+            boolean socialCollapseEvent,
+            boolean crisisBuildUpEvent) {
+        return switch (finalState) {
+            case SEVERE_BURNOUT_STATE -> burnoutEmergenceEvent && socialCollapseEvent;
+            case EMOTIONAL_NUMBNESS_STATE -> emotionalVolatilityBurstEvent && cognitiveDegradationEvent;
+            case MOTIVATIONAL_COLLAPSE -> socialCollapseEvent;
+            case SEVERE_DEPRESSIVE_RISK_PATTERN -> socialCollapseEvent && emotionalVolatilityBurstEvent
+                    && crisisBuildUpEvent;
+            case ANXIETY_ESCALATION_STATE, PANIC_ATTACK_PATTERN -> stressEscalationEvent
+                    && emotionalVolatilityBurstEvent;
+            case GENERALIZED_ANXIETY_TENDENCY -> stressEscalationEvent;
+            case MENTAL_FATIGUE_SYNDROME -> cognitiveDegradationEvent && burnoutEmergenceEvent;
+            case CONCENTRATION_DECLINE_PATTERN -> cognitiveDegradationEvent;
+            case DECISION_FATIGUE_STATE -> cognitiveDegradationEvent && emotionalVolatilityBurstEvent;
+            case SOCIAL_WITHDRAWAL_SYNDROME, SOCIAL_ISOLATION_PROGRESSION -> socialCollapseEvent;
+            case INTERPERSONAL_DETACHMENT_PATTERN -> socialCollapseEvent && emotionalVolatilityBurstEvent;
+            case SEVERE_PSYCHOLOGICAL_DETERIORATION -> crisisBuildUpEvent && cognitiveDegradationEvent
+                    && socialCollapseEvent;
+            case EMOTIONAL_COLLAPSE_RISK -> emotionalVolatilityBurstEvent && crisisBuildUpEvent;
+            case CRISIS_INTERVENTION_RECOMMENDED -> crisisBuildUpEvent;
+            default -> false;
+        };
     }
 
     public List<FinalDecisionDTO> getHistory(Long userId) {

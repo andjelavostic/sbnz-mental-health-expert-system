@@ -1,6 +1,6 @@
 export interface FinalDecision {
   finalState: any; 
-  severity: 'MODERATE' | 'HIGH' | 'CRITICAL';
+  severity: 'LOW' | 'MODERATE' | 'HIGH' | 'CRITICAL';
 
   explanation: string;
   recommendation: string;
@@ -8,4 +8,5 @@ export interface FinalDecision {
   triggeredPatterns: string[];
 
   score: number;
+  date?: string | Date;
 }

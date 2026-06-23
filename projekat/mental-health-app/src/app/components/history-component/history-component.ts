@@ -1,42 +1,50 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { AssessmentService } from '../../services/assesment-service';
+import { FinalDecision } from '../../models/final-decision.model';
 
 @Component({
   selector: 'app-history-component',
-  standalone:true,
-  imports: [CommonModule,RouterModule],
+  standalone: true,
+  imports: [CommonModule, RouterModule],
   templateUrl: './history-component.html',
   styleUrl: './history-component.css',
 })
-export class HistoryComponent {
-  history = [
-  {
-    date: '2026-06-20',
-    finalState: 'STABLE',
-    severity: 'MODERATE',
-    score: 0.42,
-    explanation: 'Blagi stres, stabilno stanje.',
-    recommendation: 'Održavati rutinu spavanja.',
-    triggeredPatterns: ['LOW_STRESS']
-  },
-  {
-    date: '2026-06-21',
-    finalState: 'RISK',
-    severity: 'HIGH',
-    score: 0.71,
-    explanation: 'Povećan nivo stresa i umora.',
-    recommendation: 'Smanjiti obaveze i više odmora.',
-    triggeredPatterns: ['SLEEP_DEGRADATION', 'HIGH_LOAD']
-  },
-  {
-    date: '2026-06-22',
-    finalState: 'CRITICAL',
-    severity: 'CRITICAL',
-    score: 0.88,
-    explanation: 'Visok rizik burnout-a.',
-    recommendation: 'Preporučuje se stručna pomoć.',
-    triggeredPatterns: ['BURNOUT_RISK', 'CHRONIC_STRESS']
+export class HistoryComponent implements OnInit {
+  history: FinalDecision[] = [];
+  loading = true;
+  errorMessage = '';
+
+  constructor(
+    private assessmentService: AssessmentService,
+    private cdr: ChangeDetectorRef,
+  ) {}
+
+  ngOnInit(): void {
+    const userId = 1;
+
+    console.log('userId:', userId);
+
+    this.assessmentService.getHistory(userId).subscribe({
+      next: (res) => {
+        console.log('History:', res);
+
+        this.history = res.map((h: any) => ({
+          ...h,
+          date: h.date ? new Date(h.date) : undefined,
+        }));
+
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+
+      error: (err) => {
+        console.error(err);
+        this.errorMessage = 'Istorija trenutno ne moze da se ucita.';
+        this.loading = false;
+        this.cdr.detectChanges(); 
+      },
+    });
   }
-];
 }

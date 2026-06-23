@@ -150,6 +150,12 @@ mat-expansion-panel-header {
   border: 1px solid transparent;
 }
 
+.LOW {
+  background: #e3f2fd;
+  color: #1565c0;
+  border-color: #90caf9;
+}
+
 .MODERATE {
   background: #e8f5e9;
   color: #2e7d32;

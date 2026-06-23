@@ -4,7 +4,19 @@
 <div class="history-container">
   <h2>Istorija procena</h2>
 
-  <div class="timeline">
+  <div *ngIf="loading" class="status-card">
+    Ucitavanje istorije...
+  </div>
+
+  <div *ngIf="!loading && errorMessage" class="status-card error">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!loading && !errorMessage && history.length === 0" class="status-card">
+    Nema sacuvanih procena za ovog korisnika.
+  </div>
+
+  <div class="timeline" *ngIf="!loading && !errorMessage && history.length > 0">
 
     <div class="timeline-item" *ngFor="let h of history">
 
@@ -13,7 +25,7 @@
       <div class="card">
 
         <div class="top">
-          <span class="date">{{ h.date }}</span>
+          <span class="date">{{ h.date | date:'yyyy-MM-dd HH:mm' }}</span>
 
           <span class="badge" [ngClass]="h.severity">
             {{ h.severity }}

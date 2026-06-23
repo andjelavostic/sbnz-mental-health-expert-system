@@ -30,23 +30,30 @@ public class FeatureCalculatorService {
                 double exhaustion = normalization.yesNo(a.getEmotionalExhaustion());
                 double nervousness = normalization.likert(a.getNervousness());
                 double irritability = normalization.yesNo(a.getIrritability());
+                double worry = normalization.likert(a.getWorryFrequency());
+                double overload = normalization.yesNo(a.getOverloadFeeling());
+                double lossOfControl = normalization.yesNo(a.getLossOfControlFeeling());
 
                 double esi = clamp(
                                 0.30 * stress +
-                                                0.30 * exhaustion +
-                                                0.20 * nervousness +
-                                                0.20 * irritability);
+                                                0.25 * nervousness +
+                                                0.20 * worry +
+                                                0.15 * irritability +
+                                                0.10 * exhaustion);
 
                 double nai = clamp(
-                                0.35 * normalization.likert(a.getSadnessLevel()) +
-                                                0.35 * normalization.yesNo(a.getLossOfControlFeeling()) +
-                                                0.30 * normalization.likert(a.getLowMoodFrequency()));
+                                0.45 * normalization.likert(a.getSadnessLevel()) +
+                                                0.35 * normalization.likert(a.getLowMoodFrequency()) +
+                                                0.20 * lossOfControl);
 
                 double lci = clamp(
-                                0.5 * normalization.yesNo(a.getOverloadFeeling()) +
-                                                0.5 * normalization.yesNo(a.getLossOfControlFeeling()));
+                                0.45 * overload +
+                                                0.35 * lossOfControl +
+                                                0.20 * exhaustion);
 
-                double evi = clamp(normalization.likert(a.getMoodSwings()));
+                double evi = clamp(
+                                0.75 * normalization.likert(a.getMoodSwings()) +
+                                                0.25 * irritability);
                 System.out.println("ESI = " + esi);
                 System.out.println("NAI = " + nai);
                 System.out.println("LCI = " + lci);
@@ -59,25 +66,31 @@ public class FeatureCalculatorService {
                 double sleepHours = normalization.sleepHours(a.getSleepHours());
                 double sleepProblems = normalization.yesNo(a.getSleepProblems());
                 double nightAwakenings = normalization.yesNo(a.getNightAwakenings());
-                double restedAfterSleep = normalization.yesNo(a.getRestedAfterSleep());
+                double notRestedAfterSleep = normalization.invert(normalization.yesNo(a.getRestedAfterSleep()));
                 double chronicFatigue = normalization.yesNo(a.getChronicFatigue());
                 double lowEnergy = normalization.yesNo(a.getLowEnergy());
                 double physicalExhaustion = normalization.likert(a.getPhysicalExhaustion());
+                double stressHeadaches = normalization.yesNo(a.getStressHeadaches());
+                double appetiteChanges = normalization.yesNo(a.getAppetiteChanges());
 
                 double sqi = clamp(
-                                0.4 * sleepHours
-                                                + 0.3 * sleepProblems
-                                                + 0.2 * nightAwakenings
-                                                + 0.1 * restedAfterSleep);
+                                0.40 * sleepHours
+                                                + 0.25 * sleepProblems
+                                                + 0.20 * nightAwakenings
+                                                + 0.15 * notRestedAfterSleep);
 
                 double fi = clamp(
-                                0.4 * chronicFatigue
-                                                + 0.3 * lowEnergy
-                                                + 0.3 * physicalExhaustion);
+                                0.30 * chronicFatigue
+                                                + 0.25 * lowEnergy
+                                                + 0.25 * physicalExhaustion
+                                                + 0.10 * notRestedAfterSleep
+                                                + 0.05 * stressHeadaches
+                                                + 0.05 * appetiteChanges);
 
                 double sfi = clamp(
-                                0.5 * nightAwakenings
-                                                + 0.5 * sleepProblems);
+                                0.45 * nightAwakenings
+                                                + 0.35 * sleepProblems
+                                                + 0.20 * sleepHours);
                 System.out.println("SQI = " + sqi);
                 System.out.println("FI = " + fi);
                 System.out.println("SFI = " + sfi);
@@ -151,7 +164,7 @@ public class FeatureCalculatorService {
 
                 double recentStress = normalization.yesNo(a.getRecentStressEvent());
 
-                double lackOfRest = normalization.likert(a.getLackOfRestTime());
+                double lackOfRest = normalization.invert(normalization.likert(a.getLackOfRestTime()));
 
                 double constantPressure = normalization.likert(a.getConstantPressure());
 
@@ -165,7 +178,7 @@ public class FeatureCalculatorService {
                                                 + 0.15 * lackOfRest);
 
                 double cse = clamp(
-                                0.35 * normalization.likert(a.getSymptomDuration())
+                                0.35 * normalization.durationDays(a.getSymptomDuration())
                                                 + 0.25 * constantPressure
                                                 + 0.20 * rumination
                                                 + 0.20 * lackOfRest);

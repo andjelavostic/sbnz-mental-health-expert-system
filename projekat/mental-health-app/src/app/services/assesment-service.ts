@@ -13,6 +13,6 @@ export class AssessmentService {
   }
 
   getHistory(userId: number) {
-    return this.http.get(`${this.baseUrl}/history/${userId}`);
+    return this.http.get<FinalDecision[]>(`${this.baseUrl}/history/${userId}`);
   }
 }

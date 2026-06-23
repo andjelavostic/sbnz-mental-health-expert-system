@@ -1,0 +1,225 @@
+package rules;
+
+import com.ftn.sbnz.model.decision.*;
+import com.ftn.sbnz.model.features.*;
+import com.ftn.sbnz.model.risks.*;
+import java.util.List;
+
+rule "Low Emotional Tension Decision"
+when
+    EmotionalFeatures(
+        $esi : ESI,
+        $nai : NAI,
+        $evi : EVI,
+        $lci : LCI,
+        ESI >= 0.2 && ESI < 0.3,
+        NAI < 0.3,
+        EVI < 0.3,
+        LCI < 0.3
+    )
+then
+    insert(new FinalDecision(
+        FinalState.LOW_RISK,
+        Severity.LOW,
+        "Prisutan je blag emocionalni pritisak bez sirenja na druge oblasti",
+        "Pratiti stres tokom narednih dana i odrzati rutinu odmora",
+        List.of("LowEmotionalTension"),
+        $esi
+    ));
+end
+
+rule "Low Mood Vulnerability Decision"
+when
+    EmotionalFeatures(
+        $nai : NAI,
+        $esi : ESI,
+        $evi : EVI,
+        $lci : LCI,
+        NAI >= 0.2 && NAI < 0.3,
+        ESI < 0.3,
+        EVI < 0.3,
+        LCI < 0.3
+    )
+then
+    insert(new FinalDecision(
+        FinalState.LOW_RISK,
+        Severity.LOW,
+        "Uoceni su blagi znaci snizenog raspolozenja",
+        "Uvesti prijatne aktivnosti i pratiti da li se raspolozenje stabilizuje",
+        List.of("LowMoodVulnerability"),
+        $nai
+    ));
+end
+
+rule "Low Sleep Strain Decision"
+when
+    SleepFeatures(
+        $sqi : SQI,
+        $fi : FI,
+        $sfi : SFI,
+        SQI >= 0.2 && SQI < 0.3,
+        FI < 0.3,
+        SFI < 0.3
+    )
+then
+    insert(new FinalDecision(
+        FinalState.LOW_RISK,
+        Severity.LOW,
+        "San pokazuje blago odstupanje bez izrazenog umora",
+        "Stabilizovati vreme odlaska na spavanje i smanjiti stimuluse pred spavanje",
+        List.of("LowSleepStrain"),
+        $sqi
+    ));
+end
+
+rule "Low Fatigue Decision"
+when
+    SleepFeatures(
+        $fi : FI,
+        $sqi : SQI,
+        $sfi : SFI,
+        FI >= 0.2 && FI < 0.3,
+        SQI < 0.3,
+        SFI < 0.3
+    )
+then
+    insert(new FinalDecision(
+        FinalState.LOW_RISK,
+        Severity.LOW,
+        "Prisutan je blag umor bez jasnog obrasca iscrpljenosti",
+        "Planirati kratke pauze i proveriti da li umor raste kroz nedelju",
+        List.of("LowFatigue"),
+        $fi
+    ));
+end
+
+rule "Low Cognitive Load Decision"
+when
+    CognitiveFeatures(
+        $cli : CLI,
+        $mfs : MFS,
+        $dli : DLI,
+        CLI >= 0.2 && CLI < 0.3,
+        MFS < 0.3,
+        DLI < 0.3
+    )
+then
+    insert(new FinalDecision(
+        FinalState.LOW_RISK,
+        Severity.LOW,
+        "Uoceno je blago kognitivno opterecenje",
+        "Raditi u kracim blokovima i pratiti koncentraciju",
+        List.of("LowCognitiveLoad"),
+        $cli
+    ));
+end
+
+rule "Low Social Withdrawal Decision"
+when
+    SocialFeatures(
+        $swi : SWI,
+        $idi : IDI,
+        $sad : SAD,
+        SWI >= 0.2 && SWI < 0.3,
+        IDI < 0.3,
+        SAD < 0.3
+    )
+then
+    insert(new FinalDecision(
+        FinalState.LOW_RISK,
+        Severity.LOW,
+        "Postoji blaga tendencija ka smanjenju socijalnog kontakta",
+        "Odrzati makar jedan planirani kontakt ili aktivnost tokom nedelje",
+        List.of("LowSocialWithdrawal"),
+        $swi
+    ));
+end
+
+rule "Low External Pressure Decision"
+when
+    EnvironmentalFeatures(
+        $esi : externalStressIndex,
+        $cse : chronicStressExposure,
+        externalStressIndex >= 0.2 && externalStressIndex < 0.3,
+        chronicStressExposure < 0.3
+    )
+then
+    insert(new FinalDecision(
+        FinalState.LOW_RISK,
+        Severity.LOW,
+        "Spoljasnji pritisak je blag i za sada nije hronican",
+        "Urediti prioritete i ostaviti prostor za oporavak",
+        List.of("LowExternalPressure"),
+        $esi
+    ));
+end
+
+rule "Moderate Emotional Stress Decision"
+when
+    EmotionalRisks( emotionalStressRisk == true, $score : score )
+then
+    insert(new FinalDecision(
+        FinalState.ANXIETY_RISK_PATTERN,
+        Severity.MODERATE,
+        "Povisen emocionalni stres je prisutan iako ne mora biti udruzen sa drugim oblastima",
+        "Primena tehnika regulacije stresa i pracenje intenziteta simptoma",
+        List.of("ModerateEmotionalStress"),
+        $score
+    ));
+end
+
+rule "Moderate Sleep Disturbance Decision"
+when
+    PhysicalRisks( sleepDisturbanceRisk == true, $score : score )
+then
+    insert(new FinalDecision(
+        FinalState.EARLY_BURNOUT_PATTERN,
+        Severity.MODERATE,
+        "Poremecaj sna je prisutan bez jasnog obrasca potpune iscrpljenosti",
+        "Stabilizovati rutinu sna i smanjiti vecernje opterecenje",
+        List.of("ModerateSleepDisturbance"),
+        $score
+    ));
+end
+
+rule "Moderate Cognitive Strain Decision"
+when
+    CognitiveRisks( cognitiveStrainRisk == true, $score : score )
+then
+    insert(new FinalDecision(
+        FinalState.MENTAL_FATIGUE_SYNDROME,
+        Severity.MODERATE,
+        "Postoji umeren kognitivni napor bez izrazenog overload-a",
+        "Smanjiti multitasking i uvesti strukturisane pauze",
+        List.of("ModerateCognitiveStrain"),
+        $score
+    ));
+end
+
+rule "Moderate Social Withdrawal Decision"
+when
+    SocialRisks( socialWithdrawalRisk == true, $score : score )
+then
+    insert(new FinalDecision(
+        FinalState.DEPRESSIVE_PATTERN,
+        Severity.MODERATE,
+        "Uoceno je umereno socijalno povlacenje",
+        "Postepeno povecati kontakt sa bliskim osobama i pratiti promene raspolozenja",
+        List.of("ModerateSocialWithdrawal"),
+        $score
+    ));
+end
+
+rule "Moderate External Pressure Decision"
+when
+    EnvironmentalRisks( externalPressureRisk == true, $score : score )
+then
+    insert(new FinalDecision(
+        FinalState.ANXIETY_RISK_PATTERN,
+        Severity.MODERATE,
+        "Spoljasnji pritisak je povisen i moze pojacavati stres",
+        "Smanjiti opterecenje gde je moguce i planirati redovan oporavak",
+        List.of("ModerateExternalPressure"),
+        $score
+    ));
+end

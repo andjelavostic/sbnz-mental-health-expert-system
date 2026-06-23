@@ -10,6 +10,20 @@ h2 {
   margin-bottom: 20px;
 }
 
+.status-card {
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+  color: #444;
+  text-align: center;
+}
+
+.status-card.error {
+  color: #c62828;
+  border-left: 4px solid #c62828;
+}
+
 /* TIMELINE LINE */
 .timeline {
   position: relative;
@@ -44,6 +58,10 @@ h2 {
 
 .dot.MODERATE {
   background: #2e7d32;
+}
+
+.dot.LOW {
+  background: #1565c0;
 }
 
 .dot.HIGH {
@@ -86,6 +104,10 @@ h2 {
 
 .badge.MODERATE {
   background: #2e7d32;
+}
+
+.badge.LOW {
+  background: #1565c0;
 }
 
 .badge.HIGH {

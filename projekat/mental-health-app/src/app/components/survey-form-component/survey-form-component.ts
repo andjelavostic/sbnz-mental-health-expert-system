@@ -104,6 +104,12 @@ export class SurveyFormComponent {
       type: 'boolean',
       answer: null,
     },
+    {
+      field: 'worryFrequency',
+      text: 'Koliko često preterano brinete o svakodnevnim stvarima?',
+      type: 'scale',
+      answer: null,
+    },
   ];
   sleepPhysicalQuestions = [
     {
@@ -137,6 +143,20 @@ export class SurveyFormComponent {
     {
       field: 'chronicFatigue',
       text: 'Da li osećate hronični umor tokom dana?',
+      type: 'boolean',
+      answer: null,
+    },
+
+    {
+      field: 'stressHeadaches',
+      text: 'Da li imate glavobolje povezane sa stresom?',
+      type: 'boolean',
+      answer: null,
+    },
+
+    {
+      field: 'appetiteChanges',
+      text: 'Da li primećujete promene apetita?',
       type: 'boolean',
       answer: null,
     },
@@ -314,19 +334,19 @@ export class SurveyFormComponent {
     },
     {
       field: 'stressTrend',
-      text: 'Kako se menja nivo stresa kroz vreme?',
+      text: 'Koliko često primećujete da nivo stresa raste kroz vreme?',
       type: 'scale',
       answer: null,
     },
     {
       field: 'moodDegradationTrend',
-      text: 'Kako se menja raspoloženje kroz vreme?',
+      text: 'Koliko često primećujete pogoršanje raspoloženja kroz vreme?',
       type: 'scale',
       answer: null,
     },
     {
       field: 'productivityDeclineTrend',
-      text: 'Kako se menja produktivnost kroz vreme?',
+      text: 'Koliko često primećujete pad produktivnosti kroz vreme?',
       type: 'scale',
       answer: null,
     },
@@ -346,9 +366,14 @@ export class SurveyFormComponent {
     }
   }
   isFormValid(): boolean {
-    return [...this.emotionalQuestions, ...this.sleepPhysicalQuestions].every(
-      (q) => q.answer !== null,
-    );
+    return [
+      ...this.emotionalQuestions,
+      ...this.sleepPhysicalQuestions,
+      ...this.cognitiveQuestions,
+      ...this.socialQuestions,
+      ...this.stressorsQuestions,
+      ...this.temporalQuestions,
+    ].every((q) => q.answer !== null);
   }
   mapSection(questions: any[]) {
     const result: any = {};
@@ -374,6 +399,11 @@ export class SurveyFormComponent {
 
     return Number(all.find((q) => q.field === field)?.answer ?? 0);
   }
+
+  isCepDecision(decision: FinalDecision | null): boolean {
+    return decision?.triggeredPatterns?.includes('CEP') ?? false;
+  }
+
   finishSurvey() {
     if (!this.isFormValid()) {
       alert('Molimo vas da odgovorite na sva pitanja pre završetka.');
@@ -448,6 +478,10 @@ export class SurveyFormComponent {
         this.zone.run(() => {
           this.finalDecision = res;
           this.view = 'result';
+
+          if (this.isCepDecision(res)) {
+            alert('CEP upozorenje: finalna odluka je zasnovana i na promenama kroz istoriju procena.');
+          }
 
           this.cdr.detectChanges();
         });
