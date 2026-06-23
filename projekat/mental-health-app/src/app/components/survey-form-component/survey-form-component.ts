@@ -461,8 +461,10 @@ export class SurveyFormComponent {
     });
   }
   resetSurvey() {
+  this.zone.run(() => {
     this.finalDecision = null;
     this.loading = false;
+    this.view = 'form';
 
     const reset = (arr: any[]) => {
       arr.forEach((q) => (q.answer = null));
@@ -474,5 +476,8 @@ export class SurveyFormComponent {
     reset(this.socialQuestions);
     reset(this.stressorsQuestions);
     reset(this.temporalQuestions);
-  }
+
+    this.cdr.detectChanges();
+  });
+}
 }
