@@ -17,13 +17,24 @@
             <strong>{{ i + 1 }}. {{ q.text }}</strong>
           </p>
 
-          <mat-radio-group [(ngModel)]="q.answer" class="radio-group">
-            <mat-radio-button [value]="1">1 - Nikad</mat-radio-button>
-            <mat-radio-button [value]="2">2 - Retko</mat-radio-button>
-            <mat-radio-button [value]="3">3 - Ponekad</mat-radio-button>
-            <mat-radio-button [value]="4">4 - Često</mat-radio-button>
-            <mat-radio-button [value]="5">5 - Uvek</mat-radio-button>
-          </mat-radio-group>
+          @switch (q.type) {
+            @case ('scale') {
+              <mat-radio-group [(ngModel)]="q.answer" class="radio-group">
+                <mat-radio-button [value]="1">Nikad</mat-radio-button>
+                <mat-radio-button [value]="2">Retko</mat-radio-button>
+                <mat-radio-button [value]="3">Ponekad</mat-radio-button>
+                <mat-radio-button [value]="4">Često</mat-radio-button>
+                <mat-radio-button [value]="5">Uvek</mat-radio-button>
+              </mat-radio-group>
+            }
+
+            @case ('boolean') {
+              <mat-radio-group [(ngModel)]="q.answer" class="radio-group">
+                <mat-radio-button [value]="1">Da</mat-radio-button>
+                <mat-radio-button [value]="0">Ne</mat-radio-button>
+              </mat-radio-group>
+            }
+          }
         </div>
       }
     </mat-expansion-panel>
@@ -40,19 +51,28 @@
             <strong>{{ i + 1 }}. {{ q.text }}</strong>
           </p>
 
-          <div class="input-area">
-            @if (q.type === 'number') {
-              <input type="number" [(ngModel)]="q.answer" class="number-input" />
-            } @else {
+          @switch (q.type) {
+            @case ('hours') {
+              <input type="number" [(ngModel)]="q.answer" (ngModelChange)="onNumberChange(q)" />
+            }
+
+            @case ('boolean') {
               <mat-radio-group [(ngModel)]="q.answer" class="radio-group">
-                <mat-radio-button [value]="1">1 - Nikad</mat-radio-button>
-                <mat-radio-button [value]="2">2 - Retko</mat-radio-button>
-                <mat-radio-button [value]="3">3 - Ponekad</mat-radio-button>
-                <mat-radio-button [value]="4">4 - Često</mat-radio-button>
-                <mat-radio-button [value]="5">5 - Uvek</mat-radio-button>
+                <mat-radio-button [value]="1">Da</mat-radio-button>
+                <mat-radio-button [value]="0">Ne</mat-radio-button>
               </mat-radio-group>
             }
-          </div>
+
+            @case ('scale') {
+              <mat-radio-group [(ngModel)]="q.answer" class="radio-group">
+                <mat-radio-button [value]="1">Nikad</mat-radio-button>
+                <mat-radio-button [value]="2">Retko</mat-radio-button>
+                <mat-radio-button [value]="3">Ponekad</mat-radio-button>
+                <mat-radio-button [value]="4">Često</mat-radio-button>
+                <mat-radio-button [value]="5">Uvek</mat-radio-button>
+              </mat-radio-group>
+            }
+          }
         </div>
       }
     </mat-expansion-panel>
@@ -115,13 +135,24 @@
             <strong>{{ i + 1 }}. {{ q.text }}</strong>
           </p>
 
-          <mat-radio-group [(ngModel)]="q.answer" class="radio-group">
-            <mat-radio-button [value]="1">1 - Nikad</mat-radio-button>
-            <mat-radio-button [value]="2">2 - Retko</mat-radio-button>
-            <mat-radio-button [value]="3">3 - Ponekad</mat-radio-button>
-            <mat-radio-button [value]="4">4 - Često</mat-radio-button>
-            <mat-radio-button [value]="5">5 - Uvek</mat-radio-button>
-          </mat-radio-group>
+          @switch (q.type) {
+            @case ('scale') {
+              <mat-radio-group [(ngModel)]="q.answer" class="radio-group">
+                <mat-radio-button [value]="1">Nikad</mat-radio-button>
+                <mat-radio-button [value]="2">Retko</mat-radio-button>
+                <mat-radio-button [value]="3">Ponekad</mat-radio-button>
+                <mat-radio-button [value]="4">Često</mat-radio-button>
+                <mat-radio-button [value]="5">Uvek</mat-radio-button>
+              </mat-radio-group>
+            }
+
+            @case ('boolean') {
+              <mat-radio-group [(ngModel)]="q.answer" class="radio-group">
+                <mat-radio-button [value]="1">Da</mat-radio-button>
+                <mat-radio-button [value]="0">Ne</mat-radio-button>
+              </mat-radio-group>
+            }
+          }
         </div>
       }
     </mat-expansion-panel>
@@ -139,15 +170,15 @@
           </p>
 
           <div class="input-area">
-            @if (q.type === 'number') {
-              <input type="number" [(ngModel)]="q.answer" class="number-input" />
+            @if (q.type === 'days' || q.type === 'weekly') {
+              <input type="number" [(ngModel)]="q.answer" (ngModelChange)="onNumberChange(q)" />
             } @else {
               <mat-radio-group [(ngModel)]="q.answer" class="radio-group">
-                <mat-radio-button [value]="1">1</mat-radio-button>
-                <mat-radio-button [value]="2">2</mat-radio-button>
-                <mat-radio-button [value]="3">3</mat-radio-button>
-                <mat-radio-button [value]="4">4</mat-radio-button>
-                <mat-radio-button [value]="5">5</mat-radio-button>
+                <mat-radio-button [value]="1">Nikad</mat-radio-button>
+                <mat-radio-button [value]="2">Retko</mat-radio-button>
+                <mat-radio-button [value]="3">Ponekad</mat-radio-button>
+                <mat-radio-button [value]="4">Često</mat-radio-button>
+                <mat-radio-button [value]="5">Uvek</mat-radio-button>
               </mat-radio-group>
             }
           </div>
@@ -163,9 +194,7 @@
     </div>
   </div>
 </div>
-<div *ngIf="loading" class="loading">
-  Evaluacija u toku...
-</div>
+<div *ngIf="loading" class="loading">Evaluacija u toku...</div>
 <div *ngIf="finalDecision" class="result-page">
   <mat-card class="result-card">
     <div class="header">

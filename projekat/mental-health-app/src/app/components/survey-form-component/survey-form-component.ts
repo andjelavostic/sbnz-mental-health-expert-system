@@ -10,6 +10,8 @@ import { UserAssessment } from '../../models/user-assessment.model';
 import { FinalDecision } from '../../models/final-decision.model';
 import { RouterModule } from '@angular/router';
 import { AssessmentService } from '../../services/assesment-service';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 export const MOCK_FINAL_DECISION: FinalDecision = {
   finalState: 'AT_RISK',
   severity: 'HIGH',
@@ -35,6 +37,11 @@ export const MOCK_FINAL_DECISION: FinalDecision = {
     'MODERATE_SOCIAL_WITHDRAWAL',
   ],
 };
+type NumberRule = {
+  min: number;
+  max: number;
+  message: string;
+};
 @Component({
   selector: 'app-survey-form',
   standalone: true,
@@ -47,12 +54,19 @@ export const MOCK_FINAL_DECISION: FinalDecision = {
     MatCardModule,
     MatExpansionModule,
     RouterModule,
+    MatFormFieldModule,
+    MatInputModule,
   ],
   templateUrl: './survey-form-component.html',
   styleUrls: ['./survey-form-component.css'],
 })
 export class SurveyFormComponent {
   constructor(private assessmentService: AssessmentService) {}
+  numberRules: Record<string, NumberRule> = {
+    hours: { min: 0, max: 24, message: '0–24 sati' },
+    days: { min: 0, max: 365, message: '0–365 dana' },
+    weekly: { min: 0, max: 7, message: '0–7 puta nedeljno' },
+  };
   emotionalQuestions = [
     {
       field: 'stressLevel',
@@ -87,7 +101,7 @@ export class SurveyFormComponent {
     {
       field: 'moodSwings',
       text: 'Da li primećujete česte promene raspoloženja?',
-      type: 'boolean',
+      type: 'scale',
       answer: null,
     },
     {
@@ -107,13 +121,13 @@ export class SurveyFormComponent {
       text: 'Da li se lako iznervirate ili postanete razdražljivi?',
       type: 'boolean',
       answer: null,
-    }
+    },
   ];
   sleepPhysicalQuestions = [
     {
       field: 'sleepHours',
       text: 'Koliko sati prosečno spavate?',
-      type: 'scale',
+      type: 'hours',
       answer: null,
     },
 
@@ -257,19 +271,19 @@ export class SurveyFormComponent {
     {
       field: 'financialProblems',
       text: 'Da li imate finansijske probleme?',
-      type: 'scale',
+      type: 'boolean',
       answer: null,
     },
     {
       field: 'recentStressEvent',
       text: 'Da li ste doživeli značajan stresni događaj u poslednjih 6 meseci?',
-      type: 'scale',
+      type: 'boolean',
       answer: null,
     },
     {
       field: 'relationshipIssues',
       text: 'Da li imate probleme u partnerskim ili porodičnim odnosima?',
-      type: 'scale',
+      type: 'boolean',
       answer: null,
     },
     {
@@ -295,46 +309,60 @@ export class SurveyFormComponent {
     {
       field: 'symptomDuration',
       text: 'Koliko dugo traju problemi sa snom (u danima)?',
-      type: 'number',
+      type: 'days',
       answer: null,
     },
     {
       field: 'isolationDuration',
       text: 'Koliko dugo traje socijalna izolacija (u danima)?',
-      type: 'number',
+      type: 'days',
       answer: null,
     },
     {
       field: 'exhaustionDuration',
       text: 'Koliko dugo traje emocionalna iscrpljenost (u danima)?',
-      type: 'number',
+      type: 'days',
       answer: null,
     },
     {
       field: 'panicFrequency',
       text: 'Koliko često imate panične epizode (nedeljno)?',
-      type: 'number',
+      type: 'weekly',
       answer: null,
     },
     {
       field: 'stressTrend',
-      text: 'Kako se menja nivo stresa kroz vreme? (1 opada - 5 raste)',
+      text: 'Kako se menja nivo stresa kroz vreme?',
       type: 'scale',
       answer: null,
     },
     {
       field: 'moodDegradationTrend',
-      text: 'Kako se menja raspoloženje kroz vreme? (1 bolje - 5 lošije)',
+      text: 'Kako se menja raspoloženje kroz vreme?',
       type: 'scale',
       answer: null,
     },
     {
       field: 'productivityDeclineTrend',
-      text: 'Kako se menja produktivnost kroz vreme? (1 stabilno - 5 veliki pad)',
+      text: 'Kako se menja produktivnost kroz vreme?',
       type: 'scale',
       answer: null,
     },
   ];
+  onNumberChange(q: any) {
+    const rule = this.numberRules[q.type];
+    if (!rule || q.answer == null) return;
+
+    if (q.answer > rule.max) {
+      q.answer = rule.max;
+      alert(rule.message);
+    }
+
+    if (q.answer < rule.min) {
+      q.answer = rule.min;
+      alert(rule.message);
+    }
+  }
   isFormValid(): boolean {
     return [...this.emotionalQuestions, ...this.sleepPhysicalQuestions].every(
       (q) => q.answer !== null,
