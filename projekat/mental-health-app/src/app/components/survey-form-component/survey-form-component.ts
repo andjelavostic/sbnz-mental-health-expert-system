@@ -362,21 +362,80 @@ export class SurveyFormComponent {
   view: 'form' | 'loading' | 'result' = 'form';
   finalDecision: FinalDecision | null = null;
   loading = false;
+  getAnswer(field: string) {
+    const all = [
+      ...this.emotionalQuestions,
+      ...this.sleepPhysicalQuestions,
+      ...this.cognitiveQuestions,
+      ...this.socialQuestions,
+      ...this.stressorsQuestions,
+      ...this.temporalQuestions,
+    ];
+
+    return Number(all.find((q) => q.field === field)?.answer ?? 0);
+  }
   finishSurvey() {
     if (!this.isFormValid()) {
       alert('Molimo vas da odgovorite na sva pitanja pre završetka.');
       return;
     }
 
-    const assessment: UserAssessment = {
+    const assessment = {
       userId: 1,
       timestamp: new Date(),
-      emotionalState: this.mapSection(this.emotionalQuestions),
-      sleepPhysical: this.mapSection(this.sleepPhysicalQuestions),
-      cognitive: this.mapSection(this.cognitiveQuestions),
-      social: this.mapSection(this.socialQuestions),
-      stressors: this.mapSection(this.stressorsQuestions),
-      temporal: this.mapSection(this.temporalQuestions),
+
+      stressLevel: this.getAnswer('stressLevel'),
+      emotionalExhaustion: this.getAnswer('emotionalExhaustion'),
+      nervousness: this.getAnswer('nervousness'),
+      overloadFeeling: this.getAnswer('overloadFeeling'),
+      lowMoodFrequency: this.getAnswer('lowMoodFrequency'),
+      moodSwings: this.getAnswer('moodSwings'),
+      sadnessLevel: this.getAnswer('sadnessLevel'),
+      lossOfControlFeeling: this.getAnswer('lossOfControlFeeling'),
+      irritability: this.getAnswer('irritability'),
+      worryFrequency: this.getAnswer('worryFrequency'),
+
+      sleepHours: this.getAnswer('sleepHours'),
+      sleepProblems: this.getAnswer('sleepProblems'),
+      nightAwakenings: this.getAnswer('nightAwakenings'),
+      restedAfterSleep: this.getAnswer('restedAfterSleep'),
+      chronicFatigue: this.getAnswer('chronicFatigue'),
+      stressHeadaches: this.getAnswer('stressHeadaches'),
+      appetiteChanges: this.getAnswer('appetiteChanges'),
+      lowEnergy: this.getAnswer('lowEnergy'),
+      physicalExhaustion: this.getAnswer('physicalExhaustion'),
+
+      concentrationProblems: this.getAnswer('concentrationProblems'),
+      forgetfulness: this.getAnswer('forgetfulness'),
+      decisionDifficulty: this.getAnswer('decisionDifficulty'),
+      mentalConfusion: this.getAnswer('mentalConfusion'),
+      productivityDrop: this.getAnswer('productivityDrop'),
+      attentionSpanIssues: this.getAnswer('attentionSpanIssues'),
+      mentalFatigue: this.getAnswer('mentalFatigue'),
+
+      socialAvoidance: this.getAnswer('socialAvoidance'),
+      communicationWithdrawal: this.getAnswer('communicationWithdrawal'),
+      socialIsolationFeeling: this.getAnswer('socialIsolationFeeling'),
+      lossOfInterest: this.getAnswer('lossOfInterest'),
+      familyAvoidance: this.getAnswer('familyAvoidance'),
+      timeSpentAlone: this.getAnswer('timeSpentAlone'),
+      emotionalDistance: this.getAnswer('emotionalDistance'),
+
+      workPressure: this.getAnswer('workPressure'),
+      financialProblems: this.getAnswer('financialProblems'),
+      recentStressEvent: this.getAnswer('recentStressEvent'),
+      relationshipIssues: this.getAnswer('relationshipIssues'),
+      lackOfRestTime: this.getAnswer('lackOfRestTime'),
+      constantPressure: this.getAnswer('constantPressure'),
+      ruminationOnTasks: this.getAnswer('ruminationOnTasks'),
+
+      symptomDuration: this.getAnswer('symptomDuration'),
+      isolationDuration: this.getAnswer('isolationDuration'),
+      exhaustionDuration: this.getAnswer('exhaustionDuration'),
+      panicFrequency: this.getAnswer('panicFrequency'),
+      stressTrend: this.getAnswer('stressTrend'),
+      moodDegradationTrend: this.getAnswer('moodDegradationTrend'),
+      productivityDeclineTrend: this.getAnswer('productivityDeclineTrend'),
     };
 
     console.log(assessment);
@@ -390,7 +449,7 @@ export class SurveyFormComponent {
           this.finalDecision = res;
           this.view = 'result';
 
-          this.cdr.detectChanges(); 
+          this.cdr.detectChanges();
         });
       },
 

@@ -47,7 +47,10 @@ public class FeatureCalculatorService {
                                                 0.5 * normalization.yesNo(a.getLossOfControlFeeling()));
 
                 double evi = clamp(normalization.likert(a.getMoodSwings()));
-
+                System.out.println("ESI = " + esi);
+                System.out.println("NAI = " + nai);
+                System.out.println("LCI = " + lci);
+                System.out.println("EVI = " + evi);
                 return new EmotionalFeatures(esi, nai, evi, lci);
         }
 
@@ -62,10 +65,10 @@ public class FeatureCalculatorService {
                 double physicalExhaustion = normalization.likert(a.getPhysicalExhaustion());
 
                 double sqi = clamp(
-                                0.5 * sleepHours
-                                                - 0.3 * sleepProblems
-                                                - 0.2 * nightAwakenings
-                                                + 0.3 * restedAfterSleep);
+                                0.4 * sleepHours
+                                                + 0.3 * sleepProblems
+                                                + 0.2 * nightAwakenings
+                                                + 0.1 * restedAfterSleep);
 
                 double fi = clamp(
                                 0.4 * chronicFatigue
@@ -75,7 +78,9 @@ public class FeatureCalculatorService {
                 double sfi = clamp(
                                 0.5 * nightAwakenings
                                                 + 0.5 * sleepProblems);
-
+                System.out.println("SQI = " + sqi);
+                System.out.println("FI = " + fi);
+                System.out.println("SFI = " + sfi);
                 return new SleepFeatures(sqi, fi, sfi);
         }
 
@@ -102,7 +107,9 @@ public class FeatureCalculatorService {
                 double dli = clamp(
                                 0.5 * decisionDifficulty
                                                 + 0.5 * mentalConfusion);
-
+                System.out.println("CLI = " + cli);
+                System.out.println("MFS = " + mfs);
+                System.out.println("DLI = " + dli);
                 return new CognitiveFeatures(cli, mfs, dli);
         }
 
@@ -128,7 +135,9 @@ public class FeatureCalculatorService {
                 double sad = clamp(
                                 0.5 * timeAlone
                                                 + 0.5 * familyAvoidance);
-
+                System.out.println("SWI = " + swi);
+                System.out.println("IDI = " + idi);
+                System.out.println("SAD = " + sad);
                 return new SocialFeatures(swi, idi, sad);
         }
 
@@ -160,7 +169,8 @@ public class FeatureCalculatorService {
                                                 + 0.25 * constantPressure
                                                 + 0.20 * rumination
                                                 + 0.20 * lackOfRest);
-
+                System.out.println("ESL = " + esl);
+                System.out.println("CSE = " + cse);
                 return new EnvironmentalFeatures(esl, cse);
         }
 
@@ -201,7 +211,10 @@ public class FeatureCalculatorService {
                                 0.5 * productivityTrend
                                                 + 0.3 * exhaustionDuration
                                                 + 0.2 * isolationDuration);
-
+                System.out.println("SPS = " + sps);
+                System.out.println("DR = " + dr);
+                System.out.println("EVL = " + evl);
+                System.out.println("TII = " + tii);
                 return new TemporalFeatures(sps, dr, evl, tii);
         }
 
