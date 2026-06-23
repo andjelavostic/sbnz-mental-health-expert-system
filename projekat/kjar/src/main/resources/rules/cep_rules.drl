@@ -1,11 +1,7 @@
 import com.ftn.sbnz.model.assessment.UserAssessmentEvent;
-import com.ftn.sbnz.model.features.*;
 global com.ftn.sbnz.service.services.FeatureCalculatorService featureService;
 import com.ftn.sbnz.model.events.*;
-import com.ftn.sbnz.model.patterns.*;
-import com.ftn.sbnz.model.risks.*;
 import java.time.LocalDateTime;
-import java.time.Duration;
 import java.util.List;
 
 declare UserAssessmentEvent
@@ -19,255 +15,98 @@ declare CognitiveDegradationEvent @role(event) @timestamp(timestampMillis) end
 declare SocialCollapseEvent @role(event) @timestamp(timestampMillis) end
 declare CrisisBuildUpEvent @role(event) @timestamp(timestampMillis) end
 
-rule "Analiza istorijskog stresa"
-when
-    // event iz proslosti
-    $e : UserAssessmentEvent($assessment : assessment) over window:time(10m)
-    
-    // indeksi
-    $ef : EmotionalFeatures() from featureService.calculateEmotional($assessment)
-then
-    System.out.println("U prošlosti je stres bio visok: " + $ef.getESI());
-end
-
-rule "Stress escalation - Pametni trend"
+rule "Stress escalation event"
 salience 100
 when
-    // 1. Uzimamo najnoviji event kao polaznu tačku
-    $t0 : UserAssessmentEvent($uid : assessment.userId, $ts0 : timestampMillis)
-    
-    // 2. Skupimo sve evente za istog korisnika u zadnja 72h
-    $lista : List() from accumulate(
+    $t0 : UserAssessmentEvent($uid : assessment.userId)
+    $events : List() from accumulate(
         $e : UserAssessmentEvent(assessment.userId == $uid) over window:time(72h),
         collectList($e)
     )
-    
-    // 3. Moramo imati bar 3 eventa za trend
-    eval($lista.size() >= 3)
-    
-    // 4. Uzimamo prethodna dva iz liste (sortirane po vremenu)
-    $t1 : UserAssessmentEvent($ts1 : timestampMillis) from $lista.get($lista.size() - 2)
-    $t2 : UserAssessmentEvent($ts2 : timestampMillis) from $lista.get($lista.size() - 3)
-    
-    // 5. Pametna provera: Da li su unosi razumni?
-    // Proveravamo da li je između najstarijeg ($t2) i najnovijeg ($t0) prošlo bar 24h
-    // (Ovo sprečava da pravilo okine ako korisnik greškom unese 3 testa u istom satu)
-    eval(Duration.ofMillis($ts0 - $ts2).toHours() >= 24)
-    
-    // 6. Izračunaj indekse za sva tri
-    $feat0 : EmotionalFeatures() from featureService.calculateEmotional($t0.getAssessment())
-    $feat1 : EmotionalFeatures() from featureService.calculateEmotional($t1.getAssessment())
-    $feat2 : EmotionalFeatures() from featureService.calculateEmotional($t2.getAssessment())
-    
-    // 7. Trend rasta: t0 > t1 > t2
-    eval($feat0.getESI() > $feat1.getESI() && $feat1.getESI() > $feat2.getESI())
-    
-    // 8. Proveri DR (MoodDegradationTrend) za najnoviji ($t0)
-    $temp : TemporalFeatures() from featureService.calculateTemporal($t0.getAssessment())
-    eval($temp.getDR() > 0.6)
-    
-    // 9. Sprečavanje duplikata (da ne insertujemo isti event više puta za istog korisnika)
-    //not StressEscalationEvent(userId == $uid, this after[24h] )
+    $score : Double() from featureService.calculateStressEscalationScore($t0, $events)
+    eval($score.doubleValue() >= 0.0)
+    not StressEscalationEvent(userId == $uid)
 then
-    double trendSlope = ($feat0.getESI() - $feat2.getESI());
-    
-    double score = (trendSlope * 0.5) + ($feat0.getESI() * 0.3) + ($temp.getDR() * 0.2);
-    score = Math.max(0.0, Math.min(1.0, score));
-    // 4. Insertuj event 
-    insert(new StressEscalationEvent($uid, LocalDateTime.now(), score));
-    System.out.println("Stress Escalation za " + $uid + " | Score: " + score);
+    insert(new StressEscalationEvent($uid, LocalDateTime.now(), $score.doubleValue()));
+    System.out.println("Stress Escalation za " + $uid + " | Score: " + $score);
 end
 
 rule "Burnout emergence event"
-salience 70 // Nešto manji prioritet od eskalacije, jer je ovo ozbiljnije stanje
+salience 70
 when
     $t0 : UserAssessmentEvent($uid : assessment.userId)
-    
-    // 1. Skupimo sve evente u zadnjih 7 dana
-    $lista : List() from accumulate(
+    $events : List() from accumulate(
         $e : UserAssessmentEvent(assessment.userId == $uid) over window:time(7d),
         collectList($e)
     )
-    eval($lista.size() >= 4) // Treba nam bar 4 tačke za pouzdan trend
-    
-    // 2. Izvlačimo poslednja 3 elementa (t0, t1, t2)
-    $t1 : UserAssessmentEvent() from $lista.get($lista.size() - 2)
-    $t2 : UserAssessmentEvent() from $lista.get($lista.size() - 3)
-    
-    // 3. Računamo feature za ta tri trenutka
-    // Za FI i SQI koristimo PhysicalFeatures
-    $f0 : SleepFeatures() from featureService.calculatePhysical($t0.getAssessment())
-    $f1 : SleepFeatures() from featureService.calculatePhysical($t1.getAssessment())
-    $f2 : SleepFeatures() from featureService.calculatePhysical($t2.getAssessment())
-    
-    // Za MFS koristimo CognitiveFeatures
-    $c0 : CognitiveFeatures() from featureService.calculateCognitive($t0.getAssessment())
-    $c1 : CognitiveFeatures() from featureService.calculateCognitive($t1.getAssessment())
-    $c2 : CognitiveFeatures() from featureService.calculateCognitive($t2.getAssessment())
-    
-    // 4. USLOVI TRENDA:
-    // FI increasing (t0 > t1 > t2)
-    eval($f0.getFI() > $f1.getFI() && $f1.getFI() > $f2.getFI())
-    
-    // SQI decreasing (t0 < t1 < t2)
-    eval($f0.getSQI() < $f1.getSQI() && $f1.getSQI() < $f2.getSQI())
-    
-    // MFS increasing (t0 > t1 > t2)
-    eval($c0.getMFS() > $c1.getMFS() && $c1.getMFS() > $c2.getMFS())
-    
+    $score : Double() from featureService.calculateBurnoutEmergenceScore($t0, $events)
+    eval($score.doubleValue() >= 0.0)
+    not BurnoutEmergenceEvent(userId == $uid)
 then
-    // 1. Računam "delta" vrednosti (koliko su se promenile)
-    // Što je veća promena, to je veći score
-    double fiDelta = $f0.getFI() - $f2.getFI();
-    double sqiDelta = $f2.getSQI() - $f0.getSQI(); // Obrnuto jer SQI pada
-    double mfsDelta = $c0.getMFS() - $c2.getMFS();
-    
-    // 2. Normalizujemo score (pretpostavimo da su delte u opsegu 0-1)
-    double score = (fiDelta + sqiDelta + mfsDelta) / 3.0;
-    score = Math.max(0.0, Math.min(1.0, score));
-    // 3. Insertujemo Burnout event
-    insert(new BurnoutEmergenceEvent($uid, LocalDateTime.now(), score));
-    System.out.println("Burnout rizik detektovan! Score: " + score);
+    insert(new BurnoutEmergenceEvent($uid, LocalDateTime.now(), $score.doubleValue()));
+    System.out.println("Burnout rizik detektovan za " + $uid + " | Score: " + $score);
 end
 
 rule "Emotional volatility burst"
 salience 80
 when
     $t0 : UserAssessmentEvent($uid : assessment.userId)
-    
-    // 1. Trenutni EVI i TII
-    $feat0 : EmotionalFeatures() from featureService.calculateEmotional($t0.getAssessment())
-    $temp0 : TemporalFeatures() from featureService.calculateTemporal($t0.getAssessment())
-    
-    // 2. Skupi EVI vrednosti za poslednja 24h
-    $eviValues : List() from accumulate(
+    $events : List() from accumulate(
         $e : UserAssessmentEvent(assessment.userId == $uid) over window:time(24h),
-        collectList(featureService.calculateEmotional($e.getAssessment()).getEVI())
+        collectList($e)
     )
-    
-    // 3. Proveri da imamo dovoljno podataka (bar 3 unosa)
-    eval($eviValues.size() >= 3)
-    
-    // 4. Izračunaj prosek (manualno ili preko servisa)
-    // Ovde koristimo servis da ne komplikujemo DRL
-    eval(featureService.isSpike($feat0.getEVI(), $eviValues))
-    
-    // 5. TII HIGH (prag npr. > 0.7)
-    eval($temp0.getTII() > 0.6)
+    $score : Double() from featureService.calculateEmotionalVolatilityBurstScore($t0, $events)
+    eval($score.doubleValue() >= 0.0)
+    not EmotionalVolatilityBurstEvent(userId == $uid)
 then
-    double avg = featureService.calculateAverage($eviValues);
-    double spikeIntensity = ($feat0.getEVI() / avg) - 1.0; 
-    
-    // 2. Formiraj score (npr. kombinacija intenziteta skoka i TII vrednosti)
-    double score = (spikeIntensity * 0.6) + ($temp0.getTII() * 0.4);
-    score = Math.max(0.0, Math.min(1.0, score));
-    // 3. Insertuj event sa score-om
-    insert(new EmotionalVolatilityBurstEvent($uid, LocalDateTime.now(), score));
-    System.out.println("Volatility burst detektovan za: " + $uid + " | Score: " + score);
+    insert(new EmotionalVolatilityBurstEvent($uid, LocalDateTime.now(), $score.doubleValue()));
+    System.out.println("Volatility burst detektovan za " + $uid + " | Score: " + $score);
 end
+
 rule "Cognitive degradation event"
 salience 60
 when
     $t0 : UserAssessmentEvent($uid : assessment.userId)
-    
-    // 1. Skupimo evente u zadnjih 7 dana
-    $lista : List() from accumulate(
+    $events : List() from accumulate(
         $e : UserAssessmentEvent(assessment.userId == $uid) over window:time(7d),
         collectList($e)
     )
-    eval($lista.size() >= 4)
-    
-    // 2. Izvlačimo poslednja 3 elementa (t0, t1, t2)
-    $t1 : UserAssessmentEvent() from $lista.get($lista.size() - 2)
-    $t2 : UserAssessmentEvent() from $lista.get($lista.size() - 3)
-    
-    // 3. Računamo CognitiveFeatures za sva tri
-    $c0 : CognitiveFeatures() from featureService.calculateCognitive($t0.getAssessment())
-    $c1 : CognitiveFeatures() from featureService.calculateCognitive($t1.getAssessment())
-    $c2 : CognitiveFeatures() from featureService.calculateCognitive($t2.getAssessment())
-    
-    // 4. USLOV: Sva tri parametra rastu (t0 > t1 > t2)
-    eval($c0.getCLI() > $c1.getCLI() && $c1.getCLI() > $c2.getCLI())
-    eval($c0.getDLI() > $c1.getDLI() && $c1.getDLI() > $c2.getDLI())
-    eval($c0.getMFS() > $c1.getMFS() && $c1.getMFS() > $c2.getMFS())
-
+    $score : Double() from featureService.calculateCognitiveDegradationScore($t0, $events)
+    eval($score.doubleValue() >= 0.0)
+    not CognitiveDegradationEvent(userId == $uid)
 then
-    // Izračunaj score: prosek rasta sva tri faktora
-    double cliDelta = $c0.getCLI() - $c2.getCLI();
-    double dliDelta = $c0.getDLI() - $c2.getDLI();
-    double mfsDelta = $c0.getMFS() - $c2.getMFS();
-    
-    double score = (cliDelta + dliDelta + mfsDelta) / 3.0;
-    score = Math.max(0.0, Math.min(1.0, score));
-    
-    insert(new CognitiveDegradationEvent($uid, LocalDateTime.now(), score));
-    
-    System.out.println("Detektovano kognitivno propadanje za korisnika: " + $uid + " | Score: " + score);
+    insert(new CognitiveDegradationEvent($uid, LocalDateTime.now(), $score.doubleValue()));
+    System.out.println("Detektovano kognitivno propadanje za " + $uid + " | Score: " + $score);
 end
 
 rule "Social collapse trajectory"
 salience 50
 when
     $t0 : UserAssessmentEvent($uid : assessment.userId)
-    
-    // 1. Skupimo evente u zadnjih 7 dana
-    $lista : List() from accumulate(
+    $events : List() from accumulate(
         $e : UserAssessmentEvent(assessment.userId == $uid) over window:time(7d),
         collectList($e)
     )
-    eval($lista.size() >= 4)
-    
-    // 2. Izvlačimo poslednja 3 elementa (t0, t1, t2)
-    $t1 : UserAssessmentEvent() from $lista.get($lista.size() - 2)
-    $t2 : UserAssessmentEvent() from $lista.get($lista.size() - 3)
-    
-    // 3. Računamo SocialFeatures za sva tri
-    $s0 : SocialFeatures() from featureService.calculateSocial($t0.getAssessment())
-    $s1 : SocialFeatures() from featureService.calculateSocial($t1.getAssessment())
-    $s2 : SocialFeatures() from featureService.calculateSocial($t2.getAssessment())
-    
-    // 4. USLOV: Sva tri socijalna parametra rastu (t0 > t1 > t2)
-    eval($s0.getSWI() > $s1.getSWI() && $s1.getSWI() > $s2.getSWI())
-    eval($s0.getSAD() > $s1.getSAD() && $s1.getSAD() > $s2.getSAD())
-    eval($s0.getIDI() > $s1.getIDI() && $s1.getIDI() > $s2.getIDI())
-    
+    $score : Double() from featureService.calculateSocialCollapseScore($t0, $events)
+    eval($score.doubleValue() >= 0.0)
+    not SocialCollapseEvent(userId == $uid)
 then
-    // Izračunaj score: prosek rasta sva tri socijalna faktora
-    double swiDelta = $s0.getSWI() - $s2.getSWI();
-    double sadDelta = $s0.getSAD() - $s2.getSAD();
-    double idiDelta = $s0.getIDI() - $s2.getIDI();
-    
-    double score = (swiDelta + sadDelta + idiDelta) / 3.0;
-    score = Math.max(0.0, Math.min(1.0, score));
-    insert(new SocialCollapseEvent($uid, LocalDateTime.now(), score));
-    System.out.println("Detektovana socijalna kolaps putanja za korisnika: " + $uid + " | Score: " + score);
+    insert(new SocialCollapseEvent($uid, LocalDateTime.now(), $score.doubleValue()));
+    System.out.println("Detektovana socijalna kolaps putanja za " + $uid + " | Score: " + $score);
 end
 
 rule "Crisis buildup event"
 salience 40
 when
     $t0 : UserAssessmentEvent($uid : assessment.userId)
-    
-    // 1. Skupimo evente za poslednja 3 dana
-    $lista : List() from accumulate(
+    $events : List() from accumulate(
         $e : UserAssessmentEvent(assessment.userId == $uid) over window:time(72h),
         collectList($e)
     )
-    eval($lista.size() >= 3)
-    
-    // 2. Izračunajmo proseke za ESI i FI (koristimo pomoćne metode)
-    $avgEsi : Double() from featureService.calculateAverageEsi($lista)
-    $avgFi : Double() from featureService.calculateAverageFi($lista)
-    
-    // 3. Uzimamo najnoviji SPS iz TemporalFeatures
-    $temp0 : TemporalFeatures() from featureService.calculateTemporal($t0.getAssessment())
-    
-    // 4. USLOV: Sustained HIGH 
-    eval($avgEsi > 0.6 && $avgFi > 0.6 && $temp0.getSPS() > 0.6)
+    $score : Double() from featureService.calculateCrisisBuildUpScore($t0, $events)
+    eval($score.doubleValue() >= 0.0)
+    not CrisisBuildUpEvent(userId == $uid)
 then
-    // Score je prosek sva tri visoka faktora
-    double score = ($avgEsi + $avgFi + $temp0.getSPS()) / 3.0;
-    score = Math.max(0.0, Math.min(1.0, score));
-    insert(new CrisisBuildUpEvent($uid, LocalDateTime.now(), score));
-    System.out.println("Detektovana kriza u nastajanju za korisnika: " + $uid + " | Score: " + score);
+    insert(new CrisisBuildUpEvent($uid, LocalDateTime.now(), $score.doubleValue()));
+    System.out.println("Detektovana kriza u nastajanju za " + $uid + " | Score: " + $score);
 end
