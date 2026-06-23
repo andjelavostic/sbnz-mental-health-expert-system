@@ -6,6 +6,199 @@ import com.ftn.sbnz.model.risks.*;
 import com.ftn.sbnz.model.events.*;
 import com.ftn.sbnz.model.patterns.*;
 
+query "supportsEvidence"(String $goal, String $evidence, Integer $depth)
+    EvidenceLink(goal == $goal, evidence == $evidence)
+or
+    eval($depth.intValue() > 0)
+    EvidenceLink(goal == $goal, $middle : evidence)
+    $nextDepth : Integer() from Integer.valueOf($depth.intValue() - 1)
+    supportsEvidence($middle, $evidence, $nextDepth;)
+end
+
+query "whyLowRisk"
+    supportsEvidence("LOW_RISK", "lowEmotionalFeatures", 4;)
+    supportsEvidence("LOW_RISK", "lowSleepFeatures", 4;)
+    supportsEvidence("LOW_RISK", "lowCognitiveFeatures", 4;)
+    supportsEvidence("LOW_RISK", "lowSocialFeatures", 4;)
+    supportsEvidence("LOW_RISK", "lowEnvironmentalFeatures", 4;)
+end
+
+query "whyLowEmotionalTension"
+    supportsEvidence("LOW_EMOTIONAL_TENSION", "ESI", 4;)
+    supportsEvidence("LOW_EMOTIONAL_TENSION", "NAI", 4;)
+    supportsEvidence("LOW_EMOTIONAL_TENSION", "EVI", 4;)
+    supportsEvidence("LOW_EMOTIONAL_TENSION", "LCI", 4;)
+end
+
+query "whyLowMoodVulnerability"
+    supportsEvidence("LOW_MOOD_VULNERABILITY", "NAI", 4;)
+    supportsEvidence("LOW_MOOD_VULNERABILITY", "ESI", 4;)
+    supportsEvidence("LOW_MOOD_VULNERABILITY", "EVI", 4;)
+    supportsEvidence("LOW_MOOD_VULNERABILITY", "LCI", 4;)
+end
+
+query "whyLowSleepStrain"
+    supportsEvidence("LOW_SLEEP_STRAIN", "SQI", 4;)
+    supportsEvidence("LOW_SLEEP_STRAIN", "FI", 4;)
+    supportsEvidence("LOW_SLEEP_STRAIN", "SFI", 4;)
+end
+
+query "whyLowFatigue"
+    supportsEvidence("LOW_FATIGUE", "FI", 4;)
+    supportsEvidence("LOW_FATIGUE", "SQI", 4;)
+    supportsEvidence("LOW_FATIGUE", "SFI", 4;)
+end
+
+query "whyLowCognitiveLoad"
+    supportsEvidence("LOW_COGNITIVE_LOAD", "CLI", 4;)
+    supportsEvidence("LOW_COGNITIVE_LOAD", "MFS", 4;)
+    supportsEvidence("LOW_COGNITIVE_LOAD", "DLI", 4;)
+end
+
+query "whyLowSocialWithdrawal"
+    supportsEvidence("LOW_SOCIAL_WITHDRAWAL", "SWI", 4;)
+    supportsEvidence("LOW_SOCIAL_WITHDRAWAL", "IDI", 4;)
+    supportsEvidence("LOW_SOCIAL_WITHDRAWAL", "SAD", 4;)
+end
+
+query "whyLowExternalPressure"
+    supportsEvidence("LOW_EXTERNAL_PRESSURE", "externalStressIndex", 4;)
+    supportsEvidence("LOW_EXTERNAL_PRESSURE", "chronicStressExposure", 4;)
+end
+
+query "whyEarlyBurnout"
+    supportsEvidence("EARLY_BURNOUT_PATTERN", "emotionalStressRisk", 4;)
+    supportsEvidence("EARLY_BURNOUT_PATTERN", "sleepDisturbanceRisk", 4;)
+    supportsEvidence("EARLY_BURNOUT_PATTERN", "cognitiveStrainRisk", 4;)
+end
+
+query "whyBurnoutSyndrome"
+    supportsEvidence("BURNOUT_SYNDROME", "emotionalOverloadRisk", 4;)
+    supportsEvidence("BURNOUT_SYNDROME", "sleepDeprivationRisk", 4;)
+    supportsEvidence("BURNOUT_SYNDROME", "cognitiveOverloadRisk", 4;)
+end
+
+query "whySevereBurnoutCep"
+    supportsEvidence("SEVERE_BURNOUT_STATE", "BurnoutEmergenceEvent", 4;)
+    supportsEvidence("SEVERE_BURNOUT_STATE", "SocialCollapseEvent", 4;)
+    supportsEvidence("SEVERE_BURNOUT_STATE", "emotionalInstabilityTemporalRisk", 4;)
+end
+
+query "whyOccupationalExhaustion"
+    supportsEvidence("OCCUPATIONAL_EXHAUSTION_PATTERN", "highExternalStressRisk", 4;)
+    supportsEvidence("OCCUPATIONAL_EXHAUSTION_PATTERN", "physicalFatigueRisk", 4;)
+    supportsEvidence("OCCUPATIONAL_EXHAUSTION_PATTERN", "BURNOUT_SYNDROME", 4;)
+end
+
+query "whyAnxietyRisk"
+    supportsEvidence("ANXIETY_RISK_PATTERN", "emotionalStressRisk", 4;)
+    supportsEvidence("ANXIETY_RISK_PATTERN", "cognitiveStrainRisk", 4;)
+end
+
+query "whyAnxietyEscalationCep"
+    supportsEvidence("ANXIETY_ESCALATION_STATE", "StressEscalationEvent", 4;)
+    supportsEvidence("ANXIETY_ESCALATION_STATE", "EmotionalVolatilityBurstEvent", 4;)
+end
+
+query "whyPanicAttack"
+    supportsEvidence("PANIC_ATTACK_PATTERN", "emotionalOverloadRisk", 4;)
+    supportsEvidence("PANIC_ATTACK_PATTERN", "escalationRisk", 4;)
+    supportsEvidence("PANIC_ATTACK_PATTERN", "sleepDeprivationRisk", 4;)
+end
+
+query "whyGeneralizedAnxiety"
+    supportsEvidence("GENERALIZED_ANXIETY_TENDENCY", "emotionalStressRisk", 4;)
+    supportsEvidence("GENERALIZED_ANXIETY_TENDENCY", "chronicStressRisk", 4;)
+    supportsEvidence("GENERALIZED_ANXIETY_TENDENCY", "StressEscalationEvent", 4;)
+end
+
+query "whyDepressivePattern"
+    supportsEvidence("DEPRESSIVE_PATTERN", "socialIsolationRisk", 4;)
+    supportsEvidence("DEPRESSIVE_PATTERN", "emotionalStressRisk", 4;)
+end
+
+query "whyEmotionalNumbness"
+    supportsEvidence("EMOTIONAL_NUMBNESS_STATE", "emotionalInstabilityRisk", 4;)
+    supportsEvidence("EMOTIONAL_NUMBNESS_STATE", "cognitiveOverloadRisk", 4;)
+    supportsEvidence("EMOTIONAL_NUMBNESS_STATE", "EmotionalVolatilityBurstEvent", 4;)
+    supportsEvidence("EMOTIONAL_NUMBNESS_STATE", "CognitiveDegradationEvent", 4;)
+end
+
+query "whyMotivationalCollapse"
+    supportsEvidence("MOTIVATIONAL_COLLAPSE", "behavioralWithdrawalRisk", 4;)
+    supportsEvidence("MOTIVATIONAL_COLLAPSE", "mentalFatigueRisk", 4;)
+    supportsEvidence("MOTIVATIONAL_COLLAPSE", "SocialCollapseEvent", 4;)
+end
+
+query "whySevereDepressiveCep"
+    supportsEvidence("SEVERE_DEPRESSIVE_RISK_PATTERN", "SocialCollapseEvent", 4;)
+    supportsEvidence("SEVERE_DEPRESSIVE_RISK_PATTERN", "EmotionalVolatilityBurstEvent", 4;)
+    supportsEvidence("SEVERE_DEPRESSIVE_RISK_PATTERN", "CrisisBuildUpEvent", 4;)
+end
+
+query "whyMentalFatigue"
+    supportsEvidence("MENTAL_FATIGUE_SYNDROME", "cognitiveOverloadRisk", 4;)
+    supportsEvidence("MENTAL_FATIGUE_SYNDROME", "sleepDeprivationRisk", 4;)
+    supportsEvidence("MENTAL_FATIGUE_SYNDROME", "emotionalStressRisk", 4;)
+end
+
+query "whyConcentrationDecline"
+    supportsEvidence("CONCENTRATION_DECLINE_PATTERN", "CognitiveDegradationEvent", 4;)
+    supportsEvidence("CONCENTRATION_DECLINE_PATTERN", "decisionImpairmentRisk", 4;)
+end
+
+query "whyDecisionFatigue"
+    supportsEvidence("DECISION_FATIGUE_STATE", "decisionImpairmentRisk", 4;)
+    supportsEvidence("DECISION_FATIGUE_STATE", "cognitiveOverloadRisk", 4;)
+    supportsEvidence("DECISION_FATIGUE_STATE", "emotionalInstabilityRisk", 4;)
+    supportsEvidence("DECISION_FATIGUE_STATE", "CognitiveDegradationEvent", 4;)
+    supportsEvidence("DECISION_FATIGUE_STATE", "EmotionalVolatilityBurstEvent", 4;)
+end
+
+query "whySocialWithdrawal"
+    supportsEvidence("SOCIAL_WITHDRAWAL_SYNDROME", "socialIsolationRisk", 4;)
+    supportsEvidence("SOCIAL_WITHDRAWAL_SYNDROME", "emotionalStressRisk", 4;)
+    supportsEvidence("SOCIAL_WITHDRAWAL_SYNDROME", "mentalFatigueRisk", 4;)
+end
+
+query "whyInterpersonalDetachment"
+    supportsEvidence("INTERPERSONAL_DETACHMENT_PATTERN", "interpersonalDetachmentRisk", 4;)
+    supportsEvidence("INTERPERSONAL_DETACHMENT_PATTERN", "emotionalInstabilityRisk", 4;)
+    supportsEvidence("INTERPERSONAL_DETACHMENT_PATTERN", "SocialCollapseEvent", 4;)
+    supportsEvidence("INTERPERSONAL_DETACHMENT_PATTERN", "EmotionalVolatilityBurstEvent", 4;)
+end
+
+query "whySocialIsolationProgression"
+    supportsEvidence("SOCIAL_ISOLATION_PROGRESSION", "SocialCollapseEvent", 4;)
+    supportsEvidence("SOCIAL_ISOLATION_PROGRESSION", "deteriorationRisk", 4;)
+end
+
+query "whySeverePsychologicalDeterioration"
+    supportsEvidence("SEVERE_PSYCHOLOGICAL_DETERIORATION", "CrisisBuildUpEvent", 4;)
+    supportsEvidence("SEVERE_PSYCHOLOGICAL_DETERIORATION", "CognitiveDegradationEvent", 4;)
+    supportsEvidence("SEVERE_PSYCHOLOGICAL_DETERIORATION", "SocialCollapseEvent", 4;)
+end
+
+query "whyEmotionalCollapse"
+    supportsEvidence("EMOTIONAL_COLLAPSE_RISK", "emotionalCrisisRisk", 4;)
+    supportsEvidence("EMOTIONAL_COLLAPSE_RISK", "EmotionalVolatilityBurstEvent", 4;)
+    supportsEvidence("EMOTIONAL_COLLAPSE_RISK", "CrisisBuildUpEvent", 4;)
+end
+
+query "whySelfHarmRisk"
+    supportsEvidence("SELF_HARM_RISK_PATTERN", "SEVERE_DEPRESSIVE_RISK_PATTERN", 4;)
+    supportsEvidence("SELF_HARM_RISK_PATTERN", "SEVERE_PSYCHOLOGICAL_DETERIORATION", 4;)
+    supportsEvidence("SELF_HARM_RISK_PATTERN", "EMOTIONAL_COLLAPSE_RISK", 4;)
+end
+
+query "whyCrisisInterventionCep"
+    supportsEvidence("CRISIS_INTERVENTION_RECOMMENDED", "exhaustionRisk", 4;)
+    supportsEvidence("CRISIS_INTERVENTION_RECOMMENDED", "emotionalCrisisRisk", 4;)
+    supportsEvidence("CRISIS_INTERVENTION_RECOMMENDED", "CrisisBuildUpEvent", 4;)
+    supportsEvidence("CRISIS_INTERVENTION_RECOMMENDED", "EMOTIONAL_COLLAPSE_RISK", 4;)
+    supportsEvidence("CRISIS_INTERVENTION_RECOMMENDED", "SEVERE_PSYCHOLOGICAL_DETERIORATION", 4;)
+end
+
 rule "Evidence - Generic Low Risk"
 when
     EmotionalFeatures(ESI < 0.3, NAI < 0.3, EVI < 0.3, LCI < 0.3)
