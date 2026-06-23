@@ -9,6 +9,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { UserAssessment } from '../../models/user-assessment.model';
 import { FinalDecision } from '../../models/final-decision.model';
 import { RouterModule } from '@angular/router';
+import { AssessmentService } from '../../services/assesment-service';
 export const MOCK_FINAL_DECISION: FinalDecision = {
   finalState: 'AT_RISK',
   severity: 'HIGH',
@@ -31,8 +32,8 @@ export const MOCK_FINAL_DECISION: FinalDecision = {
     'HIGH_STRESS_LEVEL',
     'SLEEP_DEGRADATION',
     'COGNITIVE_FATIGUE',
-    'MODERATE_SOCIAL_WITHDRAWAL'
-  ]
+    'MODERATE_SOCIAL_WITHDRAWAL',
+  ],
 };
 @Component({
   selector: 'app-survey-form',
@@ -45,12 +46,13 @@ export const MOCK_FINAL_DECISION: FinalDecision = {
     MatRadioModule,
     MatCardModule,
     MatExpansionModule,
-    RouterModule
+    RouterModule,
   ],
   templateUrl: './survey-form-component.html',
   styleUrls: ['./survey-form-component.css'],
 })
 export class SurveyFormComponent {
+  constructor(private assessmentService: AssessmentService) {}
   emotionalQuestions = [
     {
       field: 'stressLevel',
@@ -105,13 +107,7 @@ export class SurveyFormComponent {
       text: 'Da li se lako iznervirate ili postanete razdražljivi?',
       type: 'boolean',
       answer: null,
-    },
-    {
-      field: 'worryFrequency',
-      text: 'Koliko često osećate zabrinutost bez konkretnog razloga?',
-      type: 'scale',
-      answer: null,
-    },
+    }
   ];
   sleepPhysicalQuestions = [
     {
@@ -145,20 +141,6 @@ export class SurveyFormComponent {
     {
       field: 'chronicFatigue',
       text: 'Da li osećate hronični umor tokom dana?',
-      type: 'boolean',
-      answer: null,
-    },
-
-    {
-      field: 'stressHeadaches',
-      text: 'Da li imate glavobolje izazvane stresom?',
-      type: 'boolean',
-      answer: null,
-    },
-
-    {
-      field: 'appetiteChanges',
-      text: 'Da li su se pojavile promene apetita?',
       type: 'boolean',
       answer: null,
     },
@@ -367,7 +349,7 @@ export class SurveyFormComponent {
 
     return result;
   }
-  
+
   finalDecision: FinalDecision | null = MOCK_FINAL_DECISION;
   loading = false;
   finishSurvey() {
@@ -388,5 +370,18 @@ export class SurveyFormComponent {
     };
 
     console.log(assessment);
+    this.loading = true;
+
+    this.assessmentService.evaluate(assessment).subscribe({
+      next: (res: FinalDecision) => {
+        this.finalDecision = res;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.loading = false;
+        alert('Greška pri evaluaciji');
+      },
+    });
   }
 }

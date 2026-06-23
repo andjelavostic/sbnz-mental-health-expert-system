@@ -2,15 +2,15 @@ package com.ftn.sbnz.service.services;
 
 public class NormalizationService {
 
-    public double likert(int value) {
+    public double likert(double value) {
         return (value - 1) / 4.0;
     }
 
-    public double yesNo(boolean value) {
-        return value ? 1.0 : 0.0;
+    public double yesNo(double value) {
+        return value;
     }
 
-    public double frequency(int timesPerWeek) {
+    public double frequency(double timesPerWeek) {
         return Math.min(1.0, timesPerWeek / 7.0);
     }
 

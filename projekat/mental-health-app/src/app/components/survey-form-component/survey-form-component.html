@@ -163,6 +163,9 @@
     </div>
   </div>
 </div>
+<div *ngIf="loading" class="loading">
+  Evaluacija u toku...
+</div>
 <div *ngIf="finalDecision" class="result-page">
   <mat-card class="result-card">
     <div class="header">
