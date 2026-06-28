@@ -17,16 +17,29 @@ declare CognitiveDegradationEvent @role(event) @timestamp(timestampMillis) end
 declare SocialCollapseEvent @role(event) @timestamp(timestampMillis) end
 declare CrisisBuildUpEvent @role(event) @timestamp(timestampMillis) end
 
+// CEP pravila ne proveravaju sve uslove direktno u DRL-u.
+// Ona skupe istorijske procene iz vremenskog prozora, a FeatureCalculatorService
+// vrati -1.0 ako obrazac nije pronadjen, ili score 0..1 ako jeste.
+
 rule "Stress escalation event"
 salience 100
 when
+    // Trenutna procena za korisnika.
     $t0 : UserAssessmentEvent($uid : assessment.userId)
+
+    // Sve procene istog korisnika u poslednja 72 sata.
     $events : List() from accumulate(
         $e : UserAssessmentEvent(assessment.userId == $uid) over window:time(72h),
         collectList($e)
     )
+
+    // Servis proverava da li stres raste kroz najmanje 3 procene.
     $score : Double() from featureService.calculateStressEscalationScore($t0, $events)
+
+    // Score -1 znaci da CEP obrazac nije ispunjen; score >= 0 znaci da jeste.
     eval($score.doubleValue() >= 0.0)
+
+    // Ne ubacujemo isti CEP event vise puta za istog korisnika u istoj sesiji.
     not StressEscalationEvent(userId == $uid)
 then
     insert(new StressEscalationEvent($uid, OffsetDateTime.now(), $score.doubleValue()));
@@ -36,11 +49,14 @@ end
 rule "Burnout emergence event"
 salience 70
 when
+    // Trenutna procena i istorija u poslednjih 7 dana.
     $t0 : UserAssessmentEvent($uid : assessment.userId)
     $events : List() from accumulate(
         $e : UserAssessmentEvent(assessment.userId == $uid) over window:time(7d),
         collectList($e)
     )
+
+    // Proverava trend rasta umora i kognitivnog opterecenja kroz vise procena.
     $score : Double() from featureService.calculateBurnoutEmergenceScore($t0, $events)
     eval($score.doubleValue() >= 0.0)
     not BurnoutEmergenceEvent(userId == $uid)
@@ -52,11 +68,14 @@ end
 rule "Emotional volatility burst"
 salience 80
 when
+    // Posmatra emocionalnu nestabilnost u kracem prozoru od 24 sata.
     $t0 : UserAssessmentEvent($uid : assessment.userId)
     $events : List() from accumulate(
         $e : UserAssessmentEvent(assessment.userId == $uid) over window:time(24h),
         collectList($e)
     )
+
+    // Trazi nagli skok emocionalne volatilnosti u odnosu na prethodne procene.
     $score : Double() from featureService.calculateEmotionalVolatilityBurstScore($t0, $events)
     eval($score.doubleValue() >= 0.0)
     not EmotionalVolatilityBurstEvent(userId == $uid)
@@ -68,11 +87,14 @@ end
 rule "Cognitive degradation event"
 salience 60
 when
+    // Posmatra pad koncentracije, odluka i mentalne energije kroz 7 dana.
     $t0 : UserAssessmentEvent($uid : assessment.userId)
     $events : List() from accumulate(
         $e : UserAssessmentEvent(assessment.userId == $uid) over window:time(7d),
         collectList($e)
     )
+
+    // Event nastaje samo ako su kognitivni pokazatelji u jasnom porastu.
     $score : Double() from featureService.calculateCognitiveDegradationScore($t0, $events)
     eval($score.doubleValue() >= 0.0)
     not CognitiveDegradationEvent(userId == $uid)
@@ -84,11 +106,14 @@ end
 rule "Social collapse trajectory"
 salience 50
 when
+    // Posmatra povlacenje i izolaciju korisnika u poslednjih 7 dana.
     $t0 : UserAssessmentEvent($uid : assessment.userId)
     $events : List() from accumulate(
         $e : UserAssessmentEvent(assessment.userId == $uid) over window:time(7d),
         collectList($e)
     )
+
+    // Event nastaje ako socijalni pokazatelji progresivno rastu kroz procene.
     $score : Double() from featureService.calculateSocialCollapseScore($t0, $events)
     eval($score.doubleValue() >= 0.0)
     not SocialCollapseEvent(userId == $uid)
@@ -100,11 +125,14 @@ end
 rule "Crisis buildup event"
 salience 40
 when
+    // Krizni obrazac se prati u poslednja 72 sata.
     $t0 : UserAssessmentEvent($uid : assessment.userId)
     $events : List() from accumulate(
         $e : UserAssessmentEvent(assessment.userId == $uid) over window:time(72h),
         collectList($e)
     )
+
+    // Kombinuje prosecni emocionalni stres, umor i trajanje simptoma.
     $score : Double() from featureService.calculateCrisisBuildUpScore($t0, $events)
     eval($score.doubleValue() >= 0.0)
     not CrisisBuildUpEvent(userId == $uid)

@@ -6,14 +6,28 @@ import com.ftn.sbnz.model.risks.*;
 import com.ftn.sbnz.model.events.*;
 import com.ftn.sbnz.model.patterns.*;
 
+// Backward chaining ovde radi preko EvidenceLink cinjenica.
+// EvidenceLink("A", "B") znaci: cilj A ima dokaz B.
+// Dokaz moze biti osnovna feature vrednost, rizik, pattern ili CEP event.
+
+// Rekurzivni query proverava da li neki cilj ima trazeni dokaz direktno
+// ili preko lanca medjukoraka.
+// Primer: GENERALIZED_ANXIETY_TENDENCY -> chronicStressRisk -> SPS.
+// Parametar depth ogranicava dubinu pretrage da ne bi doslo do beskonacne rekurzije.
 query "supportsEvidence"(String $goal, String $evidence, Integer $depth)
+    // Direktna veza: cilj odmah ima trazeni dokaz.
     EvidenceLink(goal == $goal, evidence == $evidence)
 or
+    // Indirektna veza: cilj ima neki medjudokaz, pa se dalje proverava taj medjudokaz.
     eval($depth.intValue() > 0)
     EvidenceLink(goal == $goal, $middle : evidence)
     $nextDepth : Integer() from Integer.valueOf($depth.intValue() - 1)
     supportsEvidence($middle, $evidence, $nextDepth;)
 end
+
+// "why..." query-ji predstavljaju objasnjenje za jednu hipotezu.
+// Hipoteza je potvrdjena samo ako postoje svi navedeni dokazi.
+// Ove query-je poziva RuleEngineService kada korisnik proverava backward hipotezu.
 
 query "whyLowRisk"
     supportsEvidence("LOW_RISK", "lowEmotionalFeatures", 4;)
@@ -199,6 +213,11 @@ query "whyCrisisInterventionCep"
     supportsEvidence("CRISIS_INTERVENTION_RECOMMENDED", "SEVERE_PSYCHOLOGICAL_DETERIORATION", 4;)
 end
 
+// Pravila ispod pune bazu dokaza.
+// Kada se u radnoj memoriji pojave feature-i, rizici, pattern-i ili CEP event-i,
+// ova pravila ubacuju EvidenceLink veze koje backward query-ji kasnije prate.
+
+// Osnovni dokazi za nizak rizik: sve glavne oblasti su ispod praga.
 rule "Evidence - Generic Low Risk"
 when
     EmotionalFeatures(ESI < 0.3, NAI < 0.3, EVI < 0.3, LCI < 0.3)
@@ -214,6 +233,7 @@ then
     insert(new EvidenceLink("LOW_RISK", "lowEnvironmentalFeatures"));
 end
 
+// Direktni feature dokazi za blage odluke.
 rule "Evidence - Low Emotional Tension"
 when
     EmotionalFeatures(ESI >= 0.2 && ESI < 0.3, NAI < 0.3, EVI < 0.3, LCI < 0.3)
@@ -278,6 +298,9 @@ then
     insert(new EvidenceLink("LOW_EXTERNAL_PRESSURE", "chronicStressExposure"));
 end
 
+// Dokazi za rizike drugog nivoa.
+// Ovi linkovi povezuju rizik sa feature-ima koji su ga izazvali.
+// Na primer emotionalStressRisk moze da se objasni preko ESI i NAI.
 rule "Evidence - Emotional Stress Risk"
 when
     EmotionalRisks(emotionalStressRisk == true)
@@ -464,6 +487,9 @@ then
     insert(new EvidenceLink("emotionalInstabilityTemporalRisk", "EVI"));
 end
 
+// Dokazi za pattern-e i finalne hipoteze.
+// Ovi linkovi povezuju veci zakljucak sa rizicima, drugim pattern-ima
+// ili CEP event-ima koji ga podrzavaju.
 rule "Evidence - Early Burnout"
 when
     BurnoutPattern(earlyBurnout == true)
