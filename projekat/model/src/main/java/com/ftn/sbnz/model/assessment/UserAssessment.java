@@ -1,12 +1,12 @@
 package com.ftn.sbnz.model.assessment;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import jakarta.persistence.MappedSuperclass;
 @MappedSuperclass
 public class UserAssessment {
     private Long userId;
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
 
 
     // Emotional
@@ -69,10 +69,10 @@ public class UserAssessment {
     private double productivityDeclineTrend;
     public UserAssessment() {
     }
-    public LocalDateTime getTimestamp() {
+    public OffsetDateTime getTimestamp() {
         return timestamp;
     }
-    public void setTimestamp(LocalDateTime timestamp) {
+    public void setTimestamp(OffsetDateTime timestamp) {
         this.timestamp = timestamp;
     }
     public double getStressLevel() {

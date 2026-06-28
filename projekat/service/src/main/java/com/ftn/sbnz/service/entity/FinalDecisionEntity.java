@@ -1,5 +1,5 @@
 package com.ftn.sbnz.service.entity;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import com.ftn.sbnz.model.decision.FinalDecision;
 import jakarta.persistence.Entity;
@@ -21,6 +21,10 @@ public class FinalDecisionEntity extends FinalDecision {
     }
 
     public FinalDecisionEntity(FinalDecision decision, Long userId) {
+        this(decision, userId, OffsetDateTime.now());
+    }
+
+    public FinalDecisionEntity(FinalDecision decision, Long userId, OffsetDateTime date) {
 
         this.setFinalState(decision.getFinalState());
         this.setSeverity(decision.getSeverity());
@@ -29,7 +33,7 @@ public class FinalDecisionEntity extends FinalDecision {
         this.setTriggeredPatterns(decision.getTriggeredPatterns());
         this.setScore(decision.getScore());
         this.setUserId(userId);
-        this.setDate(LocalDateTime.now());
+        this.setDate(date);
     }
 
     public Long getId() {

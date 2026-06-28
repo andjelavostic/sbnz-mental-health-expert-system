@@ -1,16 +1,19 @@
 package com.ftn.sbnz.service.services;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.rule.QueryResults;
+import org.kie.api.time.SessionPseudoClock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ftn.sbnz.model.assessment.UserAssessment;
 import com.ftn.sbnz.model.assessment.UserAssessmentEvent;
@@ -35,6 +38,7 @@ import com.ftn.sbnz.service.entity.AssessmentEntity;
 import com.ftn.sbnz.service.entity.FinalDecisionEntity;
 import com.ftn.sbnz.service.repo.AssessmentRepository;
 import com.ftn.sbnz.service.repo.FinalDecisionRepository;
+import com.ftn.sbnz.service.websocket.CepAlertWebSocketHandler;
 
 @Service
 public class RuleEngineService {
@@ -52,6 +56,9 @@ public class RuleEngineService {
 
     @Autowired
     private FinalDecisionRepository finalDecisionRepository;
+
+    @Autowired
+    private CepAlertWebSocketHandler cepAlertWebSocketHandler;
 
     public FinalDecision evaluate(UserAssessment input) {
         KieSession kieSession = prepareSession(input, true);
@@ -92,14 +99,15 @@ public class RuleEngineService {
                     0.1);
         }
 
-        if (isCepDecision(
+        boolean cepDecision = isCepDecision(
                 decision.getFinalState(),
                 stressEscalationEvent,
                 burnoutEmergenceEvent,
                 emotionalVolatilityBurstEvent,
                 cognitiveDegradationEvent,
                 socialCollapseEvent,
-                crisisBuildUpEvent)) {
+                crisisBuildUpEvent);
+        if (cepDecision) {
             List<String> patterns = new ArrayList<>(decision.getTriggeredPatterns());
             if (!patterns.contains("CEP")) {
                 patterns.add("CEP");
@@ -107,9 +115,12 @@ public class RuleEngineService {
             decision.setTriggeredPatterns(patterns);
         }
 
-        FinalDecisionEntity decisionEntity = new FinalDecisionEntity(decision, input.getUserId());
+        FinalDecisionEntity decisionEntity = new FinalDecisionEntity(decision, input.getUserId(), input.getTimestamp());
 
         finalDecisionRepository.save(decisionEntity);
+        if (cepDecision) {
+            cepAlertWebSocketHandler.sendCepAlert(input.getUserId(), decision);
+        }
         return decision;
     }
 
@@ -162,7 +173,7 @@ public class RuleEngineService {
 
     private KieSession prepareSession(UserAssessment input, boolean saveAssessment) {
         if (input.getTimestamp() == null) {
-            input.setTimestamp(LocalDateTime.now());
+            input.setTimestamp(OffsetDateTime.now());
         }
 
         if (saveAssessment) {
@@ -173,15 +184,21 @@ public class RuleEngineService {
 
         KieSession kieSession = kieContainer.newKieSession("rulesSession");
 
-        List<AssessmentEntity> history = repo.findByUserIdAndTimestampAfter(
-                input.getUserId(), LocalDateTime.now().minusDays(7));
+        List<AssessmentEntity> history = repo.findByUserIdAndTimestampBetween(
+                input.getUserId(), input.getTimestamp().minusDays(7), input.getTimestamp());
 
-        for (AssessmentEntity oldData : history) {
-            kieSession.insert(new UserAssessmentEvent(oldData));
-        }
+        List<UserAssessmentEvent> assessmentEvents = new ArrayList<>(
+                history.stream()
+                        .map(UserAssessmentEvent::new)
+                        .toList());
         if (!saveAssessment) {
-            kieSession.insert(new UserAssessmentEvent(input));
+            assessmentEvents.add(new UserAssessmentEvent(input));
         }
+
+        SessionPseudoClock clock = (SessionPseudoClock) kieSession.getSessionClock();
+        assessmentEvents.stream()
+                .sorted(Comparator.comparing(UserAssessmentEvent::getTimestamp))
+                .forEach(event -> insertTimedEvent(kieSession, clock, event));
 
         EmotionalFeatures ef = featureService.calculateEmotional(input);
         SleepFeatures sf = featureService.calculatePhysical(input);
@@ -203,6 +220,15 @@ public class RuleEngineService {
         System.out.println("RULES FIRED: " + fired);
 
         return kieSession;
+    }
+
+    private void insertTimedEvent(KieSession kieSession, SessionPseudoClock clock, UserAssessmentEvent event) {
+        long eventTime = event.getTimestamp().toInstant().toEpochMilli();
+        long advanceBy = eventTime - clock.getCurrentTime();
+        if (advanceBy > 0) {
+            clock.advanceTime(advanceBy, TimeUnit.MILLISECONDS);
+        }
+        kieSession.insert(event);
     }
 
     private BackwardHypothesis backwardHypothesis(FinalState targetState) {
@@ -383,5 +409,11 @@ public class RuleEngineService {
                 .stream()
                 .map(FinalDecisionDTO::new)
                 .toList();
+    }
+
+    @Transactional
+    public void deleteDemoData(Long userId) {
+        finalDecisionRepository.deleteByUserId(userId);
+        repo.deleteByUserId(userId);
     }
 }

@@ -1,6 +1,6 @@
 package com.ftn.sbnz.model.decision;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import jakarta.persistence.MappedSuperclass;
@@ -8,7 +8,7 @@ import jakarta.persistence.MappedSuperclass;
 public class FinalDecision {
     private Long userId; 
 
-    private LocalDateTime date;
+    private OffsetDateTime date;
 
     private FinalState finalState;
     private Severity severity;
@@ -23,7 +23,7 @@ public class FinalDecision {
     }
 
     public FinalDecision(Long id,
-            LocalDateTime date,
+            OffsetDateTime date,
             FinalState finalState,
             Severity severity,
             String explanation,
@@ -62,11 +62,11 @@ public class FinalDecision {
         this.userId = id;
     }
 
-    public LocalDateTime getDate() {
+    public OffsetDateTime getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(OffsetDateTime date) {
         this.date = date;
     }
 

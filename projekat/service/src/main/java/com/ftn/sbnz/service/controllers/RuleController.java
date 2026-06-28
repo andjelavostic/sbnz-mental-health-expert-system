@@ -2,6 +2,7 @@ package com.ftn.sbnz.service.controllers;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,5 +40,10 @@ public class RuleController {
     @GetMapping("/history/{userId}")
     public List<FinalDecisionDTO> getHistory(@PathVariable Long userId) {
         return service.getHistory(userId);
+    }
+
+    @DeleteMapping("/demo-data/{userId}")
+    public void deleteDemoData(@PathVariable Long userId) {
+        service.deleteDemoData(userId);
     }
 }

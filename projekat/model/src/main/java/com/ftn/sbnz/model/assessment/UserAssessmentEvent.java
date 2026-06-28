@@ -1,10 +1,9 @@
 package com.ftn.sbnz.model.assessment;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.OffsetDateTime;
 
 public class UserAssessmentEvent {
     private UserAssessment assessment;
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
     public UserAssessmentEvent() {}
     public UserAssessmentEvent(UserAssessment assessment) {
         this.assessment = assessment;
@@ -12,9 +11,9 @@ public class UserAssessmentEvent {
     }
 
     public UserAssessment getAssessment() { return assessment; }
-    public LocalDateTime getTimestamp() { return timestamp; }
+    public OffsetDateTime getTimestamp() { return timestamp; }
     public long getTimestampMillis() 
     {
-        return timestamp.toInstant(ZoneOffset.UTC).toEpochMilli();
+        return timestamp.toInstant().toEpochMilli();
     }
 }

@@ -3,7 +3,7 @@ import com.ftn.sbnz.model.decision.FinalState;
 import com.ftn.sbnz.model.decision.Severity;
 import com.ftn.sbnz.service.entity.FinalDecisionEntity;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 public class FinalDecisionDTO {
@@ -17,7 +17,7 @@ public class FinalDecisionDTO {
     private List<String> triggeredPatterns;
     private double score;
 
-    private LocalDateTime date;
+    private OffsetDateTime date;
 
     public FinalDecisionDTO() {}
 
@@ -79,11 +79,11 @@ public class FinalDecisionDTO {
         this.score = score;
     }
 
-    public LocalDateTime getDate() {
+    public OffsetDateTime getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(OffsetDateTime date) {
         this.date= date;
     }
 

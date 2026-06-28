@@ -11,4 +11,6 @@ import com.ftn.sbnz.service.entity.FinalDecisionEntity;
 @Repository
 public interface FinalDecisionRepository extends JpaRepository<FinalDecisionEntity, Long> { 
     List<FinalDecisionEntity> findByUserIdOrderByDateDesc(Long userId);  
+
+    void deleteByUserId(Long userId);
 } 

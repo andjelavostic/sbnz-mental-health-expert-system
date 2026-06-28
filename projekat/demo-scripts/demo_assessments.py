@@ -8,6 +8,7 @@ from urllib.request import Request, urlopen
 
 API_URL = "http://localhost:8080/api/rules/evaluate"
 BACKWARD_URL = "http://localhost:8080/api/rules/backward-check"
+DEMO_DATA_URL = "http://localhost:8080/api/rules/demo-data"
 
 
 def iso(dt):
@@ -82,6 +83,12 @@ def post_json(url, payload):
         return json.loads(body)
 
 
+def delete_demo_data(user_id):
+    request = Request(f"{DEMO_DATA_URL}/{user_id}", method="DELETE")
+    with urlopen(request, timeout=20):
+        return
+
+
 def print_result(label, result):
     print(f"\n{label}")
     print(f"  finalState: {result.get('finalState')}")
@@ -91,12 +98,12 @@ def print_result(label, result):
 
 
 def low_risk(user_id):
-    now = datetime.now()
+    now = datetime.now().astimezone()
     return [base_assessment(user_id, now)]
 
 
 def non_cep_high_risk(user_id):
-    now = datetime.now()
+    now = datetime.now().astimezone()
     return [
         with_values(
             base_assessment(user_id, now),
@@ -136,10 +143,10 @@ def non_cep_high_risk(user_id):
 
 
 def cep_anxiety_escalation(user_id):
-    now = datetime.now()
+    now = datetime.now().astimezone()
     return [
         with_values(
-            base_assessment(user_id, now - timedelta(hours=24)),
+            base_assessment(user_id, now - timedelta(hours=25)),
             stressLevel=2,
             nervousness=2,
             worryFrequency=2,
@@ -150,9 +157,9 @@ def cep_anxiety_escalation(user_id):
         ),
         with_values(
             base_assessment(user_id, now - timedelta(hours=12)),
-            stressLevel=3,
-            nervousness=3,
-            worryFrequency=3,
+            stressLevel=4,
+            nervousness=4,
+            worryFrequency=4,
             moodSwings=1,
             productivityDeclineTrend=4,
             moodDegradationTrend=4,
@@ -164,23 +171,34 @@ def cep_anxiety_escalation(user_id):
             emotionalExhaustion=1,
             nervousness=5,
             overloadFeeling=1,
+            lowMoodFrequency=3,
+            sadnessLevel=3,
             worryFrequency=5,
-            moodSwings=5,
-            irritability=1,
-            productivityDeclineTrend=5,
+            moodSwings=1,
+            irritability=0,
+            productivityDeclineTrend=1,
             moodDegradationTrend=5,
+            symptomDuration=60,
             exhaustionDuration=20,
-            isolationDuration=20,
+            isolationDuration=14,
             panicFrequency=5,
             stressTrend=5,
+            constantPressure=5,
+            ruminationOnTasks=5,
+            lackOfRestTime=1,
         ),
     ]
+
+
+def cep_seed(user_id):
+    return cep_anxiety_escalation(user_id)[:2]
 
 
 SCENARIOS = {
     "low": low_risk,
     "noncep": non_cep_high_risk,
     "cep": cep_anxiety_escalation,
+    "cep-seed": cep_seed,
 }
 
 
@@ -188,8 +206,10 @@ def run_scenario(name, user_id):
     assessments = SCENARIOS[name](user_id)
     last_result = None
     for index, assessment in enumerate(assessments, start=1):
+        print(f"\nSending {name} assessment {index}/{len(assessments)}")
+        print(f"  timestamp: {assessment.get('timestamp')}")
         last_result = post_json(API_URL, assessment)
-        print_result(f"{name} assessment {index}/{len(assessments)}", last_result)
+        print_result("Result", last_result)
     return assessments[-1], last_result
 
 
@@ -206,11 +226,16 @@ def main():
     parser = argparse.ArgumentParser(description="Demo data generator for the mental health expert system.")
     parser.add_argument("scenario", choices=[*SCENARIOS.keys(), "all"])
     parser.add_argument("--user-id", type=int, default=1)
+    parser.add_argument("--reset", action="store_true")
     parser.add_argument("--backward", action="store_true")
-    parser.add_argument("--target", default="ANXIETY_ESCALATION_STATE")
+    parser.add_argument("--target", default="GENERALIZED_ANXIETY_TENDENCY")
     args = parser.parse_args()
 
     try:
+        if args.reset:
+            delete_demo_data(args.user_id)
+            print(f"Deleted previous demo data for user {args.user_id}.")
+
         if args.scenario == "all":
             for scenario in SCENARIOS:
                 assessment, _ = run_scenario(scenario, args.user_id)

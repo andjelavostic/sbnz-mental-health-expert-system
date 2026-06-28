@@ -3,13 +3,6 @@ import com.ftn.sbnz.model.risks.*;
 import com.ftn.sbnz.model.patterns.*;
 import com.ftn.sbnz.model.events.*;
 
-declare StressEscalationEvent @role(event) end
-declare BurnoutEmergenceEvent @role(event) end
-declare EmotionalVolatilityBurstEvent @role(event) end
-declare CognitiveDegradationEvent @role(event) end
-declare SocialCollapseEvent @role(event) end
-declare CrisisBuildUpEvent @role(event) end
-
 //ANXIETY PATTERNS
 rule "Early Burnout Pattern"
 when

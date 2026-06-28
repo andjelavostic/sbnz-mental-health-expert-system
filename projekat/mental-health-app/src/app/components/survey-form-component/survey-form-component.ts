@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule, NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatStepperModule } from '@angular/material/stepper';
@@ -43,7 +43,12 @@ type NumberRule = {
   templateUrl: './survey-form-component.html',
   styleUrls: ['./survey-form-component.css'],
 })
-export class SurveyFormComponent {
+export class SurveyFormComponent implements OnInit, OnDestroy {
+  private readonly userId = 1;
+  private cepSocket: WebSocket | null = null;
+  private cepReconnectTimer: ReturnType<typeof setTimeout> | null = null;
+  private destroyed = false;
+
   constructor(
     private assessmentService: AssessmentService,
     private cdr: ChangeDetectorRef,
@@ -55,14 +60,47 @@ export class SurveyFormComponent {
     days: { min: 0, max: 365, message: '0–365 dana' },
     weekly: { min: 0, max: 7, message: '0–7 puta nedeljno' },
   };
-  showMessage(message: string) {
+  showMessage(message: string, duration = 4000) {
   this.snackBar.open(message, 'U redu', {
-    duration: 4000,
+    duration,
     horizontalPosition: 'right',
     verticalPosition: 'bottom',
     panelClass: ['warning-snackbar']
   });
 }
+
+  ngOnInit() {
+    this.connectCepAlerts();
+  }
+
+  ngOnDestroy() {
+    this.destroyed = true;
+    if (this.cepReconnectTimer) {
+      clearTimeout(this.cepReconnectTimer);
+    }
+    this.cepSocket?.close();
+  }
+
+  private connectCepAlerts() {
+    this.cepSocket = new WebSocket(`ws://localhost:8080/ws/cep-alerts?userId=${this.userId}`);
+
+    this.cepSocket.onmessage = (event) => {
+      const decision = JSON.parse(event.data) as FinalDecision;
+      this.zone.run(() => {
+        this.finalDecision = decision;
+        this.backwardResult = null;
+        this.view = 'result';
+        this.showMessage('CEP upozorenje: stigla je nova CEP odluka iz sistema.', 10000);
+        this.cdr.detectChanges();
+      });
+    };
+
+    this.cepSocket.onclose = () => {
+      if (!this.destroyed) {
+        this.cepReconnectTimer = setTimeout(() => this.connectCepAlerts(), 2000);
+      }
+    };
+  }
   emotionalQuestions = [
     {
       field: 'stressLevel',
@@ -453,7 +491,7 @@ export class SurveyFormComponent {
 
   buildAssessment() {
     return {
-      userId: 1,
+      userId: this.userId,
       timestamp: new Date(),
 
       stressLevel: this.getAnswer('stressLevel'),
@@ -544,7 +582,7 @@ export class SurveyFormComponent {
     }
 
     const assessment = {
-      userId: 1,
+      userId: this.userId,
       timestamp: new Date(),
 
       stressLevel: this.getAnswer('stressLevel'),
@@ -613,7 +651,7 @@ export class SurveyFormComponent {
           this.view = 'result';
 
           if (this.isCepDecision(res)) {
-            this.showMessage('CEP upozorenje: odluka je dodatno potvrdjena analizom promena kroz istoriju procena.');
+            this.showMessage('CEP upozorenje: odluka je dodatno potvrdjena analizom promena kroz istoriju procena.', 10000);
           }
 
           this.cdr.detectChanges();

@@ -1,19 +1,18 @@
 package com.ftn.sbnz.model.events;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.OffsetDateTime;
 
 public class CrisisBuildUpEvent {
     private Long userId;
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
     private double score;
     public CrisisBuildUpEvent(){}
-    public CrisisBuildUpEvent(Long userId, LocalDateTime timestamp, double score) {
+    public CrisisBuildUpEvent(Long userId, OffsetDateTime timestamp, double score) {
         this.userId = userId;
         this.timestamp = timestamp;
         this.score = score;
     }
-    public long getTimestampMillis() { return timestamp.toInstant(ZoneOffset.UTC).toEpochMilli(); }
+    public long getTimestampMillis() { return timestamp.toInstant().toEpochMilli(); }
     public Long getUserId() { return userId; }
     public double getScore() { return score; }
 }
