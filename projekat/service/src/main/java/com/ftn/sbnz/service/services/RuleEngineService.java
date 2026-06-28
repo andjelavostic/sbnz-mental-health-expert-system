@@ -167,7 +167,7 @@ public class RuleEngineService {
 
         if (saveAssessment) {
             AssessmentEntity entity = new AssessmentEntity(input);
-            entity.setTimestamp(LocalDateTime.now());
+            entity.setTimestamp(input.getTimestamp());
             repo.save(entity);
         }
 

@@ -16,6 +16,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { ChangeDetectorRef, NgZone } from '@angular/core';
 import { BackwardCheckResult } from '../../models/final-decision.model';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 type NumberRule = {
   min: number;
   max: number;
@@ -37,6 +38,7 @@ type NumberRule = {
     MatInputModule,
     MatProgressSpinnerModule,
     MatSelectModule,
+    MatSnackBarModule
   ],
   templateUrl: './survey-form-component.html',
   styleUrls: ['./survey-form-component.css'],
@@ -46,12 +48,21 @@ export class SurveyFormComponent {
     private assessmentService: AssessmentService,
     private cdr: ChangeDetectorRef,
     private zone: NgZone,
+    private snackBar: MatSnackBar
   ) {}
   numberRules: Record<string, NumberRule> = {
     hours: { min: 0, max: 24, message: '0–24 sati' },
     days: { min: 0, max: 365, message: '0–365 dana' },
     weekly: { min: 0, max: 7, message: '0–7 puta nedeljno' },
   };
+  showMessage(message: string) {
+  this.snackBar.open(message, 'U redu', {
+    duration: 4000,
+    horizontalPosition: 'right',
+    verticalPosition: 'bottom',
+    panelClass: ['warning-snackbar']
+  });
+}
   emotionalQuestions = [
     {
       field: 'stressLevel',
@@ -360,12 +371,12 @@ export class SurveyFormComponent {
 
     if (q.answer > rule.max) {
       q.answer = rule.max;
-      alert(rule.message);
+      this.showMessage(rule.message);
     }
 
     if (q.answer < rule.min) {
       q.answer = rule.min;
-      alert(rule.message);
+      this.showMessage(rule.message);
     }
   }
   isFormValid(): boolean {
@@ -502,7 +513,7 @@ export class SurveyFormComponent {
 
   checkBackwardHypothesis() {
     if (!this.isFormValid()) {
-      alert('Molimo vas da odgovorite na sva pitanja pre provere hipoteze.');
+      this.showMessage('Molimo vas da odgovorite na sva pitanja pre provere hipoteze.');
       return;
     }
 
@@ -520,14 +531,15 @@ export class SurveyFormComponent {
       error: (err) => {
         console.error(err);
         this.view = 'form';
-        alert('Greska pri backward proveri');
+        this.showMessage('Greska pri backward proveri');
+        
       },
     });
   }
 
   finishSurvey() {
     if (!this.isFormValid()) {
-      alert('Molimo vas da odgovorite na sva pitanja pre završetka.');
+      this.showMessage('Molimo vas da odgovorite na sva pitanja pre završetka.');
       return;
     }
 
@@ -601,7 +613,7 @@ export class SurveyFormComponent {
           this.view = 'result';
 
           if (this.isCepDecision(res)) {
-            alert('CEP upozorenje: finalna odluka je zasnovana i na promenama kroz istoriju procena.');
+            this.showMessage('CEP upozorenje: odluka je dodatno potvrdjena analizom promena kroz istoriju procena.');
           }
 
           this.cdr.detectChanges();
@@ -611,7 +623,8 @@ export class SurveyFormComponent {
       error: (err) => {
         console.error(err);
         this.view = 'form';
-        alert('Greška pri evaluaciji');
+        this.showMessage('Greska pri proceni. Pokusajte ponovo.');
+        
       },
     });
   }
